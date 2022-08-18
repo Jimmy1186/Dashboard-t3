@@ -91,7 +91,7 @@ function Signup({sumbitHandler}:signupFromType) {
                 <input
                   type="radio"
                   name="role"
-                  value={"R"}
+                  value={3}
                   className=""
                   onChange={handleChange}
                 />
@@ -105,7 +105,7 @@ function Signup({sumbitHandler}:signupFromType) {
                   type="radio"
                   name="role"
                   className=""
-                  value={"W"}
+                  value={2}
                   onChange={handleChange}
                 />
               </label>
@@ -119,7 +119,7 @@ function Signup({sumbitHandler}:signupFromType) {
                   name="role"
                   className=""
                   onChange={handleChange}
-                  value={"X"}
+                  value={1}
                 />
               </label>
             </div>
@@ -132,6 +132,7 @@ function Signup({sumbitHandler}:signupFromType) {
             >
               新增
             </button>
+         
           </Form>
      
     )}

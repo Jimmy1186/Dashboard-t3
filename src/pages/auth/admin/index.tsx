@@ -8,14 +8,14 @@ import Signup from "../../components/tools/Signup";
 import { useCallback } from "react";
 
 function index() {
-  const { data: users, refetch } = trpc.useQuery(["question.findAllUser"]);
+  const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
   // const users = useMemo(() => data, []);
   const [msg, setMsg] = useState<alerType>({
     alertTitle: null,
     alertStatus: null,
   });
 
-  const insertMutation = trpc.useMutation(["question.inertOneUser"], {
+  const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
     onError: (e) => {
       if (e.data?.code === "CONFLICT") {
         setMsg({ alertTitle: e.message, alertStatus: "warn" });
@@ -37,7 +37,7 @@ function index() {
       insertMutation.mutate({
         username: values.username,
         password: values.password,
-        role: values.role,
+        role: Number(values.role),
       });
     },
     [users, insertMutation]
@@ -87,9 +87,8 @@ function index() {
               {users?.map((user, index) => {
                 return (
                   <tr key={index}>
-                    <td>{user.id}</td>
                     <td>{user.username}</td>
-                    <td>{user.role}</td>
+                    <td>{user.roleId}</td>
                   </tr>
                 );
               })}

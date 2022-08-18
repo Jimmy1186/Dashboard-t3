@@ -2,14 +2,13 @@
 import { createRouter } from "./context";
 import superjson from "superjson";
 
-import { protectedExampleRouter,tempRouter } from "./protected-example-router";
+import { adminRouter } from "./admin-router";
 
 
 
 export const appRouter = createRouter()
   .transformer(superjson)
-  .merge("temp.",tempRouter)
-  .merge("question.", protectedExampleRouter)
+  .merge("admin.", adminRouter)
 
  
 
