@@ -2,18 +2,106 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id       String  @id @default(cuid())
-    username String
-    password String
-    role     String
-    image    String?
+  id       String @id @default(cuid())
+  username String @db.VarChar(20) @unique
+  password String @db.VarChar(20)
+  role     Role   @relation(fields: [roleId], references: [id])
+  roleId   Int
+  users    Task[]
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  role  String @db.Char(1)
+  roles User[]
+}
+
+model Company {
+  id         Int                @id @default(autoincrement())
+  name       String? @db.VarChar(20) @unique
+  title      String @db.VarChar(40) @unique
+  tax        String? @db.Char(8) @unique
+  priCompary PrimaryCompany[]
+  secCompary SecondaryCompany[]
+}
+
+model Installment {
+  id           Int     @id @default(autoincrement())
+  percent      Int 
+  ok           Boolean
+  installments Task[]
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  location  String @db.VarChar(5) @unique
+  regions   Region[]
+  locations Task[]
+}
+
+model Region {
+  id         Int      @id @default(autoincrement())
+  region     String @db.VarChar(10) @unique
+  location   Location? @relation(fields: [locationId], references: [id])
+  locationId Int
+}
+
+model Numero {
+  id      Int    @id @default(autoincrement())
+  numero  String @db.VarChar(10) @unique
+  numeros Task[]
+}
+
+model PrimaryCompany {
+  id     Int  @id @default(autoincrement())
+  task   Task @relation(fields: [taskId], references: [id])
+  taskId Int
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId Int
+}
+
+model SecondaryCompany {
+  id     Int  @id @default(autoincrement())
+  task   Task? @relation(fields: [taskId], references: [id])
+  taskId Int
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId Int
+}
+
+model Task {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(50)
+  totalValue Decimal  @db.Decimal(19, 4)
+  costValue  Decimal  @db.Decimal(19, 4)
+  p          Int?
+  pValue     Decimal?  @db.Decimal(19, 4)
+  during     String? @db.Char(16)
+  open       DateTime? 
+  createAt   DateTime
+
+  priCompany PrimaryCompany[]
+  secCompany SecondaryCompany[]
+
+  locations  Location? @relation(fields: [locationId], references: [id])
+  locationId Int
+
+  users  User   @relation(fields: [userId], references: [id])
+  userId String
+
+  installments  Installment? @relation(fields: [installmentId], references: [id])
+  installmentId Int
+
+  numero   Numero @relation(fields: [numeroId], references: [id])
+  numeroId Int
 }
