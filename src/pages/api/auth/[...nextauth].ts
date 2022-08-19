@@ -17,14 +17,14 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
 
       credentials: {
-        username: { label: "UserName", type: "text", placeholder: "jsmith" },
+        id: { label: "UserId", type: "text", placeholder: "A X X X X X" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
 
  
         const registeredUser = await prisma.user.findFirst({
-          where: { username: { equals: credentials?.username } },
+          where: { id: { equals: credentials?.id } },
         });
    
         if (registeredUser){
@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: registeredUser.id,
             name: registeredUser.username,
-            role: registeredUser.role,
+            role: registeredUser.roleId,
           }}
           return null
         }

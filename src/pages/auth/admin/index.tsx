@@ -15,7 +15,7 @@ function index() {
     alertStatus: null,
   });
 
-  const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
+  const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
     onError: (e) => {
       if (e.data?.code === "CONFLICT") {
         setMsg({ alertTitle: e.message, alertStatus: "warn" });
@@ -35,6 +35,7 @@ function index() {
   const OnInsertUser = useCallback(
     (values: signupUserType) => {
       insertMutation.mutate({
+        id: values.id,
         username: values.username,
         password: values.password,
         role: Number(values.role),
@@ -87,6 +88,7 @@ function index() {
               {users?.map((user, index) => {
                 return (
                   <tr key={index}>
+                    <td>{user.id}</td>
                     <td>{user.username}</td>
                     <td>{user.roleId}</td>
                   </tr>

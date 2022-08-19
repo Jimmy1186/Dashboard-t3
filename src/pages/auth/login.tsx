@@ -9,7 +9,7 @@ import { baseUserType, baseUserSchema } from "../../types/common";
 
 
 const initialValues = {
-  username: "",
+  id: "",
   password: "",
 };
 
@@ -22,7 +22,7 @@ const [msg,setMsg]=useState("")
   const onsubmit = async (values: baseUserType) => {
     const status = await signIn("credentials", {
       redirect: false,
-      username: values.username,
+      id: values.id,
       password: values.password,
     }).then(res=>{
     if(res?.ok===true) router.push('/')
@@ -57,7 +57,7 @@ const [msg,setMsg]=useState("")
               <label htmlFor="username">使用者</label>
               <label className="label">
                 <span className="label-text text-red-500">
-                  {errors.username}
+                  {errors.id}
                 </span>
               </label>
               <input
@@ -65,7 +65,7 @@ const [msg,setMsg]=useState("")
                 name="username"
                 type="text"
                 onChange={handleChange}
-                value={values.username}
+                value={values.id}
                 className="input input-lg input-bordered border-2 p-2 w-full"
               />
 

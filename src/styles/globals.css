@@ -166,7 +166,7 @@ nav {
   opacity: 1;
 }
 .hideNav {
-  transform: translateX(-15rem);
+  transform: translateX(-40rem);
   opacity: 0;
 }
 .invisibleDiv {

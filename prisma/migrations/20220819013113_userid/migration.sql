@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE `User` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` CHAR(6) NOT NULL,
     `username` VARCHAR(20) NOT NULL,
-    `password` VARCHAR(20) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `roleId` INTEGER NOT NULL,
 
     UNIQUE INDEX `User_username_key`(`username`),

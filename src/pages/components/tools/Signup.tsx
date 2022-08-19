@@ -16,6 +16,7 @@ import { alerType, signupUserSchema,signupUserType } from "../../../types/common
 
 
 const initialValues = {
+  id:"",
   username: "",
   password: "",
   role: "",
@@ -41,6 +42,27 @@ function Signup({sumbitHandler}:signupFromType) {
     {({ errors, values, handleChange, isValid }) => (
       
           <Form className="signupForm">
+      <label htmlFor="id" className="">
+              使用者編號
+            </label>
+            <div className="form-control ">
+          
+                <span className="formAlert">
+                  {errors.id}
+                </span>
+         
+              <input
+                type="text"
+                name="id"
+                placeholder="johnCena"
+                className="signupFormInput"
+                onChange={handleChange}
+                value={values.id}
+              />
+            </div>
+
+
+
             <label htmlFor="username" className="">
               使用者名稱
             </label>
