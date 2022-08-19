@@ -54,15 +54,15 @@ const [msg,setMsg]=useState("")
               </label>
               {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
 
-              <label htmlFor="username">使用者</label>
+              <label htmlFor="id">使用者</label>
               <label className="label">
                 <span className="label-text text-red-500">
                   {errors.id}
                 </span>
               </label>
               <input
-                id="username"
-                name="username"
+                id="id"
+                name="id"
                 type="text"
                 onChange={handleChange}
                 value={values.id}

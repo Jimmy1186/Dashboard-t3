@@ -352,3 +352,9 @@ table > thead > tr > * {
   }
 }
 /* ----------admin----------- */
+
+/* ----------alertbar----------- */
+.alert-hidden {
+  opacity: 0;
+  transition: all 250ms linear 2s;
+}/* ----------alerbar----------- */

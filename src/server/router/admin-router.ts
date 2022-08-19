@@ -74,13 +74,19 @@ export const adminRouter = createProtectedRouter()
         message: "已有使用者使用該名稱",
       });
       try {
-        let existUser = await ctx.prisma.user.count({
+        let existUserName = await ctx.prisma.user.count({
           where: {
             username: input.username,
           },
         });
 
-        if (existUser != 0) {
+        let existUserId = await ctx.prisma.user.count({
+          where: {
+            id: input.id,
+          },
+        });
+
+        if (existUserName != 0 &&existUserId!=0) {
           throw sameUserError;
         }
         const hash = await argon2.hash(input.password)
