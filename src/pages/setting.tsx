@@ -7,23 +7,29 @@ import AlertBar from "./components/widget/AlertBar";
 function setting() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [isShowingAlert, setShowingAlert] = useState(false);
+  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
   const updateMutation = trpc.useMutation(["user.updatePassword"], {
     onSuccess: () => {
-      refetch();
-      console.log("success")
+      console.log("success");
       setShowingAlert(true);
-    
+      refetch();
+
+      setTimeout(() => {
+        setShowingAlert(false);
+        console.log("clear");
+      }, 3000);
     },
     onError: (e) => {
-        console.log(e)
+      console.log(e);
       setShowingAlert(true);
-
+      setTimeout(() => {
+        setShowingAlert(false);
+        console.log("clear");
+      }, 3000);
     },
-    
   });
   const { data, refetch } = trpc.useQuery([
     "user.userData",
@@ -56,10 +62,17 @@ function setting() {
         onUpdate={onUpdate}
       />
 
-      <AlertBar
+
+{updateMutation.data!= undefined ? (
+     <AlertBar
+        alertTitle={updateMutation.data.msg}
         isShowingAlert={isShowingAlert}
-        setShowingAlert={setShowingAlert}
+        alertStatus={updateMutation.data.alertStatus}
       />
+):("")
+
+}
+   
     </>
   );
 }

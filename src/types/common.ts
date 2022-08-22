@@ -32,10 +32,7 @@ export type signupUserType = z.infer<typeof signupUserSchema>;
 //     role: string
 //   }
 
-export type alerType = {
-  alertTitle: string | null;
-  alertStatus: "success" | "info" | "warn" | "error" | null;
-};
+
 
 export type navStateType = {
   navState: boolean;
@@ -49,4 +46,11 @@ export interface pageIndexNavStateType extends navStateType {
 
 export type glassContainerType = {
   children: React.ReactNode;
+};
+
+
+export type alerType = {
+  isShowingAlert: boolean;
+  alertTitle: string | null;
+  alertStatus: string;
 };

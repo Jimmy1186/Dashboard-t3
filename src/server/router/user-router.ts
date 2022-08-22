@@ -27,13 +27,17 @@ export const userRouter = createProtectedRouter()
       oldPassword: z.string(),
       newPassword: z.string(),
     }),
+    output:z.object({
+      msg:z.string(),
+      alertStatus:z.string()
+    }),
     resolve: async ({ ctx, input }) => {
+      
 
-
-      const unMatchError = new trpc.TRPCError({
-        code: "CONFLICT",
-        message: "密碼錯誤",
-      });
+      // const unMatchError = new trpc.TRPCError({
+      //   code: "CONFLICT",
+      //   message: "密碼錯誤",
+      // });
       const impossibleError = new trpc.TRPCError({
         code: "CONFLICT",
         message: "無此人或無密碼",
@@ -49,7 +53,8 @@ export const userRouter = createProtectedRouter()
       });
 
       if (!oldHashPassword) {
-        throw impossibleError;
+       throw impossibleError
+    
       }
       const match = await argon2.verify(
         oldHashPassword.password,
@@ -57,18 +62,22 @@ export const userRouter = createProtectedRouter()
       );
       console.log(match)
       if (!match) {
-        throw unMatchError;
+        return {msg:"舊密碼錯誤",alertStatus:"warn"}
       }
       
       const newHash = await argon2.hash(input.newPassword)
 
-      return await ctx.prisma.user.update({
+ 
+      
+      await ctx.prisma.user.update({
         where: {
           id: input.id,
         },
         data: {
           password: newHash,
         },
-      });
+      })
+
+      return {msg:"更改成功",alertStatus:"success"}
     },
   });
