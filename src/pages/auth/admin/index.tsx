@@ -6,29 +6,28 @@ import { useQuery } from "react-query";
 import { alerType, signupUserType } from "../../../types/common";
 import Signup from "../../components/tools/Signup";
 import { useCallback } from "react";
+import AlertBar from "../../components/widget/AlertBar";
 
 function index() {
   const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
+  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
   // const users = useMemo(() => data, []);
-  const [msg, setMsg] = useState<alerType>({
-    alertTitle: null,
-    alertStatus: null,
-  });
 
-  const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
-    onError: (e) => {
-      if (e.data?.code === "CONFLICT") {
-        setMsg({ alertTitle: e.message, alertStatus: "warn" });
-        return;
-      }
-      setMsg({ alertTitle: e.message, alertStatus: "error" });
-    },
+  const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
     onSuccess: () => {
-      setMsg({
-        alertTitle: "新增成功",
-        alertStatus: "success",
-      });
+      setShowingAlert(true);
       refetch();
+
+      setTimeout(() => {
+        setShowingAlert(false);
+      }, 3000);
+    },
+    onError: (e) => {
+      console.log(e);
+      setShowingAlert(true);
+      setTimeout(() => {
+        setShowingAlert(false);
+      }, 3000);
     },
   });
 
@@ -98,6 +97,16 @@ function index() {
           </table>
         </div>
       </div>
+
+      {insertMutation.data != undefined ? (
+        <AlertBar
+          alertTitle={insertMutation.data.msg}
+          isShowingAlert={isShowingAlert}
+          alertStatus={insertMutation.data.alertStatus}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }

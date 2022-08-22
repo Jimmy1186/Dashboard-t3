@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
 import React, { useCallback, useState } from "react";
+import { changePasswordType } from "../types/common";
 import { trpc } from "../utils/trpc";
 import ChangePasswordTab from "./components/tools/ChangePasswordTab";
 import AlertBar from "./components/widget/AlertBar";
@@ -13,13 +14,11 @@ function setting() {
 
   const updateMutation = trpc.useMutation(["user.updatePassword"], {
     onSuccess: () => {
-      console.log("success");
       setShowingAlert(true);
       refetch();
 
       setTimeout(() => {
         setShowingAlert(false);
-        console.log("clear");
       }, 3000);
     },
     onError: (e) => {
@@ -27,7 +26,6 @@ function setting() {
       setShowingAlert(true);
       setTimeout(() => {
         setShowingAlert(false);
-        console.log("clear");
       }, 3000);
     },
   });
@@ -38,41 +36,41 @@ function setting() {
     },
   ]);
 
-  const onUpdate = useCallback(() => {
-    updateMutation.mutate({
-      id: data!.id,
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    });
-  }, [updateMutation, data]);
+  const onUpdate = useCallback(
+    (values: changePasswordType) => {
+      updateMutation.mutate({
+        id: data!.id,
+        oldPassword: values.oldPassword,
+        newPassword: values.newPassword,
+      });
+    },
+    [updateMutation, data]
+  );
 
-  console.log(data);
+  const sumbitHandler = async (values: changePasswordType, action: any) => {
+    onUpdate(values);
+
+    action.resetForm();
+  };
 
   return (
     <>
       <div>setting</div>
+      {data ? (
+        <ChangePasswordTab id={data?.id} sumbitHandler={sumbitHandler} />
+      ) : (
+        ""
+      )}
 
-      <ChangePasswordTab
-        id={data?.id}
-        username={data?.username}
-        oldPassword={oldPassword}
-        setOldPassword={setOldPassword}
-        newPassword={newPassword}
-        setNewPassword={setNewPassword}
-        onUpdate={onUpdate}
-      />
-
-
-{updateMutation.data!= undefined ? (
-     <AlertBar
-        alertTitle={updateMutation.data.msg}
-        isShowingAlert={isShowingAlert}
-        alertStatus={updateMutation.data.alertStatus}
-      />
-):("")
-
-}
-   
+      {updateMutation.data != undefined ? (
+        <AlertBar
+          alertTitle={updateMutation.data.msg}
+          isShowingAlert={isShowingAlert}
+          alertStatus={updateMutation.data.alertStatus}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }

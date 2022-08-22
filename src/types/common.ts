@@ -25,14 +25,32 @@ export const signupUserSchema = baseUserSchema.extend({
   role: z.string().min(1, { message: "Required" }).max(1),
 });
 
+export const changePasswordSchema = z.object({
+  id: z
+  .string()
+  .min(6, "固定6位")
+  .max(6, "固定6位")
+  .regex(new RegExp(".*[A-Z].*"), "One uppercase character")
+  .regex(new RegExp("^[A-Z0-9_.]+$"), "english and number only"),
+  oldPassword: z
+    .string()
+    .min(3, "Password must be at least 3 characters long")
+    .max(12, "less then 12 characters long")
+    .regex(new RegExp("^[A-Za-z0-9_.]+$"), "english and number only"),
+  newPassword: z
+    .string()
+    .min(3, "Password must be at least 3 characters long")
+    .max(12, "less then 12 characters long")
+    .regex(new RegExp("^[A-Za-z0-9_.]+$"), "english and number only"),
+});
+
+export type changePasswordType = z.infer<typeof changePasswordSchema>
 export type baseUserType = z.infer<typeof baseUserSchema>;
 export type signupUserType = z.infer<typeof signupUserSchema>;
 
 //   export interface signupSchema extends dataType {
 //     role: string
 //   }
-
-
 
 export type navStateType = {
   navState: boolean;
@@ -48,9 +66,18 @@ export type glassContainerType = {
   children: React.ReactNode;
 };
 
-
 export type alerType = {
   isShowingAlert: boolean;
   alertTitle: string | null;
   alertStatus: string;
+};
+
+export type userType = {
+  id?: string;
+  username?: string;
+  oldPassword: string;
+  setOldPassword: React.Dispatch<React.SetStateAction<string>>;
+  newPassword: string;
+  setNewPassword: React.Dispatch<React.SetStateAction<string>>;
+  onUpdate: () => void;
 };
