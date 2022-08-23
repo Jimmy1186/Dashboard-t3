@@ -64,20 +64,43 @@ model Numero {
 
 model PrimaryCompany {
   id     Int  @id @default(autoincrement())
+
+  amount Decimal   @db.Decimal(19, 4)
+  cutPayment Decimal?   @db.Decimal(19, 4)
+
   task   Task @relation(fields: [taskId], references: [id])
   taskId Int
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId Int
+
+  note Note? @relation(fields: [notes],references: [id])
+  notes Int
 }
 
 model SecondaryCompany {
   id     Int   @id @default(autoincrement())
+
+  amount Decimal   @db.Decimal(19, 4)
+  cutPayment Decimal?   @db.Decimal(19, 4)
+
+
   task   Task? @relation(fields: [taskId], references: [id])
   taskId Int
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId Int
+  
+  note Note? @relation(fields: [notes],references: [id])
+  notes Int
+}
+
+
+model Note{
+ id     Int   @id @default(autoincrement())
+ note   String
+ primaryCompays PrimaryCompany[]
+ secondaryCompanys SecondaryCompany[]
 }
 
 model History {
@@ -93,8 +116,6 @@ model History {
 model Task {
   id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(50)
-  totalValue Decimal   @db.Decimal(19, 4)
-  costValue  Decimal   @db.Decimal(19, 4)
   p          Int?
   pValue     Decimal?  @db.Decimal(19, 4)
   during     String?   @db.Char(16)

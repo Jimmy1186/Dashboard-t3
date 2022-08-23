@@ -81,3 +81,21 @@ export type userType = {
   setNewPassword: React.Dispatch<React.SetStateAction<string>>;
   onUpdate: () => void;
 };
+
+
+
+export const companySchema = z.object({
+  name: z.string()
+  .min(2,"最少兩個字")
+  .max(10,"最多10個字"),
+  title: z.string()
+  .min(6,"最少六個字")
+  .max(50,"最多50個字")
+  .regex(new RegExp("[^\x00-\xff]+$"), "只能中文"),
+  tax: z.string()
+  .max(8,"8 characters")
+  .min(8,"8 characters")
+  .regex(new RegExp("^[0-9_.]+$"), "number only"),
+});
+
+export type companyType = z.infer<typeof companySchema>;
