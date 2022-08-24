@@ -393,3 +393,6 @@ table > thead > tr > * {
   transition: all 250ms linear 2s;
 }/* ----------alerbar----------- */
 
+.autoList{
+  height: 15rem !important;
+}

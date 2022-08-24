@@ -1,6 +1,7 @@
 import React from "react";
 import AddCompony from "../components/widget/AddCompony";
 import AddInstallment from "../components/widget/AddInstallment";
+import AddLocation from "../components/widget/AddLocation";
 
 
 
@@ -13,8 +14,9 @@ function index() {
 
   return (
     <>
-     <AddCompony />
-     <AddInstallment />
+    <AddLocation />
+     {/* <AddCompony />
+     <AddInstallment /> */}
     </>
   );
 }

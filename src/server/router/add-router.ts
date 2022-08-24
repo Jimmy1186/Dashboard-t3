@@ -2,73 +2,80 @@ import * as trpc from "@trpc/server";
 import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
 
-
 export const addRouter = createProtectedRouter()
-.mutation("company",{
-    input:z.object({
-        name:z.string(),
-        title:z.string(),
-        tax:z.string()
+  .mutation("company", {
+    input: z.object({
+      name: z.string(),
+      title: z.string(),
+      tax: z.string(),
     }),
-    output:z.object({
-        msg:z.string(),
-        alertStatus:z.string()
-      }),
-      resolve: async ({ ctx, input }) => {
-        const {...rest}=input
-
-        let existColumn = await ctx.prisma.company.count({
-            where:{
-               OR:[
-                {
-                    name:input.name
-                },
-                {
-                    title:input.title
-                },
-                {
-                    tax:input.tax
-                }
-               ]
-            },   
-        }).then(res=>{return res})
-  
-        
-        if(existColumn!=0){
-            return {msg:"已有該公司",alertStatus:"warn"}
-        }
-
-
-
-        await ctx.prisma.company.create({
-            data:{
-                ...rest
-            }
-        })
-
-        return {msg:"新增成功",alertStatus:"success"}
-    }
-})
-.mutation("installment",{
-    input:z.object({
-        percent:z.number(),
-        ok:z.boolean()
+    output: z.object({
+      msg: z.string(),
+      alertStatus: z.string(),
     }),
-    output:z.object({
-        msg:z.string(),
-        alertStatus:z.string()
-      }),
-      resolve: async ({ ctx, input }) => {
-        const {...rest}=input
+    resolve: async ({ ctx, input }) => {
+      const { ...rest } = input;
 
-        //記得加超過100的warn
-
-        await ctx.prisma.installment.create({
-            data:{
-                ...rest
-            }
+      let existColumn = await ctx.prisma.company
+        .count({
+          where: {
+            OR: [
+              {
+                name: input.name,
+              },
+              {
+                title: input.title,
+              },
+              {
+                tax: input.tax,
+              },
+            ],
+          },
         })
+        .then((res) => {
+          return res;
+        });
 
-        return {msg:"新增成功",alertStatus:"success"}
-    }
-})
+      if (existColumn != 0) {
+        return { msg: "已有該公司", alertStatus: "warn" };
+      }
+
+      await ctx.prisma.company.create({
+        data: {
+          ...rest,
+        },
+      });
+
+      return { msg: "新增成功", alertStatus: "success" };
+    },
+  })
+  .mutation("installment", {
+    input: z.object({
+      percent: z.number(),
+      ok: z.boolean(),
+      task: z.number(),
+    }),
+    output: z.object({
+      msg: z.string(),
+      alertStatus: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      const { ...rest } = input;
+
+      //記得加超過100的warn
+
+      await ctx.prisma.installment.create({
+        data: {
+          ...rest,
+        },
+      });
+
+      return { msg: "新增成功", alertStatus: "success" };
+    },
+  })
+  .query("location", {
+    resolve: async ({ ctx }) => {
+      // return await ctx.prisma.$queryRaw`SELECT location as label,id FROM location LIMIT 10`
+      return await ctx.prisma.location.findMany();
+    },
+  });
