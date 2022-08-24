@@ -2,7 +2,7 @@
 import { createRouter } from "./context";
 import superjson from "superjson";
 
-import { adminRouter} from "./admin-router";
+import { adminRouter,tempRouter} from "./admin-router";
 import { userRouter } from "./user-router";
 import { addRouter } from "./add-router";
 
@@ -10,7 +10,7 @@ import { addRouter } from "./add-router";
 
 export const appRouter = createRouter()
   .transformer(superjson)
-  // .merge("temp.",tempRouter)
+  .merge("temp.",tempRouter)
   .merge("add.",addRouter)
   .merge("user.",userRouter)
   .merge("admin.", adminRouter)

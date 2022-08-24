@@ -3,12 +3,9 @@ import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TextField from "@mui/material/TextField";
 import { z } from "zod";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import { companySchema, companyType } from "../../../types/common";
 import { trpc } from "../../../utils/trpc";
-
-
-
 
 function AddCompony() {
   const initialValues = {
@@ -17,20 +14,22 @@ function AddCompony() {
     tax: "",
   };
 
-  const addCompanyMutation = trpc.useMutation(['add.company'])
+  const addCompanyMutation = trpc.useMutation(["add.company"]);
 
-  const onAddCompany = useCallback(({name,title,tax}:companyType)=>{
-    addCompanyMutation.mutate({
+  const onAddCompany = useCallback(
+    ({ name, title, tax }: companyType) => {
+      addCompanyMutation.mutate({
         name,
         title,
-        tax
-    })
-  },[addCompanyMutation])
+        tax,
+      });
+    },
+    [addCompanyMutation]
+  );
 
-
-  const sumbitHandler = (values: companyType) => {
-    onAddCompany(values)
-    // action.resetForm();
+  const sumbitHandler = (values: companyType,action:any) => {
+    onAddCompany(values);
+    action.resetForm();
   };
   return (
     <Formik
@@ -40,9 +39,9 @@ function AddCompony() {
     >
       {({ errors, values, handleChange, isValid }) => (
         <Form className="signupForm">
-            <h3>新增公司</h3>
-            {addCompanyMutation.data?.msg}
-            {errors.name}
+          <h3>新增公司</h3>
+          {addCompanyMutation.data?.msg}
+          {errors.name}
           <TextField
             id="outlined-basic"
             label="公司名稱"
@@ -52,8 +51,7 @@ function AddCompony() {
             variant="outlined"
           />
 
-
-{errors.title}
+          {errors.title}
           <TextField
             id="outlined-basic"
             label="公司抬頭"
@@ -63,19 +61,18 @@ function AddCompony() {
             variant="outlined"
           />
 
-          
-{errors.tax}
+          {errors.tax}
           <TextField
             id="outlined-basic"
             label="統編"
             name="tax"
             value={values.tax}
             onChange={handleChange}
-         
           />
 
-        <Button variant="outlined" type="submit">存檔</Button>
-
+          <Button variant="outlined" type="submit" disabled={!isValid}>
+            存檔
+          </Button>
         </Form>
       )}
     </Formik>

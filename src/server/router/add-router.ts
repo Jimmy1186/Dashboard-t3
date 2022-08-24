@@ -49,3 +49,26 @@ export const addRouter = createProtectedRouter()
         return {msg:"新增成功",alertStatus:"success"}
     }
 })
+.mutation("installment",{
+    input:z.object({
+        percent:z.number(),
+        ok:z.boolean()
+    }),
+    output:z.object({
+        msg:z.string(),
+        alertStatus:z.string()
+      }),
+      resolve: async ({ ctx, input }) => {
+        const {...rest}=input
+
+        //記得加超過100的warn
+
+        await ctx.prisma.installment.create({
+            data:{
+                ...rest
+            }
+        })
+
+        return {msg:"新增成功",alertStatus:"success"}
+    }
+})

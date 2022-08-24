@@ -5,46 +5,46 @@ import * as trpc from "@trpc/server";
 import { createRouter } from "./context";
 
 
-// export const tempRouter = createRouter()
-// .mutation("inertOneUser", {
-//   input: z.object({
-//     id:z.string(),
-//     username: z.string(),
-//     role: z.number(),
-//     password: z.string(),
-//   }),
-//   resolve: async ({ input, ctx }) => {
-//     const sameUserError = new trpc.TRPCError({
-//       code: "CONFLICT",
-//       message: "已有使用者使用該名稱",
-//     });
-//     try {
-//       let existUser = await ctx.prisma.user.count({
-//         where: {
-//           username: input.username,
-//         },
-//       });
+export const tempRouter = createRouter()
+.mutation("inertOneUser", {
+  input: z.object({
+    id:z.string(),
+    username: z.string(),
+    role: z.number(),
+    password: z.string(),
+  }),
+  resolve: async ({ input, ctx }) => {
+    const sameUserError = new trpc.TRPCError({
+      code: "CONFLICT",
+      message: "已有使用者使用該名稱",
+    });
+    try {
+      let existUser = await ctx.prisma.user.count({
+        where: {
+          username: input.username,
+        },
+      });
 
-//       if (existUser != 0) {
-//         throw sameUserError;
-//       }
-//       const hash = await argon2.hash(input.password)
+      if (existUser != 0) {
+        throw sameUserError;
+      }
+      const hash = await argon2.hash(input.password)
       
-//       return await ctx.prisma.user.create({
-//         data:{
-//           id:input.id,
-//           username:input.username,
-//           password:hash,
-//           roleId:input.role
-//         }
-//       });
-//     } catch (e) {
+      return await ctx.prisma.user.create({
+        data:{
+          id:input.id,
+          username:input.username,
+          password:hash,
+          roleId:input.role
+        }
+      });
+    } catch (e) {
  
   
-//       throw e
-//     }
-//   },
-// })
+      throw e
+    }
+  },
+})
 
 
 // Example router with queries that can only be hit if the user requesting is signed in
