@@ -7,12 +7,21 @@ import Button from "@mui/material/Button";
 import { companySchema, companyType } from "../../../types/common";
 import { trpc } from "../../../utils/trpc";
 
-function AddCompony() {
+
+
+
   const initialValues = {
     name: "",
     title: "",
     tax: "",
   };
+
+
+
+
+
+function AddCompony() {
+
 
   const addCompanyMutation = trpc.useMutation(["add.company"]);
 

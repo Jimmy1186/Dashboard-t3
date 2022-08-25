@@ -39,7 +39,7 @@ function AddLocation() {
       validationSchema={toFormikValidationSchema(locationSchema)}
       onSubmit={sumbitHandler}
     >
-      {({ errors, values, handleChange, isValid, setFieldValue }) => (
+      {({ errors, values, handleChange, isValid, setFieldValue,setErrors }) => (
         <Form className="signupForm">
           <h3>新增公司</h3>
 
@@ -49,7 +49,13 @@ function AddLocation() {
             options={lo || []}
             onChange={(_, value: any) => {
               // console.log(value)
-              setFieldValue("id", value.id);
+              try{
+                setFieldValue("companyId",   value.id!=null? value.id:initialValues.id);
+             }catch(e){
+               setErrors({
+                   id:"一定要選"
+               })
+             }
             }}
             getOptionLabel={(option) => `${option.id}${option.location}`}
             renderOption={(props: any, option: any) => {

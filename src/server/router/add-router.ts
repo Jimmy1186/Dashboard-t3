@@ -78,4 +78,36 @@ export const addRouter = createProtectedRouter()
       // return await ctx.prisma.$queryRaw`SELECT location as label,id FROM location LIMIT 10`
       return await ctx.prisma.location.findMany();
     },
-  });
+  })
+  .mutation("note",{
+    input:z.object({
+      note:z.string()
+    }),
+    output: z.object({
+      msg: z.string(),
+      alertStatus: z.string(),
+    }),
+    resolve:async({ctx,input})=>{
+      await ctx.prisma.note.create({
+        data:{
+          note:input.note
+        }
+      })
+      return { msg: "新增成功", alertStatus: "success" };
+    }
+  })
+  .query("findCompany",{
+    resolve:async({ctx})=>{
+      return await ctx.prisma.company.findMany({})
+    }
+  })
+  .query("user",{
+    resolve:async({ctx})=>{
+      return ctx.prisma.user.findMany({
+        select:{
+          id:true,
+          username:true
+        }
+      })
+    }
+  })
