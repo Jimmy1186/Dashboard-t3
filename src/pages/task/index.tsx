@@ -5,6 +5,7 @@ import AddInstallment from "../components/widget/AddInstallment";
 import AddLocation from "../components/widget/AddLocation";
 import AddNote from "../components/widget/AddNote";
 import AddPriOrSecCompany from "../components/widget/AddPriOrSecCompany";
+import AddTask from "../components/widget/AddTask";
 
 
 
@@ -17,10 +18,11 @@ function index() {
 
   return (
     <>
-    <AddCharge />
+    <AddTask />
+    {/* <AddCharge /> */}
     {/* <AddPriOrSecCompany /> */}
     {/* <AddNote /> */}
-    {/* <AddLocation /> */}
+    <AddLocation />
      {/* <AddCompony />
      <AddInstallment /> */}
     </>

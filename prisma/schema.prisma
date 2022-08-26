@@ -44,12 +44,10 @@ model Installment {
 }
 
 model Location {
-  id       Int      @id @default(autoincrement())
-  location String   @unique @db.VarChar(10)
+  id       Int    @id @default(autoincrement())
+  location String @unique @db.VarChar(10)
   task     Task[]
 }
-
-
 
 model PrimaryCompany {
   id Int @id @default(autoincrement())
@@ -109,14 +107,16 @@ model Charge {
 }
 
 model Task {
-  id       Int       @id @default(autoincrement())
-  name     String    @db.VarChar(50)
-  p        Int?
-  pValue   Decimal?  @db.Decimal(19, 4)
-  during   String?   @db.Char(16)
-  open     DateTime?
-  createAt DateTime
-  numero   String    @unique @db.VarChar(10)
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(50)
+  p         Int?
+  pValue    Decimal?  @db.Decimal(19, 4)
+  during    String?   @db.Char(16)
+  startDate DateTime?
+  endDate   DateTime?
+  open      DateTime?
+  createAt  DateTime
+  numero    String    @unique @db.VarChar(10)
 
   priCompany   PrimaryCompany[]
   secCompany   SecondaryCompany[]

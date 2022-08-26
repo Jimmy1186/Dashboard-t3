@@ -10,11 +10,11 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 
 export const locationSchema = z.object({
-  id: z.number(),
+  location: z.number(),
 });
 export type locationType = z.infer<typeof locationSchema>;
 type locationsType = {
-  id: number;
+  location: number;
 };
 
 function AddLocation() {
@@ -23,7 +23,7 @@ function AddLocation() {
   const { data: lo, isLoading } = trpc.useQuery(["add.location", inputValue]);
 
   const initialValues = {
-    id: 0,
+    location: 0,
   };
 
 
@@ -43,17 +43,18 @@ function AddLocation() {
         <Form className="signupForm">
           <h3>新增公司</h3>
 
-          {errors.id}
+          {errors.location}
           <Autocomplete
             id="id"
             options={lo || []}
             onChange={(_, value: any) => {
               // console.log(value)
               try{
-                setFieldValue("companyId",   value.id!=null? value.id:initialValues.id);
+                setFieldValue("location",   value.id!=null? value.id:initialValues.location);
              }catch(e){
                setErrors({
-                   id:"一定要選"
+                 location:"一定要選"
+                
                })
              }
             }}
