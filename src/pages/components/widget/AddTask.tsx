@@ -12,62 +12,28 @@ import FormControl from "@mui/material/FormControl";
 import DatePicker from "react-datepicker";
 import Head from "next/head";
 import Button from "@mui/material/Button";
+import AddLocation from "./AddLocation";
 
-const taskSchema = z.object({
-  numero: z.string(),
-  name: z.string(),
-  p: z.number(),
-  pValue: z.number(),
-  startDate: z.date().nullable(),
-  endDate: z.date().nullable(),
-  open: z.date().nullable(),
-  createAt: z.date().nullable(),
-});
 
-export type taskType = z.infer<typeof taskSchema>;
 
-function AddTask() {
-  const initialValues = {
-    numero: "",
-    name: "",
-    p: 0,
-    pValue: 0,
-    startDate: null,
-    endDate: null,
-    open: null,
-    createAt: null,
-  };
 
-  const sumbitHandler = (values: taskType, action: any) => {
+type taskType = {
+  errors: any,
+  setFieldValue: (dataName: string, data: Date) => void;
+  handleChange:(props:any)=>void,
+  values:any,
+};
 
-    console.log(values);
-  };
+function AddTask({ errors, setFieldValue,handleChange,values }: taskType) {
+
+
+
 
   return (
     <>
-      <Head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/2.14.1/react-datepicker.min.css"
-        />
-      </Head>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={toFormikValidationSchema(taskSchema)}
-        onSubmit={sumbitHandler}
-      >
-        {({ errors, values, handleChange, setFieldValue, isValid }) => (
-
-
-          <Form className="signupForm">
-            {/* {errors? (console.log(errors)):("")} */}
-            {errors.numero}
-            <TextField
-            onChange={handleChange}
-              name="numero"
-              label="NO."
-              variant="outlined"
-            />
+    
+          
+          
 
             {errors.name}
             <TextField
@@ -77,9 +43,9 @@ function AddTask() {
               onChange={handleChange}
               variant="outlined"
             />
-{errors.p}
+            {errors.p}
             <TextField
-            type="number"
+              type="number"
               id="outlined-basic"
               name="p"
               label="坪数"
@@ -97,15 +63,13 @@ function AddTask() {
                 <InputAdornment position="start">$</InputAdornment>
               }
               name="pValue"
-
             />
 
             {errors.startDate}
             <DatePicker
               selected={values.startDate}
               name="startDate"
-              onChange={(date) => {
-            
+              onChange={(date:any) => {
                 setFieldValue("startDate", date);
               }}
             />
@@ -114,8 +78,7 @@ function AddTask() {
             <DatePicker
               selected={values.endDate}
               name="endDate"
-              onChange={(date) => {
-   
+              onChange={(date:any) => {
                 setFieldValue("endDate", date);
               }}
             />
@@ -124,8 +87,7 @@ function AddTask() {
             <DatePicker
               selected={values.open}
               name="open"
-              onChange={(date) => {
-        
+              onChange={(date:any) => {
                 setFieldValue("open", date);
               }}
             />
@@ -134,18 +96,12 @@ function AddTask() {
             <DatePicker
               selected={values.createAt}
               name="createAt"
-              onChange={(date) => {
-
+              onChange={(date:any) => {
                 setFieldValue("createAt", date);
               }}
             />
-                <Button variant="outlined" type="submit" disabled={!isValid}>
-              存檔
-            </Button>
-      
-          </Form>
-        )}
-      </Formik>
+
+
     </>
   );
 }

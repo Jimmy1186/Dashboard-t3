@@ -24,7 +24,23 @@ const initialValues = {
   cutPayment: 0,
 };
 
-function AddPriOrSecCompany() {
+
+
+
+
+
+
+type locationType = {
+  companyType:"sec"|"pri",
+  errors: any,
+  setFieldValue: (dataName: string, locationId: number) => void
+  setErrors: (location: object) => void
+  handleChange:(props:any)=>void,
+  values:any
+};
+
+
+function AddPriOrSecCompany({ companyType,errors, setFieldValue, setErrors,values,handleChange }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
 
   const sumbitHandler = (values: selectCompanyType, action: any) => {
@@ -33,14 +49,8 @@ function AddPriOrSecCompany() {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={toFormikValidationSchema(selectCompanySchema)}
-      onSubmit={sumbitHandler}
-    >
-      {({ errors, values, handleChange, isValid, setFieldValue,setErrors }) => (
-        <Form className="signupForm">
-          <h3>新增公司</h3>
+<>
+    <h3>{companyType==="pri"?"契約公司":"支払業者"}</h3>
         {errors.companyId}
           <Autocomplete
             options={company || []}
@@ -101,13 +111,9 @@ function AddPriOrSecCompany() {
             }
             label="契約金額"
           />
+</>
+      
 
-          <Button variant="outlined" type="submit" disabled={!isValid}>
-            存檔
-          </Button>
-        </Form>
-      )}
-    </Formik>
   );
 }
 

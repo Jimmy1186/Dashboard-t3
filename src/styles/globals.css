@@ -393,6 +393,10 @@ table > thead > tr > * {
   transition: all 250ms linear 2s;
 }/* ----------alerbar----------- */
 
-.autoList{
-  height: 15rem !important;
+
+.createTask{
+  height: 10rem;
+  width: 100%;
+  background: var(--bg-white);
+  margin-bottom:3rem ;
 }

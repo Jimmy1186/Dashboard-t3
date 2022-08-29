@@ -13,7 +13,16 @@ export const noteSchema = z.object({
 
 export type noteType = z.infer<typeof noteSchema>;
 
-function AddNote() {
+
+
+
+type locationType = {
+  errors: any,
+  handleChange:(props:any)=>void,
+  values:any
+};
+
+function AddNote({errors,handleChange,values}:locationType) {
   const initialValues = {
     note: "",
     // primaryCompays: 0,
@@ -26,13 +35,7 @@ function AddNote() {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={toFormikValidationSchema(noteSchema)}
-      onSubmit={sumbitHandler}
-    >
-      {({ errors, values, handleChange, isValid }) => (
-        <Form className="signupForm">
+<>
           <h3>備註</h3>
           {/* {addCompanyMutation.data?.msg}
         {errors.name} */}
@@ -44,13 +47,10 @@ function AddNote() {
             onChange={handleChange}
             variant="outlined"
           />
+</>
 
-          <Button variant="outlined" type="submit" disabled={!isValid}>
-            存檔
-          </Button>
-        </Form>
-      )}
-    </Formik>
+
+
   );
 }
 

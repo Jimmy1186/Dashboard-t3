@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { changePasswordType } from "../types/common";
 import { trpc } from "../utils/trpc";
 import ChangePasswordTab from "./components/tools/ChangePasswordTab";
-import AlertBar from "./components/widget/AlertBar";
+import AlertBar from "./components/tools/AlertBar";
 
 function setting() {
   const [oldPassword, setOldPassword] = useState("");

@@ -35,7 +35,7 @@ CREATE TABLE `Installment` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `percent` INTEGER NOT NULL,
     `ok` BOOLEAN NOT NULL,
-    `taskId` INTEGER NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -43,19 +43,9 @@ CREATE TABLE `Installment` (
 -- CreateTable
 CREATE TABLE `Location` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `location` VARCHAR(5) NOT NULL,
+    `location` VARCHAR(10) NOT NULL,
 
     UNIQUE INDEX `Location_location_key`(`location`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Region` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `region` VARCHAR(10) NOT NULL,
-    `locationId` INTEGER NOT NULL,
-
-    UNIQUE INDEX `Region_region_key`(`region`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -64,7 +54,7 @@ CREATE TABLE `PrimaryCompany` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `amount` DECIMAL(19, 4) NOT NULL,
     `cutPayment` DECIMAL(19, 4) NULL,
-    `taskId` INTEGER NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
     `companyId` INTEGER NOT NULL,
     `notes` INTEGER NOT NULL,
 
@@ -76,7 +66,7 @@ CREATE TABLE `SecondaryCompany` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `amount` DECIMAL(19, 4) NOT NULL,
     `cutPayment` DECIMAL(19, 4) NULL,
-    `taskId` INTEGER NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
     `companyId` INTEGER NOT NULL,
     `notes` INTEGER NOT NULL,
 
@@ -96,7 +86,7 @@ CREATE TABLE `History` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `editAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `userId` VARCHAR(191) NOT NULL,
-    `taskId` INTEGER NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -105,24 +95,24 @@ CREATE TABLE `History` (
 CREATE TABLE `Charge` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` VARCHAR(191) NOT NULL,
-    `taskId` INTEGER NOT NULL,
+    `taskId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Task` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(6) NOT NULL,
     `name` VARCHAR(50) NOT NULL,
     `p` INTEGER NULL,
     `pValue` DECIMAL(19, 4) NULL,
     `during` CHAR(16) NULL,
+    `startDate` DATETIME(3) NULL,
+    `endDate` DATETIME(3) NULL,
     `open` DATETIME(3) NULL,
     `createAt` DATETIME(3) NOT NULL,
-    `numero` VARCHAR(10) NOT NULL,
     `locationId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Task_numero_key`(`numero`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -131,9 +121,6 @@ ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFE
 
 -- AddForeignKey
 ALTER TABLE `Installment` ADD CONSTRAINT `Installment_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Region` ADD CONSTRAINT `Region_locationId_fkey` FOREIGN KEY (`locationId`) REFERENCES `Location`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `PrimaryCompany` ADD CONSTRAINT `PrimaryCompany_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

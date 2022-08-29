@@ -6,14 +6,14 @@ import { useQuery } from "react-query";
 import { alerType, signupUserType } from "../../../types/common";
 import Signup from "../../components/tools/Signup";
 import { useCallback } from "react";
-import AlertBar from "../../components/widget/AlertBar";
+import AlertBar from "../../components/tools/AlertBar";
 
 function index() {
   const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
   // const users = useMemo(() => data, []);
 
-  const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
+  const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
     onSuccess: () => {
       setShowingAlert(true);
       refetch();

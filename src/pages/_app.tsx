@@ -7,8 +7,8 @@ import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
 import Navbar from "./components/layout/Navbar";
 import { useState } from "react";
-import NavBtn from "./components/widget/NavBtn";
 import GlassContainer from "./components/layout/GlassContainer";
+import NavBtn from "./components/tools/NavBtn";
 
 const MyApp: AppType = ({
   Component,
