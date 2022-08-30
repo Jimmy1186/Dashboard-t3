@@ -38,12 +38,22 @@ const taskSchema = z.object({
   open: z.date().nullable(),
   createAt: z.date().nullable(),
   locationId: z.number(),
-  userId:z.array(z.object({
-    id:z.string()
-  }))
+  userId: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ),
+
+  percent: z.array(
+    z.object({
+      rate: z.number(),
+      ok: z.boolean(),
+    })
+  ),
 });
 
 export type taskType = z.infer<typeof taskSchema>;
+
 
 const initialValues = {
   name: "",
@@ -54,41 +64,63 @@ const initialValues = {
   open: null,
   createAt: null,
   locationId: 0,
-  userId:[]
+  userId: [],
+  percent: [
+    {
+      rate: 0,
+      ok: false,
+    },
+  ],
 };
 
-
 function taskId() {
+
   const router = useRouter();
+  const taskId = router.query.taskId as string;
   const [count, setCount] = useState(0);
   const { data: session } = useSession();
 
+  const {data:task,refetch} = trpc.useQuery(['add.findOneTask',{taskId:taskId}])
   const taskMutation = trpc.useMutation(["add.task"]);
-const chargeMutation= trpc.useMutation(['add.charge'])
-const historyMutation = trpc.useMutation(['add.history'])
+  const chargeMutation = trpc.useMutation(["add.charge"]);
+  const historyMutation = trpc.useMutation(["add.history"]);
+  const installmentMutation = trpc.useMutation(["add.installment"]);
 
+console.log(task)
 
-const onHistory = useCallback(
-    async()=>{
-        const taskId = await router.query.taskId
-        historyMutation.mutate({
-            userId:session?.id as string,
-            taskId:taskId as string,
-        })
-},[historyMutation]) 
+  const onInstallment = useCallback(
+    (values: taskType) => {
+   
 
+      installmentMutation.mutate({
+        taskId: taskId as string,
+        percent:values.percent
+      });
+    },
+    [installmentMutation]
+  );
 
-const onCreateCharge =useCallback( 
-     async(values: taskType)=>{
-        const taskId = await router.query.taskId
-    chargeMutation.mutate({
-        userId:values.userId,
-        taskId:taskId as string,
-    })
-},[chargeMutation]) 
+  const onHistory = useCallback( () => {
+ 
+    historyMutation.mutate({
+      userId: session?.id as string,
+      taskId: taskId as string,
+    });
+  }, [historyMutation]);
+
+  const onCreateCharge = useCallback(
+     (values: taskType) => {
+    
+      chargeMutation.mutate({
+        userId: values.userId,
+        taskId: taskId as string,
+      });
+    },
+    [chargeMutation]
+  );
 
   const onUpdateTask = useCallback(
-    async(values: taskType) => {
+    async (values: taskType) => {
       const {
         name,
         p,
@@ -105,10 +137,10 @@ const onCreateCharge =useCallback(
         open === null ||
         createAt === null
       ) {
-        console.log("date cant be null")
+        console.log("date cant be null");
         return;
       }
-      const taskId = await router.query.taskId
+      const taskId = await router.query.taskId;
       taskMutation.mutate({
         id: taskId as string,
         name: name,
@@ -125,10 +157,11 @@ const onCreateCharge =useCallback(
   );
 
   const sumbitHandler = (values: taskType, action: any) => {
-    onHistory()
-    onCreateCharge(values)
-    onUpdateTask(values);
-    // console.log(values);
+    onInstallment(values)
+    // onHistory();
+    // onCreateCharge(values);
+    // onUpdateTask(values);
+    console.log(values);
   };
 
   return (
@@ -173,6 +206,12 @@ const onCreateCharge =useCallback(
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
               />
+              <AddInstallment
+                values={values}
+                errors={errors}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+              />
               {/* <Fab
                 size="small"
                 color="secondary"
@@ -200,7 +239,7 @@ const onCreateCharge =useCallback(
         )}
       </Formik>
 
-      <AddCompony />
+      {/* <AddCompony /> */}
     </>
   );
 }

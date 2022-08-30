@@ -51,26 +51,31 @@ export const addRouter = createProtectedRouter()
   })
   .mutation("installment", {
     input: z.object({
-      percent: z.number(),
-      ok: z.boolean(),
-      task: z.number(),
-    }),
-    output: z.object({
-      msg: z.string(),
-      alertStatus: z.string(),
+      taskId:z.string(),
+      percent: z.array(
+        z.object({
+            rate:z.number(),
+            ok: z.boolean()
+        })
+      ),
     }),
     resolve: async ({ ctx, input }) => {
-      const { ...rest } = input;
+
 
       //記得加超過100的warn
 
-      await ctx.prisma.installment.create({
+    return input.percent.map(async(i)=>{
+      return   await ctx.prisma.installment.create({
         data: {
-          ...rest,
+            percent:i.rate,
+            ok:i.ok,
+            taskId:input.taskId
         },
+    })
+
       });
 
-      return { msg: "新增成功", alertStatus: "success" };
+     
     },
   })
   .query("location", {
@@ -238,4 +243,17 @@ export const addRouter = createProtectedRouter()
         },
       });
     },
-  });
+  })
+.query("findOneTask",{
+  input:z.object({
+    taskId:z.string()
+  }),
+  resolve:async({ctx,input})=>{
+    const tId = await input.taskId
+    return await ctx.prisma.$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,GROUP_CONCAT(DISTINCT Charge.userId) AS charge, GROUP_CONCAT(percent) AS percent,GROUP_CONCAT(ok) AS ok FROM Task
+    JOIN Location ON Task.locationId = Location.id
+    JOIN Charge ON Task.id = Charge.taskId
+    JOIN Installment ON Task.id = Installment.TaskId
+    WHERE Task.id=${tId};`
+  }
+})
