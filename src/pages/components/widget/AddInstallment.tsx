@@ -64,18 +64,7 @@ function AddInstallment({
                       新增
                     </Button>
                   </ButtonGroup>
-                  {/* <button
-                    type="button"
-                    onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                  >
-                    -
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => arrayHelpers.push({ rate: 0, ok: false })}
-                  >
-                    +
-                  </button> */}
+              
 
                   <Field
                     as={FormControlLabel}
@@ -85,13 +74,7 @@ function AddInstallment({
                     label="OK"
                   />
 
-                  {/* <FormControlLabel
-                  
-                    control={
-                      <Field type="checkbox"  name={`percent.${index}.ok`}  />
-                    }
-                    label="OK?"
-                  /> */}
+                
                 </div>
               ))
             ) : (

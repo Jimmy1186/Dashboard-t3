@@ -10,7 +10,7 @@ import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { z } from "zod";
+import { object, z } from "zod";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -43,65 +43,125 @@ const taskSchema = z.object({
       id: z.string(),
     })
   ),
-
   percent: z.array(
     z.object({
       rate: z.number(),
       ok: z.boolean(),
     })
   ),
+  
 });
+
+const taskSql = z.object({
+  name: z.string(),
+  p: z.number(),
+  pValue: z.number(),
+  startDate: z.date().nullable(),
+  endDate: z.date().nullable(),
+  open: z.date().nullable(),
+  createAt: z.date().nullable(),
+  locationId: z.number(),
+  charge: z.string(),
+  id: z.string(),
+  percent: z.string(),
+  ok: z.string(),
+});
+export type taskSqlType = z.infer<typeof taskSql>;
 
 export type taskType = z.infer<typeof taskSchema>;
 
-
-const initialValues = {
-  name: "",
-  p: 0,
-  pValue: 0,
-  startDate: null,
-  endDate: null,
-  open: null,
-  createAt: null,
-  locationId: 0,
-  userId: [],
-  percent: [
-    {
-      rate: 0,
-      ok: false,
-    },
-  ],
-};
+const convertTypeZ = z.array(z.object({}));
+type convertType = z.infer<typeof convertTypeZ>;
 
 function taskId() {
-
   const router = useRouter();
   const taskId = router.query.taskId as string;
-  const [count, setCount] = useState(0);
   const { data: session } = useSession();
 
-  const {data:task,refetch} = trpc.useQuery(['add.findOneTask',{taskId:taskId}])
+  // const {
+  //   data: task,
+  //   refetch,
+  //   isLoading,
+  //   isSuccess,
+  // } = trpc.useQuery(["add.findOneTask", { taskId: taskId }]);
   const taskMutation = trpc.useMutation(["add.task"]);
   const chargeMutation = trpc.useMutation(["add.charge"]);
   const historyMutation = trpc.useMutation(["add.history"]);
   const installmentMutation = trpc.useMutation(["add.installment"]);
+  
 
-console.log(task)
+  let initialValues = {
+    name: "",
+    p: 0,
+    pValue: 0,
+    startDate: null,
+    endDate: null,
+    open: null,
+    createAt: null,
+    locationId: 0,
+    userId: [],
+    percent: [
+      {
+        rate: 0,
+        ok: false,
+      },
+    ],
+
+  };
+
+//  if(!isLoading){
+  //   const newTask = task as convertType;
+  // const initTask = newTask[0] as taskSqlType;
+
+  // const np = initTask.percent.split(",");
+  // const nk = initTask.ok.split(",");
+  // let obj: any = [];
+  // np.forEach((ele, i) => {
+  //   obj[i] = {
+  //     rate: ele,
+  //     ok: nk[i],
+  //   };
+  // });
+
+
+    // const initialValues = {
+    // name: initTask.name,
+    // p: initTask.p,
+    // pValue: initTask.pValue,
+    // startDate: initTask.startDate,
+    // endDate: initTask.endDate,
+    // open: initTask.open,
+    // createAt: initTask.createAt,
+    // locationId:initTask.locationId,
+    // userId: initTask.charge.split(',').map(i=>{
+    //   return {id:i}
+    // }),
+    // percent: obj
+  //};
+
+ 
+ 
+
+  //}
+
+ 
+
+  // console.log(newp)
+
+ 
+
 
   const onInstallment = useCallback(
     (values: taskType) => {
-   
-
       installmentMutation.mutate({
         taskId: taskId as string,
-        percent:values.percent
+        percent: values.percent,
       });
     },
     [installmentMutation]
   );
 
-  const onHistory = useCallback( () => {
- 
+  const onHistory = useCallback(() => {
     historyMutation.mutate({
       userId: session?.id as string,
       taskId: taskId as string,
@@ -109,8 +169,7 @@ console.log(task)
   }, [historyMutation]);
 
   const onCreateCharge = useCallback(
-     (values: taskType) => {
-    
+    (values: taskType) => {
       chargeMutation.mutate({
         userId: values.userId,
         taskId: taskId as string,
@@ -157,16 +216,23 @@ console.log(task)
   );
 
   const sumbitHandler = (values: taskType, action: any) => {
-    onInstallment(values)
+    // onInstallment(values)
     // onHistory();
     // onCreateCharge(values);
     // onUpdateTask(values);
+    //refetch()
     console.log(values);
   };
+
+
+
+
+
 
   return (
     <>
       <Formik
+        enableReinitialize={true}
         initialValues={initialValues}
         validationSchema={toFormikValidationSchema(taskSchema)}
         onSubmit={sumbitHandler}
@@ -193,14 +259,22 @@ console.log(task)
                 setErrors={setErrors}
               />
 
-              {/* <AddPriOrSecCompany
-                companyType="pri"
+              <AddPriOrSecCompany
+                companyType="priCompany"
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
                 handleChange={handleChange}
                 values={values}
-              /> */}
+              />
+                        <AddPriOrSecCompany
+                companyType="secCompany"
+                errors={errors}
+                setFieldValue={setFieldValue}
+                setErrors={setErrors}
+                handleChange={handleChange}
+                values={values}
+              />
               <AddLocation
                 errors={errors}
                 setFieldValue={setFieldValue}
@@ -212,24 +286,7 @@ console.log(task)
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
               />
-              {/* <Fab
-                size="small"
-                color="secondary"
-                aria-label="add"
-                onClick={() => {
-                  setCount(count + 1);
-                }}
-              >
-                <AddIcon />
-              </Fab>
-              {[...Array(count)].map((_, i) => (
-                <AddInstallment 
-                key={i} 
-                errors={errors}
-                handleChange={handleChange}
-                values={values}
-                />
-              ))} */}
+       
 
               <Button variant="outlined" type="submit" disabled={!isValid}>
                 存檔

@@ -250,10 +250,15 @@ export const addRouter = createProtectedRouter()
   }),
   resolve:async({ctx,input})=>{
     const tId = await input.taskId
-    return await ctx.prisma.$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,GROUP_CONCAT(DISTINCT Charge.userId) AS charge, GROUP_CONCAT(percent) AS percent,GROUP_CONCAT(ok) AS ok FROM Task
-    JOIN Location ON Task.locationId = Location.id
-    JOIN Charge ON Task.id = Charge.taskId
-    JOIN Installment ON Task.id = Installment.TaskId
-    WHERE Task.id=${tId};`
+    return await ctx.prisma.$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
+    GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
+    (SELECT GROUP_CONCAT(percent) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS percent ,
+    (SELECT GROUP_CONCAT(ok) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS ok
+    FROM Task
+    INNER JOIN Location ON Task.locationId = Location.id
+    INNER JOIN Charge ON Task.id = Charge.taskId
+    INNER JOIN Installment ON Task.id = Installment.TaskId
+    WHERE Task.id=${tId}
+    group by Task.id;`
   }
 })
