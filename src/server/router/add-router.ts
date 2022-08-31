@@ -51,31 +51,26 @@ export const addRouter = createProtectedRouter()
   })
   .mutation("installment", {
     input: z.object({
-      taskId:z.string(),
+      taskId: z.string(),
       percent: z.array(
         z.object({
-            rate:z.number(),
-            ok: z.boolean()
+          rate: z.number(),
+          ok: z.boolean(),
         })
       ),
     }),
     resolve: async ({ ctx, input }) => {
-
-
       //記得加超過100的warn
 
-    return input.percent.map(async(i)=>{
-      return   await ctx.prisma.installment.create({
-        data: {
-            percent:i.rate,
-            ok:i.ok,
-            taskId:input.taskId
-        },
-    })
-
+      return input.percent.map(async (i) => {
+        return await ctx.prisma.installment.create({
+          data: {
+            percent: i.rate,
+            ok: i.ok,
+            taskId: input.taskId,
+          },
+        });
       });
-
-     
     },
   })
   .query("location", {
@@ -84,7 +79,7 @@ export const addRouter = createProtectedRouter()
       return await ctx.prisma.location.findMany();
     },
   })
-  .mutation("note", {
+  .mutation("priNote", {
     input: z.object({
       note: z.string(),
     }),
@@ -93,7 +88,24 @@ export const addRouter = createProtectedRouter()
       alertStatus: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      await ctx.prisma.note.create({
+      await ctx.prisma.priNote.create({
+        data: {
+          note: input.note,
+        },
+      });
+      return { msg: "新增成功", alertStatus: "success" };
+    },
+  })
+  .mutation("secNote", {
+    input: z.object({
+      note: z.string(),
+    }),
+    output: z.object({
+      msg: z.string(),
+      alertStatus: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      await ctx.prisma.secNote.create({
         data: {
           note: input.note,
         },
@@ -216,18 +228,14 @@ export const addRouter = createProtectedRouter()
         },
       });
 
-
-
-      return input.userId.map(async(chargeData)=>{
+      return input.userId.map(async (chargeData) => {
         return await ctx.prisma.charge.create({
           data: {
             taskId: input.taskId,
             userId: chargeData.id,
           },
-        })
-      })
-      
-
+        });
+      });
     },
   })
   .mutation("history", {
@@ -244,13 +252,14 @@ export const addRouter = createProtectedRouter()
       });
     },
   })
-.query("findOneTask",{
-  input:z.object({
-    taskId:z.string()
-  }),
-  resolve:async({ctx,input})=>{
-    const tId = await input.taskId
-    return await ctx.prisma.$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
+  .query("findOneTask", {
+    input: z.object({
+      taskId: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      const tId = await input.taskId;
+      return await ctx.prisma
+        .$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
     GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
     (SELECT GROUP_CONCAT(percent) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS percent ,
     (SELECT GROUP_CONCAT(ok) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS ok
@@ -259,6 +268,52 @@ export const addRouter = createProtectedRouter()
     INNER JOIN Charge ON Task.id = Charge.taskId
     INNER JOIN Installment ON Task.id = Installment.TaskId
     WHERE Task.id=${tId}
-    group by Task.id;`
-  }
-})
+    group by Task.id;`;
+    },
+  })
+  .mutation("priCompany", {
+    input: z.object({
+      taskId: z.string(),
+      companyId: z.number(),
+      amount: z.number(),
+      cutPayment: z.number(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await ctx.prisma.primaryCompany.create({
+        data: {
+          taskId: input.taskId,
+          amount: input.amount,
+          cutPayment: input.cutPayment,
+          companyId: input.companyId,
+        },
+      });
+    },
+  })
+  .mutation("secCompany", {
+    input: z.object({
+      taskId: z.string(),
+      secCompany: z.array(
+        z.object({
+     
+          companyId: z.number(),
+          amount: z.number(),
+          cutPayment: z.number(),
+        })
+      ),
+    }),
+    resolve: async ({ ctx, input }) => {
+      const Cid = input.secCompany.map((i) => i.companyId);
+  
+
+      await input.secCompany.map(async (i) => {
+        await ctx.prisma.secondaryCompany.create({
+          data: {
+            taskId: input.taskId,
+            amount: i.amount,
+            cutPayment: i.cutPayment,
+            companyId: i.companyId,
+          },
+        });
+      });
+    },
+  });

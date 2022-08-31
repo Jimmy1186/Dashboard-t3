@@ -6,6 +6,9 @@ import { z } from "zod";
 import Button from "@mui/material/Button";
 import { companySchema, companyType } from "../../../types/common";
 import { trpc } from "../../../utils/trpc";
+import CloseIcon from "@mui/icons-material/Close";
+
+
 
 
 
@@ -16,11 +19,14 @@ import { trpc } from "../../../utils/trpc";
     tax: "",
   };
 
+type toggleCompanyType = {
+  companyToggle:boolean,
+  setCompanyToggle:(toggle:boolean)=>void
+}
 
 
 
-
-function AddCompony() {
+function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
 
 
   const addCompanyMutation = trpc.useMutation(["add.company"]);
@@ -49,6 +55,11 @@ function AddCompony() {
       {({ errors, values, handleChange, isValid }) => (
         <Form className="signupForm">
           <h3>新增公司</h3>
+          <Button
+            type="button"
+            startIcon={<CloseIcon />}
+            onClick={() => setCompanyToggle(!companyToggle)}
+          ></Button>
           {addCompanyMutation.data?.msg}
           {errors.name}
           <TextField

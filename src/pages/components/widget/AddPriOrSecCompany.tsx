@@ -21,12 +21,6 @@ export const selectCompanySchema = z.object({
 
 export type selectCompanyType = z.infer<typeof selectCompanySchema>;
 
-const initialValues = {
-  companyId: 0,
-  amount: 0,
-  cutPayment: 0,
-};
-
 type locationType = {
   companyType: "secCompany" | "priCompany";
   errors: any;
@@ -45,11 +39,7 @@ function AddPriOrSecCompany({
   handleChange,
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
-
-  const sumbitHandler = (values: selectCompanyType, action: any) => {
-    console.log(values);
-    action.resetForm();
-  };
+  console.log(errors);
 
   if (companyType === "priCompany") {
     return (
@@ -106,6 +96,15 @@ function AddPriOrSecCompany({
           }}
           startAdornment={<InputAdornment position="start">$</InputAdornment>}
           name="cutPayment"
+        />
+        <TextField
+          id="outlined-basic"
+          label="備註"
+          name={`priCompany.note`}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFieldValue(`priCompany.note`, e.target.value);
+          }}
+          variant="outlined"
         />
       </>
     );
@@ -199,12 +198,26 @@ function AddPriOrSecCompany({
                       type="button"
                       startIcon={<AddIcon />}
                       onClick={() =>
-                        arrayHelpers.push({ amount: 0, cutPayment: 0 })
+                        arrayHelpers.push({
+                          amount: 0,
+                          cutPayment: 0,
+                          note: "",
+                        })
                       }
                     >
                       新增
                     </Button>
                   </ButtonGroup>
+
+                  <TextField
+                    id="outlined-basic"
+                    label="備註"
+                    name={`secCompany.${index}.note`}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFieldValue(`secCompany.${index}.note`, e.target.value);
+                    }}
+                    variant="outlined"
+                  />
                 </div>
               ))
             ) : (

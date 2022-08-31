@@ -3,7 +3,6 @@ import AddCharge from "../components/widget/AddCharge";
 import AddCompony from "../components/widget/AddCompony";
 import AddInstallment from "../components/widget/AddInstallment";
 import AddLocation from "../components/widget/AddLocation";
-import AddNote from "../components/widget/AddNote";
 import AddPriOrSecCompany from "../components/widget/AddPriOrSecCompany";
 import AddTask from "../components/widget/AddTask";
 import { Formik, Form } from "formik";
@@ -29,6 +28,7 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useSession } from "next-auth/react";
 
+
 const taskSchema = z.object({
   name: z.string(),
   p: z.number(),
@@ -49,7 +49,20 @@ const taskSchema = z.object({
       ok: z.boolean(),
     })
   ),
-  
+  priCompany: z.object({
+    companyId: z.number(),
+    amount: z.number(),
+    cutPayment: z.number(),
+    note: z.string().nullable(),
+  }),
+  secCompany: z.array(
+    z.object({
+      companyId: z.number(),
+      amount: z.number(),
+      cutPayment: z.number(),
+      note: z.string().nullable(),
+    })
+  ),
 });
 
 const taskSql = z.object({
@@ -75,6 +88,7 @@ type convertType = z.infer<typeof convertTypeZ>;
 
 function taskId() {
   const router = useRouter();
+  const [companyToggle, setCompanyToggle] = useState(false);
   const taskId = router.query.taskId as string;
   const { data: session } = useSession();
 
@@ -88,7 +102,9 @@ function taskId() {
   const chargeMutation = trpc.useMutation(["add.charge"]);
   const historyMutation = trpc.useMutation(["add.history"]);
   const installmentMutation = trpc.useMutation(["add.installment"]);
-  
+  const priCompanyMutation = trpc.useMutation(["add.priCompany"]);
+  const secCompanyMutation = trpc.useMutation(["add.secCompany"]);
+
 
   let initialValues = {
     name: "",
@@ -106,10 +122,24 @@ function taskId() {
         ok: false,
       },
     ],
-
+    priCompany: {
+      companyId: 0,
+      amount: 0,
+      cutPayment: 0,
+      note: null,
+    },
+    secCompany: [
+      {
+        taskId:taskId as string,
+        companyId: 0,
+        amount: 0,
+        cutPayment: 0,
+        note: null,
+      },
+    ],
   };
 
-//  if(!isLoading){
+  //  if(!isLoading){
   //   const newTask = task as convertType;
   // const initTask = newTask[0] as taskSqlType;
 
@@ -123,32 +153,46 @@ function taskId() {
   //   };
   // });
 
-
-    // const initialValues = {
-    // name: initTask.name,
-    // p: initTask.p,
-    // pValue: initTask.pValue,
-    // startDate: initTask.startDate,
-    // endDate: initTask.endDate,
-    // open: initTask.open,
-    // createAt: initTask.createAt,
-    // locationId:initTask.locationId,
-    // userId: initTask.charge.split(',').map(i=>{
-    //   return {id:i}
-    // }),
-    // percent: obj
+  // const initialValues = {
+  // name: initTask.name,
+  // p: initTask.p,
+  // pValue: initTask.pValue,
+  // startDate: initTask.startDate,
+  // endDate: initTask.endDate,
+  // open: initTask.open,
+  // createAt: initTask.createAt,
+  // locationId:initTask.locationId,
+  // userId: initTask.charge.split(',').map(i=>{
+  //   return {id:i}
+  // }),
+  // percent: obj
   //};
-
- 
- 
 
   //}
 
- 
-
   // console.log(newp)
 
- 
+  const onPriCompany = useCallback(
+    (values: taskType) => {
+      priCompanyMutation.mutate({
+        taskId: taskId as string,
+        companyId: values.priCompany.companyId,
+        amount: values.priCompany.amount,
+        cutPayment: values.priCompany.cutPayment,
+      });
+    },
+    [priCompanyMutation]
+  );
+
+  const onSecCompany = useCallback(
+    (values: taskType) => {
+      secCompanyMutation.mutate({
+        taskId: taskId as string,
+        secCompany:values.secCompany
+      });
+    },
+    [priCompanyMutation]
+  );
 
 
   const onInstallment = useCallback(
@@ -216,18 +260,14 @@ function taskId() {
   );
 
   const sumbitHandler = (values: taskType, action: any) => {
-    // onInstallment(values)
-    // onHistory();
-    // onCreateCharge(values);
-    // onUpdateTask(values);
-    //refetch()
+    onInstallment(values)
+    onHistory();
+    onCreateCharge(values);
+    onUpdateTask(values);
+    onPriCompany(values)
+    onSecCompany(values)
     console.log(values);
   };
-
-
-
-
-
 
   return (
     <>
@@ -267,7 +307,8 @@ function taskId() {
                 handleChange={handleChange}
                 values={values}
               />
-                        <AddPriOrSecCompany
+
+              <AddPriOrSecCompany
                 companyType="secCompany"
                 errors={errors}
                 setFieldValue={setFieldValue}
@@ -275,6 +316,7 @@ function taskId() {
                 handleChange={handleChange}
                 values={values}
               />
+
               <AddLocation
                 errors={errors}
                 setFieldValue={setFieldValue}
@@ -286,7 +328,6 @@ function taskId() {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
               />
-       
 
               <Button variant="outlined" type="submit" disabled={!isValid}>
                 存檔
@@ -296,7 +337,26 @@ function taskId() {
         )}
       </Formik>
 
-      {/* <AddCompony /> */}
+      {companyToggle ? (
+        <>
+        
+          <AddCompony
+            setCompanyToggle={setCompanyToggle}
+            companyToggle={companyToggle}
+          />
+        </>
+      ) : (
+        <>
+          <Button
+            type="button"
+            startIcon={<AddIcon />}
+            onClick={() => setCompanyToggle(!companyToggle)}
+          >
+            {/* show this when user has removed all friends from the list */}
+            新增公司資料
+          </Button>
+        </>
+      )}
     </>
   );
 }

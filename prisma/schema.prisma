@@ -14,7 +14,7 @@ model User {
   id       String    @id @db.Char(6)
   username String    @unique @db.VarChar(20)
   password String
-  role     Role      @relation(fields: [roleId], references: [id],onDelete: Cascade)
+  role     Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId   Int
   charges  Charge[]
   history  History[]
@@ -33,13 +33,15 @@ model Company {
   tax        String?            @unique @db.Char(8)
   priCompary PrimaryCompany[]
   secCompary SecondaryCompany[]
+
+  @@unique([name, title, tax])
 }
 
 model Installment {
   id      Int     @id @default(autoincrement())
   percent Int
   ok      Boolean
-  task    Task    @relation(fields: [taskId], references: [id],onDelete: Cascade)
+  task    Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId  String
 }
 
@@ -55,14 +57,15 @@ model PrimaryCompany {
   amount     Decimal  @db.Decimal(19, 4)
   cutPayment Decimal? @db.Decimal(19, 4)
 
-  task   Task   @relation(fields: [taskId], references: [id],onDelete: Cascade)
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
-  company   Company @relation(fields: [companyId], references: [id],onDelete: Cascade)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId Int
 
-  note  Note? @relation(fields: [notes], references: [id],onDelete: Cascade)
-  notes Int
+  notes PriNote[]
+
+  @@unique([taskId, companyId])
 }
 
 model SecondaryCompany {
@@ -71,38 +74,44 @@ model SecondaryCompany {
   amount     Decimal  @db.Decimal(19, 4)
   cutPayment Decimal? @db.Decimal(19, 4)
 
-  task   Task?  @relation(fields: [taskId], references: [id],onDelete: Cascade)
+  task   Task?  @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
-  company   Company @relation(fields: [companyId], references: [id],onDelete: Cascade)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId Int
 
-  note  Note? @relation(fields: [notes], references: [id],onDelete: Cascade)
-  notes Int
+  notes SecNote[]
 }
 
-model Note {
-  id                Int                @id @default(autoincrement())
-  note              String
-  primaryCompays    PrimaryCompany[]
-  secondaryCompanys SecondaryCompany[]
+model PriNote {
+  id        Int            @id @default(autoincrement())
+  note      String
+  company   PrimaryCompany? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
+}
+
+model SecNote {
+  id        Int              @id @default(autoincrement())
+  note      String
+  company   SecondaryCompany? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
 }
 
 model History {
   id     Int      @id @default(autoincrement())
   editAt DateTime @default(now())
-  user   User     @relation(fields: [userId], references: [id],onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  task   Task   @relation(fields: [taskId], references: [id],onDelete: Cascade)
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 }
 
 model Charge {
   id     Int    @id @default(autoincrement())
-  users  User   @relation(fields: [userId], references: [id],onDelete: Cascade)
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  task   Task   @relation(fields: [taskId], references: [id],onDelete: Cascade)
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 }
 
@@ -122,6 +131,6 @@ model Task {
   charges      Charge[]
   history      History[]
 
-  locations  Location? @relation(fields: [locationId], references: [id],onDelete: Cascade)
+  locations  Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId Int
 }
