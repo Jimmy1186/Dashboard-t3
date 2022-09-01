@@ -142,38 +142,6 @@ function taskId() {
     ],
   };
 
-  //  if(!isLoading){
-  //   const newTask = task as convertType;
-  // const initTask = newTask[0] as taskSqlType;
-
-  // const np = initTask.percent.split(",");
-  // const nk = initTask.ok.split(",");
-  // let obj: any = [];
-  // np.forEach((ele, i) => {
-  //   obj[i] = {
-  //     rate: ele,
-  //     ok: nk[i],
-  //   };
-  // });
-
-  // const initialValues = {
-  // name: initTask.name,
-  // p: initTask.p,
-  // pValue: initTask.pValue,
-  // startDate: initTask.startDate,
-  // endDate: initTask.endDate,
-  // open: initTask.open,
-  // createAt: initTask.createAt,
-  // locationId:initTask.locationId,
-  // userId: initTask.charge.split(',').map(i=>{
-  //   return {id:i}
-  // }),
-  // percent: obj
-  //};
-
-  //}
-
-  // console.log(newp)
 
 const onAll = useCallback(
  
@@ -322,7 +290,7 @@ const onAll = useCallback(
             startIcon={<AddIcon />}
             onClick={() => setCompanyToggle(!companyToggle)}
           >
-            {/* show this when user has removed all friends from the list */}
+        
             新增公司資料
           </Button>
         </>

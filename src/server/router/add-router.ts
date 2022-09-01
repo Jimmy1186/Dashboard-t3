@@ -1,5 +1,6 @@
 import * as trpc from "@trpc/server";
 import { any, z } from "zod";
+import { taskSqlType } from "../../types/task";
 import { createProtectedRouter } from "./protected-router";
 
 export const addRouter = createProtectedRouter()
@@ -271,6 +272,22 @@ export const addRouter = createProtectedRouter()
     group by Task.id;`;
     },
   })
+  .query("findAllTask", {
+    resolve: async ({ ctx }) => {
+      const allTask: taskSqlType = await ctx.prisma
+        .$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
+    GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
+    (SELECT GROUP_CONCAT(percent) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS percent ,
+    (SELECT GROUP_CONCAT(ok) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS ok
+    FROM Task
+    INNER JOIN Location ON Task.locationId = Location.id
+    INNER JOIN Charge ON Task.id = Charge.taskId
+    INNER JOIN Installment ON Task.id = Installment.TaskId
+    group by Task.id;`;
+
+      return allTask;
+    },
+  })
   .mutation("priCompany", {
     input: z.object({
       taskId: z.string(),
@@ -345,22 +362,22 @@ export const addRouter = createProtectedRouter()
           ok: z.boolean(),
         })
       ),
-      priCompany:
-        z.object({
-          companyId: z.number(),
-          amount: z.number(),
-          cutPayment: z.number().nullable(),
-          note: z.string().nullable(),
-        }
-      ),
-      secCompany: z.array(
-        z.object({
-          companyId: z.number(),
-          amount: z.number(),
-          cutPayment: z.number().nullable(),
-          note: z.string().nullable(),
-        })
-      ).nullable(),
+      priCompany: z.object({
+        companyId: z.number(),
+        amount: z.number(),
+        cutPayment: z.number().nullable(),
+        note: z.string().nullable(),
+      }),
+      secCompany: z
+        .array(
+          z.object({
+            companyId: z.number(),
+            amount: z.number(),
+            cutPayment: z.number().nullable(),
+            note: z.string().nullable(),
+          })
+        )
+        .nullable(),
     }),
     resolve: async ({ ctx, input }) => {
       const {
@@ -380,8 +397,8 @@ export const addRouter = createProtectedRouter()
       } = input;
 
       await ctx.prisma.task.update({
-        where:{
-          id:id
+        where: {
+          id: id,
         },
         data: {
           id: id,
@@ -392,11 +409,11 @@ export const addRouter = createProtectedRouter()
           endDate: endDate,
           open: open,
           createAt: createAt,
-          locationId: locationId, 
-        }
+          locationId: locationId,
+        },
       });
 
-     userId.map(async (chargeData) => {
+      userId.map(async (chargeData) => {
         return await ctx.prisma.charge.create({
           data: {
             taskId: id,
@@ -404,36 +421,64 @@ export const addRouter = createProtectedRouter()
           },
         });
       });
-
-     await ctx.prisma.primaryCompany.create({
+if(priCompany.note!=null){
+       await ctx.prisma.primaryCompany.create({
         data: {
           taskId: id,
           amount: priCompany.amount,
           cutPayment: priCompany.cutPayment,
           companyId: priCompany.companyId,
+          notes: {
+            create: {
+              note: priCompany.note,
+            },
+          },
         },
       });
+}else{
+  await ctx.prisma.primaryCompany.create({
+    data: {
+      taskId: id,
+      amount: priCompany.amount,
+      cutPayment: priCompany.cutPayment,
+      companyId: priCompany.companyId,
+    },
+  });
+}
+ 
 
-
-
-     if(secCompany!=null){
-      await secCompany.map(async (i) => {
-        await ctx.prisma.secondaryCompany.create({
-          data: {
-            taskId: id,
-            amount: i.amount,
-            cutPayment: i.cutPayment,
-            companyId: i.companyId,
-          },
+      if (secCompany != null) {
+        secCompany.map(async (i) => {
+          if (i.note != null) {
+            await ctx.prisma.secondaryCompany.create({
+              data: {
+                taskId: id,
+                amount: i.amount,
+                cutPayment: i.cutPayment,
+                companyId: i.companyId,
+                notes: {
+                  create: {
+                    note: i.note,
+                  },
+                },
+              },
+            });
+          } else {
+            await ctx.prisma.secondaryCompany.create({
+              data: {
+                taskId: id,
+                amount: i.amount,
+                cutPayment: i.cutPayment,
+                companyId: i.companyId,
+              },
+            });
+          }
         });
-      });
-     }
-    
-
+      }
 
       await ctx.prisma.history.create({
         data: {
-          userId: ctx.session.id,
+          userId: ctx.session.user.id,
           taskId: id,
         },
       });
@@ -447,6 +492,5 @@ export const addRouter = createProtectedRouter()
           },
         });
       });
-
     },
   });

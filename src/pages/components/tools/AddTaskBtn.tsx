@@ -34,7 +34,7 @@ function AddTaskBtn({onCreateFn}:createBtnType) {
   const router = useRouter()
 
 
-console.log(router.pathname)
+
 
   const sumbitHandler = (values: createTaskType, action: any) => {
     onCreateFn(values)

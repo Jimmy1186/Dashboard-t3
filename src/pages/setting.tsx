@@ -32,7 +32,7 @@ function setting() {
   const { data, refetch } = trpc.useQuery([
     "user.userData",
     {
-      userId: session?.id as string,
+      userId: session?.user?.id as string
     },
   ]);
 

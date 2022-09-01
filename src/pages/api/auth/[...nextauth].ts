@@ -68,6 +68,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.name = user.name;
       }
+          
+      
       return token;
     },
 
@@ -76,10 +78,13 @@ export const authOptions: NextAuthOptions = {
       // console.log("session", session);
       // console.log("token", token);
       // console.log("user", user);
-      if (token) {
-        session.id = token.id;
+     
+
+    
+      if (token&& session.user!=undefined) {
+        session.user.id = token.id as string
       }
-      return session;
+      return session
     },
   },
 };
