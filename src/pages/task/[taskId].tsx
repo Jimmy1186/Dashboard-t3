@@ -30,13 +30,14 @@ import { useSession } from "next-auth/react";
 
 
 const taskSchema = z.object({
+  id:z.string(),
   name: z.string(),
   p: z.number(),
   pValue: z.number(),
   startDate: z.date().nullable(),
   endDate: z.date().nullable(),
   open: z.date().nullable(),
-  createAt: z.date().nullable(),
+  createAt: z.date(),
   locationId: z.number(),
   userId: z.array(
     z.object({
@@ -62,7 +63,7 @@ const taskSchema = z.object({
       cutPayment: z.number(),
       note: z.string().nullable(),
     })
-  ),
+  ).nullable(),
 });
 
 const taskSql = z.object({
@@ -104,16 +105,18 @@ function taskId() {
   const installmentMutation = trpc.useMutation(["add.installment"]);
   const priCompanyMutation = trpc.useMutation(["add.priCompany"]);
   const secCompanyMutation = trpc.useMutation(["add.secCompany"]);
-
+  const testQuery = trpc.useMutation(['add.test'])
+  const AllMutation = trpc.useMutation(['add.all'])
 
   let initialValues = {
+    id:taskId,
     name: "",
     p: 0,
     pValue: 0,
     startDate: null,
     endDate: null,
     open: null,
-    createAt: null,
+    createAt:  new Date(),
     locationId: 0,
     userId: [],
     percent: [
@@ -172,101 +175,68 @@ function taskId() {
 
   // console.log(newp)
 
-  const onPriCompany = useCallback(
-    (values: taskType) => {
-      priCompanyMutation.mutate({
-        taskId: taskId as string,
-        companyId: values.priCompany.companyId,
-        amount: values.priCompany.amount,
-        cutPayment: values.priCompany.cutPayment,
+const onAll = useCallback(
+ 
+  (values:taskType)=>{
+
+    const {
+      id,
+      name,
+      p,
+      pValue,
+      startDate,
+      endDate,
+      open,
+      createAt,
+      locationId,
+      userId,
+      percent,
+      priCompany,
+      secCompany,
+    } = values;
+
+
+    if(priCompany===null){
+      return
+    }
+
+
+
+
+    AllMutation.mutate({
+      id: id,
+      name: name,
+      p: p,
+      pValue: pValue,
+      startDate: startDate,
+      endDate: endDate,
+      open: open,
+      createAt: createAt,
+      locationId: locationId,
+      userId: userId,
+      percent:percent,
+      priCompany:priCompany,
+      secCompany:secCompany
+    })
+  },
+  [AllMutation]
+)
+
+
+  const onTest = useCallback(
+    () => {
+      testQuery.mutate({
+       so:"sad"
       });
     },
-    [priCompanyMutation]
-  );
-
-  const onSecCompany = useCallback(
-    (values: taskType) => {
-      secCompanyMutation.mutate({
-        taskId: taskId as string,
-        secCompany:values.secCompany
-      });
-    },
-    [priCompanyMutation]
-  );
-
-
-  const onInstallment = useCallback(
-    (values: taskType) => {
-      installmentMutation.mutate({
-        taskId: taskId as string,
-        percent: values.percent,
-      });
-    },
-    [installmentMutation]
-  );
-
-  const onHistory = useCallback(() => {
-    historyMutation.mutate({
-      userId: session?.id as string,
-      taskId: taskId as string,
-    });
-  }, [historyMutation]);
-
-  const onCreateCharge = useCallback(
-    (values: taskType) => {
-      chargeMutation.mutate({
-        userId: values.userId,
-        taskId: taskId as string,
-      });
-    },
-    [chargeMutation]
-  );
-
-  const onUpdateTask = useCallback(
-    async (values: taskType) => {
-      const {
-        name,
-        p,
-        pValue,
-        startDate,
-        endDate,
-        open,
-        createAt,
-        locationId,
-      } = values;
-      if (
-        startDate === null ||
-        endDate === null ||
-        open === null ||
-        createAt === null
-      ) {
-        console.log("date cant be null");
-        return;
-      }
-      const taskId = await router.query.taskId;
-      taskMutation.mutate({
-        id: taskId as string,
-        name: name,
-        p: p,
-        pValue: pValue,
-        startDate: startDate,
-        endDate: endDate,
-        open: open,
-        createAt: createAt,
-        locationId: locationId,
-      });
-    },
-    [taskMutation]
+    [testQuery]
   );
 
   const sumbitHandler = (values: taskType, action: any) => {
-    onInstallment(values)
-    onHistory();
-    onCreateCharge(values);
-    onUpdateTask(values);
-    onPriCompany(values)
-    onSecCompany(values)
+
+    onAll(values)
     console.log(values);
+    action.resetForm()
   };
 
   return (

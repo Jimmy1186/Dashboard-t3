@@ -24,6 +24,7 @@ model Role {
   id   Int    @id @default(autoincrement())
   role String @db.Char(1)
   user User[]
+  @@unique([role])
 }
 
 model Company {
@@ -64,8 +65,8 @@ model PrimaryCompany {
   companyId Int
 
   notes PriNote[]
+@@unique([taskId,companyId])
 
-  @@unique([taskId, companyId])
 }
 
 model SecondaryCompany {
@@ -81,6 +82,7 @@ model SecondaryCompany {
   companyId Int
 
   notes SecNote[]
+  @@unique([taskId,companyId])
 }
 
 model PriNote {
@@ -133,4 +135,6 @@ model Task {
 
   locations  Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
   locationId Int
+
+  @@unique([name])
 }

@@ -39,7 +39,7 @@ function AddPriOrSecCompany({
   handleChange,
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
-  console.log(errors);
+
 
   if (companyType === "priCompany") {
     return (
@@ -98,6 +98,7 @@ function AddPriOrSecCompany({
           name="cutPayment"
         />
         <TextField
+        
           id="outlined-basic"
           label="備註"
           name={`priCompany.note`}

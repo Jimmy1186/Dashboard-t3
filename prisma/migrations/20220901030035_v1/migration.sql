@@ -14,6 +14,7 @@ CREATE TABLE `Role` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `role` CHAR(1) NOT NULL,
 
+    UNIQUE INDEX `Role_role_key`(`role`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -70,6 +71,7 @@ CREATE TABLE `SecondaryCompany` (
     `taskId` VARCHAR(191) NOT NULL,
     `companyId` INTEGER NOT NULL,
 
+    UNIQUE INDEX `SecondaryCompany_taskId_companyId_key`(`taskId`, `companyId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -122,6 +124,7 @@ CREATE TABLE `Task` (
     `createAt` DATETIME(3) NOT NULL,
     `locationId` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Task_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

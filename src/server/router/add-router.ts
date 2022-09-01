@@ -257,7 +257,7 @@ export const addRouter = createProtectedRouter()
       taskId: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      const tId = await input.taskId;
+      // const tId = await input.taskId;
       return await ctx.prisma
         .$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
     GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
@@ -267,7 +267,7 @@ export const addRouter = createProtectedRouter()
     INNER JOIN Location ON Task.locationId = Location.id
     INNER JOIN Charge ON Task.id = Charge.taskId
     INNER JOIN Installment ON Task.id = Installment.TaskId
-    WHERE Task.id=${tId}
+    WHERE Task.id=${input.taskId}
     group by Task.id;`;
     },
   })
@@ -294,7 +294,6 @@ export const addRouter = createProtectedRouter()
       taskId: z.string(),
       secCompany: z.array(
         z.object({
-     
           companyId: z.number(),
           amount: z.number(),
           cutPayment: z.number(),
@@ -303,7 +302,6 @@ export const addRouter = createProtectedRouter()
     }),
     resolve: async ({ ctx, input }) => {
       const Cid = input.secCompany.map((i) => i.companyId);
-  
 
       await input.secCompany.map(async (i) => {
         await ctx.prisma.secondaryCompany.create({
@@ -315,5 +313,140 @@ export const addRouter = createProtectedRouter()
           },
         });
       });
+    },
+  })
+  .mutation("test", {
+    input: z.object({
+      so: z.string(),
+    }),
+    resolve: async ({ ctx }) => {
+      return { da: "sd" };
+    },
+  })
+  .mutation("all", {
+    input: z.object({
+      id: z.string(),
+      name: z.string(),
+      p: z.number(),
+      pValue: z.number(),
+      startDate: z.date().nullable(),
+      endDate: z.date().nullable(),
+      open: z.date().nullable(),
+      createAt: z.date(),
+      locationId: z.number(),
+      userId: z.array(
+        z.object({
+          id: z.string(),
+        })
+      ),
+      percent: z.array(
+        z.object({
+          rate: z.number(),
+          ok: z.boolean(),
+        })
+      ),
+      priCompany:
+        z.object({
+          companyId: z.number(),
+          amount: z.number(),
+          cutPayment: z.number().nullable(),
+          note: z.string().nullable(),
+        }
+      ),
+      secCompany: z.array(
+        z.object({
+          companyId: z.number(),
+          amount: z.number(),
+          cutPayment: z.number().nullable(),
+          note: z.string().nullable(),
+        })
+      ).nullable(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      const {
+        id,
+        name,
+        p,
+        pValue,
+        startDate,
+        endDate,
+        open,
+        createAt,
+        locationId,
+        userId,
+        percent,
+        priCompany,
+        secCompany,
+      } = input;
+
+      await ctx.prisma.task.update({
+        where:{
+          id:id
+        },
+        data: {
+          id: id,
+          name: name,
+          p: p,
+          pValue: pValue,
+          startDate: startDate,
+          endDate: endDate,
+          open: open,
+          createAt: createAt,
+          locationId: locationId, 
+        }
+      });
+
+     userId.map(async (chargeData) => {
+        return await ctx.prisma.charge.create({
+          data: {
+            taskId: id,
+            userId: chargeData.id,
+          },
+        });
+      });
+
+     await ctx.prisma.primaryCompany.create({
+        data: {
+          taskId: id,
+          amount: priCompany.amount,
+          cutPayment: priCompany.cutPayment,
+          companyId: priCompany.companyId,
+        },
+      });
+
+
+
+     if(secCompany!=null){
+      await secCompany.map(async (i) => {
+        await ctx.prisma.secondaryCompany.create({
+          data: {
+            taskId: id,
+            amount: i.amount,
+            cutPayment: i.cutPayment,
+            companyId: i.companyId,
+          },
+        });
+      });
+     }
+    
+
+
+      await ctx.prisma.history.create({
+        data: {
+          userId: ctx.session.id,
+          taskId: id,
+        },
+      });
+
+      percent.map(async (i) => {
+        return await ctx.prisma.installment.create({
+          data: {
+            percent: i.rate,
+            ok: i.ok,
+            taskId: id,
+          },
+        });
+      });
+
     },
   });
