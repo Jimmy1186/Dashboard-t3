@@ -14,9 +14,9 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
   const initialValues = {
-    name: "",
-    title: "",
-    tax: "",
+    c_name: "",
+    c_title: "",
+    c_tax: "",
   };
 
 type toggleCompanyType = {
@@ -32,11 +32,11 @@ function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
   const addCompanyMutation = trpc.useMutation(["add.company"]);
 
   const onAddCompany = useCallback(
-    ({ name, title, tax }: companyType) => {
+    ({ c_name, c_title, c_tax }: companyType) => {
       addCompanyMutation.mutate({
-        name,
-        title,
-        tax,
+        c_name,
+        c_title,
+        c_tax,
       });
     },
     [addCompanyMutation]
@@ -61,32 +61,32 @@ function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
             onClick={() => setCompanyToggle(!companyToggle)}
           ></Button>
           {addCompanyMutation.data?.msg}
-          {errors.name}
+          {errors.c_name}
           <TextField
             id="outlined-basic"
             label="公司名稱"
-            name="name"
-            value={values.name}
+            name="c_name"
+            value={values.c_name}
             onChange={handleChange}
             variant="outlined"
           />
 
-          {errors.title}
+          {errors.c_title}
           <TextField
             id="outlined-basic"
             label="公司抬頭"
-            name="title"
-            value={values.title}
+            name="c_title"
+            value={values.c_title}
             onChange={handleChange}
             variant="outlined"
           />
 
-          {errors.tax}
+          {errors.c_tax}
           <TextField
             id="outlined-basic"
             label="統編"
-            name="tax"
-            value={values.tax}
+            name="c_tax"
+            value={values.c_tax}
             onChange={handleChange}
           />
 

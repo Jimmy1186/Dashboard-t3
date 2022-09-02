@@ -22,119 +22,80 @@ model User {
 
 model Role {
   id   Int    @id @default(autoincrement())
-  role String @db.Char(1)
+  roles String @db.Char(1)
   user User[]
-  @@unique([role])
+
+  @@unique([roles])
 }
 
 model Company {
-  id         Int                @id @default(autoincrement())
-  name       String?            @unique @db.VarChar(20)
-  title      String             @unique @db.VarChar(40)
-  tax        String?            @unique @db.Char(8)
-  priCompary PrimaryCompany[]
-  secCompary SecondaryCompany[]
+  id           Int           @id @default(autoincrement())
+  c_name         String?       @unique @db.VarChar(20)
+  c_title        String        @unique @db.VarChar(40)
+  c_tax          String?       @unique @db.Char(8)
+  ComparyTypes CompanyType[]
 
-  @@unique([name, title, tax])
+  @@unique([c_name, c_title, c_tax])
 }
 
 model Installment {
   id      Int     @id @default(autoincrement())
   percent Int
   ok      Boolean
-  task    Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId  String
+  task    Task?   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId  String?
 }
 
-model Location {
+model Locations {
   id       Int    @id @default(autoincrement())
-  location String @unique @db.VarChar(10)
+  location_name String @unique @db.VarChar(10)
   task     Task[]
 }
 
-model PrimaryCompany {
-  id Int @id @default(autoincrement())
-
-  amount     Decimal  @db.Decimal(19, 4)
-  cutPayment Decimal? @db.Decimal(19, 4)
-
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String
-
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId Int
-
-  notes PriNote[]
-@@unique([taskId,companyId])
-
-}
-
-model SecondaryCompany {
-  id Int @id @default(autoincrement())
-
-  amount     Decimal  @db.Decimal(19, 4)
-  cutPayment Decimal? @db.Decimal(19, 4)
-
-  task   Task?  @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String
-
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId Int
-
-  notes SecNote[]
-  @@unique([taskId,companyId])
-}
-
-model PriNote {
-  id        Int            @id @default(autoincrement())
-  note      String
-  company   PrimaryCompany? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId Int
-}
-
-model SecNote {
-  id        Int              @id @default(autoincrement())
-  note      String
-  company   SecondaryCompany? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId Int
+model CompanyType {
+  id          Int      @id @default(autoincrement())
+  companyType String
+  amount      Decimal  @db.Decimal(19, 4)
+  cutPayment  Decimal? @db.Decimal(19, 4)
+  task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId      String
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  companyId   Int?
+  notes       String?
 }
 
 model History {
   id     Int      @id @default(autoincrement())
   editAt DateTime @default(now())
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   taskId String
 }
 
 model Charge {
   id     Int    @id @default(autoincrement())
-  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   taskId String
 }
 
 model Task {
-  id        String    @id @db.VarChar(6)
-  name      String    @db.VarChar(50)
-  p         Int?
-  pValue    Decimal?  @db.Decimal(19, 4)
-  startDate DateTime?
-  endDate   DateTime?
-  open      DateTime?
-  createAt  DateTime
-
-  priCompany   PrimaryCompany[]
-  secCompany   SecondaryCompany[]
+  id           String        @id @db.VarChar(6)
+  task_name    String?        @db.VarChar(50)
+  p            Int?
+  pValue       Decimal?      @db.Decimal(19, 4)
+  startDate    DateTime?
+  endDate      DateTime?
+  openDate     DateTime?
+  createAt     DateTime
+  CompanyTypes CompanyType[]
   installments Installment[]
   charges      Charge[]
   history      History[]
+  locations    Locations?     @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  locationId   Int?
 
-  locations  Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  locationId Int
-
-  @@unique([name])
+  @@unique([task_name])
 }

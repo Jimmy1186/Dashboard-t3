@@ -7,21 +7,18 @@ import TextField from "@mui/material/TextField";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Button from "@mui/material/Button";
-import { AddLocation } from "@mui/icons-material";
 import { useRouter } from "next/router";
 
 
 
 export const createTaskSchena = z.object({
   id: z.string(),
-  name: z.string(),
 });
 
 export type createTaskType = z.infer<typeof createTaskSchena>;
 
 const initialValues = {
   id: "",
-  name: "",
 };
 
 export type createBtnType ={
@@ -69,14 +66,6 @@ function AddTaskBtn({onCreateFn}:createBtnType) {
                   label="NO"
                   name="id"
                   value={values.id}
-                  onChange={handleChange}
-                  variant="outlined"
-                />
-
-                <TextField
-                  label="工事名"
-                  name="name"
-                  value={values.name}
                   onChange={handleChange}
                   variant="outlined"
                 />

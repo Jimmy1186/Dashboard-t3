@@ -12,9 +12,9 @@ type locationType = {
   setFieldValue: (dataName: string, locationId: number) => void;
   setErrors: (location: object) => void;
 };
-
 function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
   const { data: lo, isLoading } = trpc.useQuery(["add.location"]);
+
 
   return (
     <>
@@ -25,7 +25,7 @@ function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
         id="id"
         options={lo || []}
         onChange={(_, value: any) => {
-          // console.log(value)
+     
           try {
             setFieldValue("locationId", value.id);
             // setFieldValue("location",   value.id!=null? value.id:initialValues.location);
@@ -35,13 +35,13 @@ function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
             });
           }
         }}
-        getOptionLabel={(option) => `${option.id}${option.location}`}
+        getOptionLabel={(option) => `${option.id}${option.location_name}`}
         renderOption={(props: any, option: any) => {
           return (
             <li
               {...props}
               className="autoList"
-            >{`${option.id}:${option.location}`}</li>
+            >{`${option.id}:${option.location_name}`}</li>
           );
         }}
         renderInput={(params) => {

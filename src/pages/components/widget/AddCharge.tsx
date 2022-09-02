@@ -52,7 +52,7 @@ function AddCharge({errors,setFieldValue,setErrors}:locationType) {
             return { id: i.id };
           });
 
-          console.log(JSON.stringify(Uid));
+   
           try {
             setFieldValue("userId", Uid);
           } catch (e) {

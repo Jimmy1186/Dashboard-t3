@@ -7,31 +7,17 @@ import AddPriOrSecCompany from "../components/widget/AddPriOrSecCompany";
 import AddTask from "../components/widget/AddTask";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { object, z } from "zod";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormControl from "@mui/material/FormControl";
-import DatePicker from "react-datepicker";
-import Head from "next/head";
+import { z } from "zod";
 import Button from "@mui/material/Button";
-import AddTaskBtn, { createTaskType } from "../components/tools/AddTaskBtn";
 import { motion } from "framer-motion";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import "react-datepicker/dist/react-datepicker.css";
-import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import { useSession } from "next-auth/react";
-
 
 const taskSchema = z.object({
   id:z.string(),
-  name: z.string(),
+  task_name: z.string(),
   p: z.number(),
   pValue: z.number(),
   startDate: z.date().nullable(),
@@ -50,15 +36,10 @@ const taskSchema = z.object({
       ok: z.boolean(),
     })
   ),
-  priCompany: z.object({
-    companyId: z.number(),
-    amount: z.number(),
-    cutPayment: z.number(),
-    note: z.string().nullable(),
-  }),
-  secCompany: z.array(
+  companyTypes: z.array(
     z.object({
       companyId: z.number(),
+      companyType:z.any(),
       amount: z.number(),
       cutPayment: z.number(),
       note: z.string().nullable(),
@@ -66,51 +47,22 @@ const taskSchema = z.object({
   ).nullable(),
 });
 
-const taskSql = z.object({
-  name: z.string(),
-  p: z.number(),
-  pValue: z.number(),
-  startDate: z.date().nullable(),
-  endDate: z.date().nullable(),
-  open: z.date().nullable(),
-  createAt: z.date().nullable(),
-  locationId: z.number(),
-  charge: z.string(),
-  id: z.string(),
-  percent: z.string(),
-  ok: z.string(),
-});
-export type taskSqlType = z.infer<typeof taskSql>;
 
 export type taskType = z.infer<typeof taskSchema>;
 
-const convertTypeZ = z.array(z.object({}));
-type convertType = z.infer<typeof convertTypeZ>;
 
 function taskId() {
   const router = useRouter();
   const [companyToggle, setCompanyToggle] = useState(false);
   const taskId = router.query.taskId as string;
-  const { data: session } = useSession();
 
-  // const {
-  //   data: task,
-  //   refetch,
-  //   isLoading,
-  //   isSuccess,
-  // } = trpc.useQuery(["add.findOneTask", { taskId: taskId }]);
-  const taskMutation = trpc.useMutation(["add.task"]);
-  const chargeMutation = trpc.useMutation(["add.charge"]);
-  const historyMutation = trpc.useMutation(["add.history"]);
-  const installmentMutation = trpc.useMutation(["add.installment"]);
-  const priCompanyMutation = trpc.useMutation(["add.priCompany"]);
-  const secCompanyMutation = trpc.useMutation(["add.secCompany"]);
-  const testQuery = trpc.useMutation(['add.test'])
+
+
   const AllMutation = trpc.useMutation(['add.all'])
 
   let initialValues = {
     id:taskId,
-    name: "",
+    task_name: "",
     p: 0,
     pValue: 0,
     startDate: null,
@@ -125,15 +77,9 @@ function taskId() {
         ok: false,
       },
     ],
-    priCompany: {
-      companyId: 0,
-      amount: 0,
-      cutPayment: 0,
-      note: null,
-    },
-    secCompany: [
+    companyTypes: [
       {
-        taskId:taskId as string,
+        companyType:"pri",
         companyId: 0,
         amount: 0,
         cutPayment: 0,
@@ -149,7 +95,7 @@ const onAll = useCallback(
 
     const {
       id,
-      name,
+      task_name,
       p,
       pValue,
       startDate,
@@ -159,12 +105,11 @@ const onAll = useCallback(
       locationId,
       userId,
       percent,
-      priCompany,
-      secCompany,
+      companyTypes,
     } = values;
 
 
-    if(priCompany===null){
+    if(companyTypes===null){
       return
     }
 
@@ -173,7 +118,7 @@ const onAll = useCallback(
 
     AllMutation.mutate({
       id: id,
-      name: name,
+      task_name:task_name,
       p: p,
       pValue: pValue,
       startDate: startDate,
@@ -183,22 +128,15 @@ const onAll = useCallback(
       locationId: locationId,
       userId: userId,
       percent:percent,
-      priCompany:priCompany,
-      secCompany:secCompany
+      companyTypes:companyTypes,
+
     })
   },
   [AllMutation]
 )
 
 
-  const onTest = useCallback(
-    () => {
-      testQuery.mutate({
-       so:"sad"
-      });
-    },
-    [testQuery]
-  );
+
 
   const sumbitHandler = (values: taskType, action: any) => {
 
@@ -238,7 +176,6 @@ const onAll = useCallback(
               />
 
               <AddPriOrSecCompany
-                companyType="priCompany"
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
@@ -246,14 +183,7 @@ const onAll = useCallback(
                 values={values}
               />
 
-              <AddPriOrSecCompany
-                companyType="secCompany"
-                errors={errors}
-                setFieldValue={setFieldValue}
-                setErrors={setErrors}
-                handleChange={handleChange}
-                values={values}
-              />
+
 
               <AddLocation
                 errors={errors}

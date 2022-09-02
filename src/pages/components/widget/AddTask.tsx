@@ -38,7 +38,7 @@ function AddTask({ errors, setFieldValue,handleChange,values }: taskType) {
             {errors.name}
             <TextField
               id="outlined-basic"
-              name="name"
+              name="task_name"
               label="工事名"
               onChange={handleChange}
               variant="outlined"

@@ -12,23 +12,23 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `Role` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `role` CHAR(1) NOT NULL,
+    `roles` CHAR(1) NOT NULL,
 
-    UNIQUE INDEX `Role_role_key`(`role`),
+    UNIQUE INDEX `Role_roles_key`(`roles`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Company` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(20) NULL,
-    `title` VARCHAR(40) NOT NULL,
-    `tax` CHAR(8) NULL,
+    `c_name` VARCHAR(20) NULL,
+    `c_title` VARCHAR(40) NOT NULL,
+    `c_tax` CHAR(8) NULL,
 
-    UNIQUE INDEX `Company_name_key`(`name`),
-    UNIQUE INDEX `Company_title_key`(`title`),
-    UNIQUE INDEX `Company_tax_key`(`tax`),
-    UNIQUE INDEX `Company_name_title_tax_key`(`name`, `title`, `tax`),
+    UNIQUE INDEX `Company_c_name_key`(`c_name`),
+    UNIQUE INDEX `Company_c_title_key`(`c_title`),
+    UNIQUE INDEX `Company_c_tax_key`(`c_tax`),
+    UNIQUE INDEX `Company_c_name_c_title_c_tax_key`(`c_name`, `c_title`, `c_tax`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -37,58 +37,29 @@ CREATE TABLE `Installment` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `percent` INTEGER NOT NULL,
     `ok` BOOLEAN NOT NULL,
-    `taskId` VARCHAR(191) NOT NULL,
+    `taskId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Location` (
+CREATE TABLE `Locations` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `location` VARCHAR(10) NOT NULL,
+    `location_name` VARCHAR(10) NOT NULL,
 
-    UNIQUE INDEX `Location_location_key`(`location`),
+    UNIQUE INDEX `Locations_location_name_key`(`location_name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `PrimaryCompany` (
+CREATE TABLE `CompanyType` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `companyType` VARCHAR(191) NOT NULL,
     `amount` DECIMAL(19, 4) NOT NULL,
     `cutPayment` DECIMAL(19, 4) NULL,
     `taskId` VARCHAR(191) NOT NULL,
-    `companyId` INTEGER NOT NULL,
-
-    UNIQUE INDEX `PrimaryCompany_taskId_companyId_key`(`taskId`, `companyId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `SecondaryCompany` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `amount` DECIMAL(19, 4) NOT NULL,
-    `cutPayment` DECIMAL(19, 4) NULL,
-    `taskId` VARCHAR(191) NOT NULL,
-    `companyId` INTEGER NOT NULL,
-
-    UNIQUE INDEX `SecondaryCompany_taskId_companyId_key`(`taskId`, `companyId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `PriNote` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `note` VARCHAR(191) NOT NULL,
-    `companyId` INTEGER NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `SecNote` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `note` VARCHAR(191) NOT NULL,
-    `companyId` INTEGER NOT NULL,
+    `companyId` INTEGER NULL,
+    `notes` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -115,16 +86,16 @@ CREATE TABLE `Charge` (
 -- CreateTable
 CREATE TABLE `Task` (
     `id` VARCHAR(6) NOT NULL,
-    `name` VARCHAR(50) NOT NULL,
+    `task_name` VARCHAR(50) NOT NULL,
     `p` INTEGER NULL,
     `pValue` DECIMAL(19, 4) NULL,
     `startDate` DATETIME(3) NULL,
     `endDate` DATETIME(3) NULL,
-    `open` DATETIME(3) NULL,
+    `openDate` DATETIME(3) NULL,
     `createAt` DATETIME(3) NOT NULL,
-    `locationId` INTEGER NOT NULL,
+    `locationId` INTEGER NULL,
 
-    UNIQUE INDEX `Task_name_key`(`name`),
+    UNIQUE INDEX `Task_task_name_key`(`task_name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -135,22 +106,10 @@ ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFE
 ALTER TABLE `Installment` ADD CONSTRAINT `Installment_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PrimaryCompany` ADD CONSTRAINT `PrimaryCompany_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `CompanyType` ADD CONSTRAINT `CompanyType_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PrimaryCompany` ADD CONSTRAINT `PrimaryCompany_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SecondaryCompany` ADD CONSTRAINT `SecondaryCompany_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SecondaryCompany` ADD CONSTRAINT `SecondaryCompany_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `PriNote` ADD CONSTRAINT `PriNote_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `PrimaryCompany`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `SecNote` ADD CONSTRAINT `SecNote_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `SecondaryCompany`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `CompanyType` ADD CONSTRAINT `CompanyType_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `History` ADD CONSTRAINT `History_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -165,4 +124,4 @@ ALTER TABLE `Charge` ADD CONSTRAINT `Charge_userId_fkey` FOREIGN KEY (`userId`) 
 ALTER TABLE `Charge` ADD CONSTRAINT `Charge_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Task` ADD CONSTRAINT `Task_locationId_fkey` FOREIGN KEY (`locationId`) REFERENCES `Location`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Task` ADD CONSTRAINT `Task_locationId_fkey` FOREIGN KEY (`locationId`) REFERENCES `Locations`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

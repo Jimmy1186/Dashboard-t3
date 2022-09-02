@@ -22,16 +22,14 @@ export const selectCompanySchema = z.object({
 export type selectCompanyType = z.infer<typeof selectCompanySchema>;
 
 type locationType = {
-  companyType: "secCompany" | "priCompany";
   errors: any;
-  setFieldValue: (dataName: string, locationId: number) => void;
+  setFieldValue: (dataName: string, v: number | string) => void;
   setErrors: (location: object) => void;
   handleChange: (props: any) => void;
   values: any;
 };
 
 function AddPriOrSecCompany({
-  companyType,
   errors,
   setFieldValue,
   setErrors,
@@ -40,95 +38,25 @@ function AddPriOrSecCompany({
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
 
-
-  if (companyType === "priCompany") {
-    return (
-      <>
-        <Autocomplete
-          options={company || []}
-          onChange={(_, value: any | null) => {
-            console.log(value);
-            try {
-              setFieldValue(`priCompany.companyId`, value.id);
-            } catch (e) {
-              setErrors({
-                companyId: "一定要選",
-              });
-            }
-          }}
-          getOptionLabel={(option) => `${option.id}${option.name}`}
-          renderOption={(props: any, option: any) => {
-            return (
-              <li
-                {...props}
-                className="autoList"
-              >{`${option.id}:${option.name}`}</li>
-            );
-          }}
-          renderInput={(params) => {
-            return (
-              <TextField
-                value={values.companyId}
-                {...params}
-                label="選擇公司"
-                variant="outlined"
-              />
-            );
-          }}
-        />
-
-        <InputLabel htmlFor="outlined-adornment">契約金額</InputLabel>
-        {errors.amount}
-
-        <OutlinedInput
-          type="number"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFieldValue(`priCompany.amount`, Number(e.target.value));
-          }}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          name="amount"
-        />
-
-        <OutlinedInput
-          type="number"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFieldValue(`priCompany.cutPayment`, Number(e.target.value));
-          }}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          name="cutPayment"
-        />
-        <TextField
-        
-          id="outlined-basic"
-          label="備註"
-          name={`priCompany.note`}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFieldValue(`priCompany.note`, e.target.value);
-          }}
-          variant="outlined"
-        />
-      </>
-    );
-  }
   return (
     <>
       <h3>"支払業者"</h3>
 
       {errors.companyId}
       <FieldArray
-        name="secCompany"
+        name="companyTypes"
+        validateOnChange={false}
         render={(arrayHelpers) => (
           <>
-            {values.secCompany && values.secCompany.length > 0 ? (
-              values.secCompany.map((per: any, index: any) => (
+            {values.companyTypes && values.companyTypes.length > 0 ? (
+              values.companyTypes.map((per: any, index: any) => (
                 <div key={index}>
                   <Autocomplete
                     options={company || []}
                     onChange={(_, value: any | null) => {
-                      console.log(value);
                       try {
                         setFieldValue(
-                          `secCompany.${index}.companyId`,
+                          `companyTypes.${index}.companyId`,
                           value.id
                         );
                       } catch (e) {
@@ -137,19 +65,19 @@ function AddPriOrSecCompany({
                         });
                       }
                     }}
-                    getOptionLabel={(option) => `${option.id}${option.name}`}
+                    getOptionLabel={(option) => `${option.id}${option.c_name}`}
                     renderOption={(props: any, option: any) => {
                       return (
                         <li
                           {...props}
                           className="autoList"
-                        >{`${option.id}:${option.name}`}</li>
+                        >{`${option.id}:${option.c_name}`}</li>
                       );
                     }}
                     renderInput={(params) => {
                       return (
                         <TextField
-                          value={`secCompany.${index}.companyId`}
+                          value={`companyTypes.${index}.companyId`}
                           {...params}
                           label="選擇公司"
                           variant="outlined"
@@ -162,10 +90,10 @@ function AddPriOrSecCompany({
                     startAdornment={
                       <InputAdornment position="start">$</InputAdornment>
                     }
-                    name={`secCompany.${index}.amount`}
+                    name={`companyTypes.${index}.amount`}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setFieldValue(
-                        `secCompany.${index}.amount`,
+                        `companyTypes.${index}.amount`,
                         Number(e.target.value)
                       );
                     }}
@@ -175,10 +103,10 @@ function AddPriOrSecCompany({
                     startAdornment={
                       <InputAdornment position="start">$</InputAdornment>
                     }
-                    name={`secCompany.${index}.cutPayment`}
+                    name={`companyTypes.${index}.cutPayment`}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setFieldValue(
-                        `secCompany.${index}.cutPayment`,
+                        `companyTypes.${index}.cutPayment`,
                         Number(e.target.value)
                       );
                     }}
@@ -188,21 +116,27 @@ function AddPriOrSecCompany({
                     variant="contained"
                     aria-label="outlined primary button group"
                   >
-                    <Button
-                      type="button"
-                      startIcon={<DeleteIcon />}
-                      onClick={() => arrayHelpers.remove(index)}
-                    >
-                      刪除
-                    </Button>
+                    {values.companyTypes[index].companyType === "pri" ? (
+                      ""
+                    ) : (
+                      <Button
+                        type="button"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => arrayHelpers.remove(index)}
+                      >
+                        刪除
+                      </Button>
+                    )}
+
                     <Button
                       type="button"
                       startIcon={<AddIcon />}
                       onClick={() =>
                         arrayHelpers.push({
+                          companyTypes: "sec",
                           amount: 0,
                           cutPayment: 0,
-                          note: "",
+                          note: null,
                         })
                       }
                     >
@@ -213,9 +147,12 @@ function AddPriOrSecCompany({
                   <TextField
                     id="outlined-basic"
                     label="備註"
-                    name={`secCompany.${index}.note`}
+                    name={`companyTypes.${index}.note`}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFieldValue(`secCompany.${index}.note`, e.target.value);
+                      setFieldValue(
+                        `companyTypes.${index}.note`,
+                        e.target.value
+                      );
                     }}
                     variant="outlined"
                   />
