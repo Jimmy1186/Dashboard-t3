@@ -37,7 +37,7 @@ function AddPriOrSecCompany({
   handleChange,
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
-
+console.log(errors)
   return (
     <>
       <h3>"支払業者"</h3>
@@ -54,11 +54,25 @@ function AddPriOrSecCompany({
                   <Autocomplete
                     options={company || []}
                     onChange={(_, value: any | null) => {
+                     
                       try {
                         setFieldValue(
                           `companyTypes.${index}.companyId`,
                           value.id
                         );
+                        {index!=0?(
+                          setFieldValue(
+                            `companyTypes.${index}.companyType`,
+                            "sec"
+                          )
+                        ):(
+                          setFieldValue(
+                            `companyTypes.${index}.companyType`,
+                            "pri"
+                          )
+                        )
+                        console.log(values.companyTypes)
+                      }
                       } catch (e) {
                         setErrors({
                           companyId: "一定要選",
@@ -85,6 +99,7 @@ function AddPriOrSecCompany({
                       );
                     }}
                   />
+
 
                   <OutlinedInput
                     startAdornment={
@@ -133,7 +148,8 @@ function AddPriOrSecCompany({
                       startIcon={<AddIcon />}
                       onClick={() =>
                         arrayHelpers.push({
-                          companyTypes: "sec",
+                          companyType: "sec",
+                          companyId:0,
                           amount: 0,
                           cutPayment: 0,
                           note: null,

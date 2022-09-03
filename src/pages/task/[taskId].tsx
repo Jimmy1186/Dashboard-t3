@@ -39,7 +39,7 @@ const taskSchema = z.object({
   companyTypes: z.array(
     z.object({
       companyId: z.number(),
-      companyType:z.any(),
+      companyType:z.string(),
       amount: z.number(),
       cutPayment: z.number(),
       note: z.string().nullable(),

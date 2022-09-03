@@ -136,19 +136,38 @@ export const addRouter = createProtectedRouter()
   //     return allTask;
   //   },
   // })
-  .query("test", {
+  .query("taskList", {
     resolve: async ({ ctx }) => {
       return await ctx.prisma.task.findMany({
-        select:{
-          task_name:true
-        }
-        // include:{
-        //   charges:true,
-        //   locations:true,
-        //   CompanyTypes:true,
-        //   installments:true
-        // }
-      })
+        select: {
+          id:true,
+          task_name: true,
+          charges: {
+            select: {
+              users:{
+                select:{
+                  username:true
+                }
+              } 
+            },
+          },
+          locations: {
+            select: {
+              location_name: true,
+            },
+          },
+          CompanyTypes: {
+            select: {
+              amount: true,
+              company: {
+                select: {
+                  c_name: true,
+                },
+              },
+            },
+          },
+        },
+      });
     },
   })
   .mutation("all", {
@@ -176,7 +195,7 @@ export const addRouter = createProtectedRouter()
       companyTypes: z
         .array(
           z.object({
-            companyType: z.any(),
+            companyType: z.string(),
             companyId: z.number(),
             amount: z.number(),
             cutPayment: z.number().nullable(),
@@ -229,6 +248,7 @@ export const addRouter = createProtectedRouter()
 
       if (companyTypes != null) {
         companyTypes.map(async (i) => {
+        
           await ctx.prisma.companyType.create({
             data: {
               taskId: id,

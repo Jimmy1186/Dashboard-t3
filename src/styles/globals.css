@@ -400,3 +400,9 @@ table > thead > tr > * {
   background: var(--bg-white);
   margin-bottom:3rem ;
 }
+
+.tableUsers{
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+}
