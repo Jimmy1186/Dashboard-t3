@@ -5,11 +5,10 @@ import Skeleton from "@mui/material/Skeleton";
 import AddTaskBtn, { createTaskType } from "../components/tools/AddTaskBtn";
 import { trpc } from "../../utils/trpc";
 import Paper from "@mui/material/Paper";
-import { v4 as uuidv4 } from 'uuid';
-import { Prisma } from '@prisma/client'
-
-
-
+import { v4 as uuidv4 } from "uuid";
+import { Prisma } from "@prisma/client";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const taskSchema = z.object({
   id: z.string(),
@@ -30,17 +29,31 @@ type tl = {
         } | null;
       }[]
     | null;
+  installments:
+    | {
+        percent: number | null;
+        ok: boolean;
+      }[]
+    | null;
   CompanyTypes:
     | {
         company: {
           c_name: string | null;
         } | null;
-        amount: Prisma.Decimal
+        amount: Prisma.Decimal;
+        cutPayment: Prisma.Decimal | null;
+        notes: string | null;
       }[];
 };
 
 function index() {
-  const { data: task, isLoading,refetch } = trpc.useQuery(["add.taskList"]);
+  const {
+    data: task,
+    isLoading,
+    refetch,
+  } = trpc.useQuery(["add.taskList"], {
+    keepPreviousData: true,
+  });
   const columns = useMemo<MRT_ColumnDef<tl>[]>(
     () => [
       {
@@ -92,10 +105,40 @@ function index() {
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
+            cutPayment: number;
+            notes: string;
           }[];
           const cv = cell.getValue() as cvType;
 
           return <div className="tableUsers">{cv[0]?.amount}</div>;
+        },
+      },
+      {
+        accessorFn: (row) => row.CompanyTypes,
+        header: "主差し引い",
+        Cell: ({ cell }) => {
+          type cvType = {
+            amount: number;
+            cutPayment: number;
+            notes: string;
+          }[];
+          const cv = cell.getValue() as cvType;
+
+          return <div className="tableUsers">{cv[0]?.cutPayment}</div>;
+        },
+      },
+      {
+        accessorFn: (row) => row.CompanyTypes,
+        header: "主備註",
+        Cell: ({ cell }) => {
+          type cvType = {
+            amount: number;
+            cutPayment: number;
+            notes: string;
+          }[];
+          const cv = cell.getValue() as cvType;
+
+          return <div className="tableUsers">{cv[0]?.notes}</div>;
         },
       },
       {
@@ -111,7 +154,7 @@ function index() {
 
           return (
             <div className="tableUsers">
-              {c.slice(1).map((i: any, n: number) => {
+              {c.slice(1).map((i: any) => {
                 return <p key={uuidv4()}>{i.company.c_name}</p>;
               })}
 
@@ -127,16 +170,90 @@ function index() {
           type cvType = {
             amount: number;
           }[];
-      
+          type cvTypes = {
+            amount: number;
+          };
+
           const c = cell.getValue() as cvType;
 
           return (
-            <div className="tableUsers" >
-              {c.slice(1).map((i: any) => {
-                return <p key={uuidv4()}>{i.amount}</p>;
-              })}
-
+            <div className="tableUsers">
+              {c.slice(1).reduce((n, { amount }) => n + Number(amount), 0)}
               <br />
+            </div>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => row.CompanyTypes,
+        header: "支払差し引い",
+        Cell: ({ cell }) => {
+          type cvType = {
+            amount: number;
+            cutPayment: number;
+          }[];
+          const c = cell.getValue() as cvType;
+
+          return (
+            <div className="tableUsers">
+              {c
+                .slice(1)
+                .reduce((n, { cutPayment }) => n + Number(cutPayment), 0)}
+            </div>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => row.CompanyTypes,
+        header: "支払備註",
+        Cell: ({ cell }) => {
+          type cvType = {
+            amount: number;
+            cutPayment: number;
+            notes: string;
+          }[];
+          type cvTypes = {
+            amount: number;
+            cutPayment: number;
+            notes: string;
+          };
+
+          const cv = cell.getValue() as cvType;
+
+          return (
+            <div className="tableUsers">
+              {cv.slice(1).map((i: cvTypes) => {
+                return <p key={uuidv4()}>{i.notes}</p>;
+              })}
+            </div>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => row.installments,
+        header: "分割払い",
+        Cell: ({ cell }) => {
+          type iType = {
+            percent: number;
+            ok: boolean;
+          }[];
+          type iTypes = {
+            percent: number;
+            ok: boolean;
+          };
+
+          const cv = cell.getValue() as iType;
+
+          return (
+            <div className="tableUsers">
+              {cv.map((i: iTypes) => {
+                return (
+                  <div className="installmenttable"  key={uuidv4()}>
+                    <p>{}</p>
+                    <FormControlLabel control={<Checkbox defaultChecked={i.ok} />} label={i.percent} />
+                  </div>
+                );
+              })}
             </div>
           );
         },

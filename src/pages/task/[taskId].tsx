@@ -42,7 +42,7 @@ const taskSchema = z.object({
       companyType:z.string(),
       amount: z.number(),
       cutPayment: z.number(),
-      note: z.string().nullable(),
+      notes: z.string().nullable(),
     })
   ).nullable(),
 });
@@ -83,7 +83,7 @@ function taskId() {
         companyId: 0,
         amount: 0,
         cutPayment: 0,
-        note: null,
+        notes: null,
       },
     ],
   };

@@ -159,6 +159,8 @@ export const addRouter = createProtectedRouter()
           CompanyTypes: {
             select: {
               amount: true,
+              cutPayment:true,
+              notes:true,
               company: {
                 select: {
                   c_name: true,
@@ -166,6 +168,12 @@ export const addRouter = createProtectedRouter()
               },
             },
           },
+          installments:{
+            select:{
+              percent:true,
+              ok:true
+            }
+          }
         },
       });
     },
@@ -199,7 +207,7 @@ export const addRouter = createProtectedRouter()
             companyId: z.number(),
             amount: z.number(),
             cutPayment: z.number().nullable(),
-            note: z.string().nullable(),
+            notes: z.string().nullable(),
           })
         )
         .nullable(),
@@ -256,6 +264,7 @@ export const addRouter = createProtectedRouter()
               amount: i.amount,
               cutPayment: i.cutPayment,
               companyId: i.companyId,
+              notes:i.notes
             },
           });
         });

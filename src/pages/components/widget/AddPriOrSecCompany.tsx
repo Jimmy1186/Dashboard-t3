@@ -163,10 +163,10 @@ console.log(errors)
                   <TextField
                     id="outlined-basic"
                     label="備註"
-                    name={`companyTypes.${index}.note`}
+                    name={`companyTypes.${index}.notes`}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setFieldValue(
-                        `companyTypes.${index}.note`,
+                        `companyTypes.${index}.notes`,
                         e.target.value
                       );
                     }}
