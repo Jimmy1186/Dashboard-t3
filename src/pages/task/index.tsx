@@ -54,6 +54,9 @@ function index() {
   } = trpc.useQuery(["add.taskList"], {
     keepPreviousData: true,
   });
+  const createTaskMutation = trpc.useMutation(["add.create"]);
+
+
   const columns = useMemo<MRT_ColumnDef<tl>[]>(
     () => [
       {
@@ -249,7 +252,6 @@ function index() {
               {cv.map((i: iTypes) => {
                 return (
                   <div className="installmenttable"  key={uuidv4()}>
-                    <p>{}</p>
                     <FormControlLabel control={<Checkbox defaultChecked={i.ok} />} label={i.percent} />
                   </div>
                 );
@@ -262,7 +264,7 @@ function index() {
     []
   );
 
-  const createTaskMutation = trpc.useMutation(["add.create"]);
+  
 
   console.log(task);
   const onCreate = useCallback(
@@ -285,15 +287,17 @@ function index() {
   }
   return (
     <>
-      <AddTaskBtn onCreateFn={onCreate} />
+    <div className="task-wrapper">
+  <AddTaskBtn onCreateFn={onCreate} />
       {isLoading ? (
         <Skeleton animation="wave">
           <Paper elevation={3} />
         </Skeleton>
       ) : (
-        <MaterialReactTable columns={columns} data={task ? task : []} />
+        <MaterialReactTable  columns={columns} data={task ? task : []} />
       )}
-      ;
+
+    </div>
     </>
   );
 }

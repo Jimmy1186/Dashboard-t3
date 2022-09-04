@@ -1,10 +1,13 @@
 :root {
+  --html-bg:#6B9080;
+   --nav-hover:#f6fff842;
+
   --yellow: linear-gradient(180deg, #f8d49a -146.42%, #fad79d -46.42%);
   --orange: #fca61f;
   --orange-bg:#fca61f96;
   --orange-text:#794a00;
 
-  --bg-white:#ffffffe3;
+  --bg-white:#ffff;
   --black: #242d49;
   --gray: #788097;
   --purple: linear-gradient(180deg, #bb67ff 0%, #c484f3 100%);
@@ -17,9 +20,8 @@
   --green-bg:#b2ff91a3;
   --green-text:#278100;
 
-  --glass: rgba(255, 255, 255, 0.54);
-  --boxShadow: 0px 19px 60px rgb(0 0 0 / 8%);
-  --smboxShadow: -79px 51px 60px rgba(0, 0, 0, 0.08);
+  --glass: #F6FFF8;
+  --box-shadow: #A4C3B2;
   --activeItem: #f799a354;
 }
 
@@ -56,7 +58,7 @@ body,
 
 html {
   color: var(--black);
-  background:#EEEEEE;
+  background:var(--html-bg);
 }
 #__next {
   display: flex;
@@ -71,6 +73,7 @@ html {
   border-radius: 2rem;
   overflow-y: auto;
   padding: 1rem;
+  margin-top: 1rem;
 }
 
 @media screen and (min-width: 1024px) {
@@ -97,29 +100,30 @@ html {
   width: 2rem;
   height: 2rem;
 }
-ul {
+nav>ul {
   list-style: none;
+  color:var(--bg-white);
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  padding: 0;
+  padding: 0 1.5rem 0 0.3rem;
 }
 
 .active {
-  background: var(--activeItem);
-  margin-left: 0;
-  transition:all 200ms ease-out
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
 }
 .active::before {
   content: "";
-  width: 8px;
-  height: 100%;
-  background: var(--pink);
-  margin-right: calc(1rem - 8px);
+  background: var(--bg-white);
+  width: 40%;
+  height: 0.2rem;
+  border-radius: 2rem;
+  position: absolute;
 }
-.activeLink{
-  transform: translateX(-1rem);
-}
+
 
 ul > li {
   display: flex;
@@ -142,7 +146,7 @@ ul > li > a {
 }
 
 ul>li>a:hover{
-  background: var(--glass);
+  background: var(--nav-hover);
   }
 
 .navBtn {
@@ -155,7 +159,7 @@ nav {
   top: 0;
   left: 0;
   z-index: 10;
-  background: #ffe0e0;
+  background: var(--html-bg);
   width: 55%;
 
   height: 100%;
@@ -195,6 +199,16 @@ nav {
   .navBtn {
     display: none;
   }
+  .active::before {
+    width: 60%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .active::before {
+    width: 30%;
+  }
+
 }
 
 /* ----------navbar----------- */
@@ -305,8 +319,6 @@ table > thead > tr > * {
 }
 
 .signupForm{
-  background-color: var(--bg-white);
-  padding: .5rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -393,16 +405,78 @@ table > thead > tr > * {
   transition: all 250ms linear 2s;
 }/* ----------alerbar----------- */
 
+.task-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
 
 .createTask{
-  height: 10rem;
   width: 100%;
-  background: var(--bg-white);
-  margin-bottom:3rem ;
 }
 
 .tableUsers{
   display: flex;
   gap: 1rem;
   flex-direction: row;
+}
+
+.bgPaper{
+  background: var(--bg-white);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 6px 8px 33px var(--box-shadow)
+}
+
+
+.addTaskBtn{
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #77bfa3;
+}
+
+.addTaskBtn:hover{
+  background: #35a87f5c;
+  scale: 1.2;
+}
+.addTaskBtn:active{
+  scale: 1;
+}
+
+.addTaskSvg{
+  width: 25px;
+  height: 25px;
+}
+.addTaskSvgPath{
+  color: var(--bg-white);
+ 
+}
+
+.errormsg{
+  color: #f4845f;
+}
+
+.inputWrapper{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  gap: .5rem;
+}
+.inputBox,.selectCompany{
+  width: 100%;
+}
+.datePicker{
+  width: 100%;
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: medium;
+  border-color: rgb(173 173 173 / 28%);
+}
+.selectCompanyBtn{
+  margin: 1rem;
 }

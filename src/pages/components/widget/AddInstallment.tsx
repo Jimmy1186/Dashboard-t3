@@ -26,70 +26,80 @@ function AddInstallment({
 }: taskType) {
   return (
     <>
-      <FieldArray
-        name="percent"
-        render={(arrayHelpers) => (
-          <div>
-            {values.percent && values.percent.length > 0 ? (
-              values.percent.map((per: any, index: any) => (
-                <div key={index}>
-                  <OutlinedInput
-                    startAdornment={
-                      <InputAdornment position="end">%</InputAdornment>
-                    }
-                    name={`percent.${index}.rate`}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setFieldValue(
-                        `percent.${index}.rate`,
-                        Number(e.target.value)
-                      );
-                    }}
-                  />
-                  <ButtonGroup
-                    variant="contained"
-                    aria-label="outlined primary button group"
-                  >
-                    <Button
-                      type="button"
-                      startIcon={<DeleteIcon />}
-                      onClick={() => arrayHelpers.remove(index)}
-                    >
-                      刪除
-                    </Button>
-                    <Button
-                      type="button"
-                      startIcon={<AddIcon />}
-                      onClick={() => arrayHelpers.push({ rate: 0, ok: false })}
-                    >
-                      新增
-                    </Button>
-                  </ButtonGroup>
-              
+      <div className="bgPaper ">
+      <h3>分期</h3>
+        <FieldArray
+          name="percent"
+          render={(arrayHelpers) => (
+            <div>
+              {values.percent && values.percent.length > 0 ? (
+                values.percent.map((per: any, index: any) => (
+                  <div key={index}>
+                    <div className="inputBox">
+                   
+                      <OutlinedInput
+                        startAdornment={
+                          <InputAdornment position="end">%</InputAdornment>
+                        }
+                        name={`percent.${index}.rate`}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldValue(
+                            `percent.${index}.rate`,
+                            Number(e.target.value)
+                          );
+                        }}
+                      />
+                    </div>
 
-                  <Field
-                    as={FormControlLabel}
-                    type="checkbox"
-                    name={`percent.${index}.ok`}
-                    control={<Checkbox />}
-                    label="OK"
-                  />
+                    <div className="inputBox">
+                      <Field
+                        as={FormControlLabel}
+                        type="checkbox"
+                        name={`percent.${index}.ok`}
+                        control={<Checkbox />}
+                        label="OK"
+                      />
+                    </div>
 
-                
-                </div>
-              ))
-            ) : (
-              <Button
-                type="button"
-                startIcon={<AddIcon />}
-                onClick={() => arrayHelpers.push("")}
-              >
-                {/* show this when user has removed all friends from the list */}
-                Add a percent
-              </Button>
-            )}
-          </div>
-        )}
-      />
+                    <div className="inputBox selectCompanyBtn">
+                      <ButtonGroup
+                        variant="contained"
+                        aria-label="outlined primary button group"
+                      >
+                        <Button
+                          type="button"
+                          startIcon={<DeleteIcon />}
+                          onClick={() => arrayHelpers.remove(index)}
+                        >
+                          刪除
+                        </Button>
+                        <Button
+                          type="button"
+                          startIcon={<AddIcon />}
+                          onClick={() =>
+                            arrayHelpers.push({ rate: 0, ok: false })
+                          }
+                        >
+                          新增
+                        </Button>
+                      </ButtonGroup>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <Button
+                  type="button"
+                  startIcon={<AddIcon />}
+                  onClick={() => arrayHelpers.push("")}
+                >
+                  {/* show this when user has removed all friends from the list */}
+                  Add a percent
+                </Button>
+              )}
+            </div>
+          )}
+        />
+      </div>
     </>
   );
 }

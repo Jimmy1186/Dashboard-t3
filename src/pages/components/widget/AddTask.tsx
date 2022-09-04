@@ -7,101 +7,112 @@ import { z } from "zod";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormControl from "@mui/material/FormControl";
+
 import DatePicker from "react-datepicker";
-import Head from "next/head";
-import Button from "@mui/material/Button";
-import AddLocation from "./AddLocation";
-
-
-
 
 type taskType = {
-  errors: any,
+  errors: any;
   setFieldValue: (dataName: string, data: Date) => void;
-  handleChange:(props:any)=>void,
-  values:any,
+  handleChange: (props: any) => void;
+  values: any;
 };
 
-function AddTask({ errors, setFieldValue,handleChange,values }: taskType) {
-
-
-
-
+function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
   return (
     <>
-    
-          
-          
+      <div className="bgPaper inputWrapper">
+        <div className="inputBox">
+          <p className="errormsg">{errors.task_name}</p>
 
-            {errors.name}
-            <TextField
-              id="outlined-basic"
-              name="task_name"
-              label="工事名"
-              onChange={handleChange}
-              variant="outlined"
-            />
-            {errors.p}
-            <TextField
-              type="number"
-              id="outlined-basic"
-              name="p"
-              label="坪数"
-              onChange={handleChange}
-              variant="outlined"
-            />
+          <TextField
+          fullWidth
+            id="outlined-basic"
+            name="task_name"
+            label="工事名"
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </div>
 
-            <InputLabel htmlFor="outlined-adornment-amount">坪単価</InputLabel>
+        <div className="inputBox">
+          <p className="errormsg">{errors.p}</p>
+          <TextField
+            fullWidth
+            type="number"
+            id="outlined-basic"
+            name="p"
+            label="坪数"
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </div>
 
-            {errors.pValue}
-            <OutlinedInput
-              type="number"
-              onChange={handleChange}
-              startAdornment={
-                <InputAdornment position="start">$</InputAdornment>
-              }
-              name="pValue"
-            />
+        <div className="inputBox">
+          <p className="errormsg"> {errors.pValue}</p>
+          <TextField
+            fullWidth
+            type="number"
+            onChange={handleChange}
+            name="pValue"
+            label="坪單價"
+          />
+        </div>
 
-            {errors.startDate}
-            <DatePicker
-              selected={values.startDate}
-              name="startDate"
-              onChange={(date:any) => {
-                setFieldValue("startDate", date);
-              }}
-            />
+        <div className="inputBox">
+          <h3>開工日期</h3>
+          <p className="errormsg">{errors.startDate}</p>
+          <DatePicker
+          placeholderText="2077/1/1"
+            className="datePicker"
+            selected={values.startDate}
+            name="startDate"
+            onChange={(date: any) => {
+              setFieldValue("startDate", date);
+            }}
+          />
+        </div>
 
-            {errors.endDate}
-            <DatePicker
-              selected={values.endDate}
-              name="endDate"
-              onChange={(date:any) => {
-                setFieldValue("endDate", date);
-              }}
-            />
+        <div className="inputBox">
+          <h3>完工日期</h3>
+          <p className="errormsg">{errors.endDate}</p>
+          <DatePicker
+           placeholderText="1925/3/5"
+            className="datePicker"
+            selected={values.endDate}
+            name="endDate"
+            onChange={(date: any) => {
+              setFieldValue("endDate", date);
+            }}
+          />
+        </div>
 
-            {errors.open}
-            <DatePicker
-              selected={values.open}
-              name="open"
-              onChange={(date:any) => {
-                setFieldValue("open", date);
-              }}
-            />
+        <div className="inputBox">
+          <h3>開幕日</h3>
+          <p className="errormsg">{errors.open}</p>
+          <DatePicker
+           placeholderText="1972/7/2"
+            className="datePicker"
+            selected={values.open}
+            name="open"
+            onChange={(date: any) => {
+              setFieldValue("open", date);
+            }}
+          />
+        </div>
 
-            {errors.createAt}
-            <DatePicker
-              selected={values.createAt}
-              name="createAt"
-              onChange={(date:any) => {
-                setFieldValue("createAt", date);
-              }}
-            />
-
-
+        <div className="inputBox">
+          <h3>做成日</h3>
+          <p className="errormsg">{errors.createAt}</p>
+          <DatePicker
+            className="datePicker"
+            selected={values.createAt}
+            name="createAt"
+            onChange={(date: any) => {
+              setFieldValue("createAt", date);
+            }}
+          />
+        </div>
+      </div>
     </>
   );
 }
