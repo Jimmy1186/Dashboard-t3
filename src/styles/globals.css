@@ -441,10 +441,10 @@ table > thead > tr > * {
 
 .addTaskBtn:hover{
   background: #35a87f5c;
-  scale: 1.2;
+  transform: scale(1.2);
 }
 .addTaskBtn:active{
-  scale: 1;
+  transform: scale(1);
 }
 
 .addTaskSvg{

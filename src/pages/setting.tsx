@@ -2,12 +2,10 @@ import { useSession } from "next-auth/react";
 import React, { useCallback, useState } from "react";
 import { changePasswordType } from "../types/common";
 import { trpc } from "../utils/trpc";
-import ChangePasswordTab from "./components/tools/ChangePasswordTab";
-import AlertBar from "./components/tools/AlertBar";
+import ChangePasswordTab from "../components/tools/ChangePasswordTab";
+import AlertBar from "../components/tools/AlertBar";
 
-function setting() {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+function Setting() {
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
 
   const { data: session } = useSession();
@@ -75,4 +73,4 @@ function setting() {
   );
 }
 
-export default setting;
+export default Setting;

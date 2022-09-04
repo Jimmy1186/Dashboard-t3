@@ -1,5 +1,5 @@
 import React from "react";
-import { changePasswordSchema, changePasswordType, userType } from "../../../types/common";
+import { changePasswordSchema, changePasswordType} from "../../types/common";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 

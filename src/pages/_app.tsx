@@ -5,10 +5,10 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "../components/layout/Navbar";
 import { useState } from "react";
-import GlassContainer from "./components/layout/GlassContainer";
-import NavBtn from "./components/tools/NavBtn";
+import GlassContainer from "../components/layout/GlassContainer";
+import NavBtn from "../components/tools/NavBtn";
 
 const MyApp: AppType = ({
   Component,

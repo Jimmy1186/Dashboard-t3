@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import mainLogo from "/public/mainLogo.gif";
-import { navStateType, pageIndexNavStateType } from "../../../types/common";
+import { pageIndexNavStateType } from "../../types/common";
 import Link from "next/link";
 function Navbar({
   navState,
@@ -20,7 +20,7 @@ const pageHandler =(n:number)=>{
     <>
       <nav className={`${navState ? "showNav" : "hideNav"}`}>
         <div className="logo">
-          <Image src={mainLogo} />
+          <Image src={mainLogo} alt="logo"/>
         </div>
         <ul>
           <li className={`${pageIndex===0?"active":""}`}>

@@ -1,19 +1,15 @@
-import React, { useCallback } from "react";
-import { Formik, Form, FieldArray, Field } from "formik";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import TextField from "@mui/material/TextField";
-import { z } from "zod";
+import React from "react";
+import { FieldArray, Field } from "formik";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { InputLabel, OutlinedInput } from "@mui/material";
+import { OutlinedInput } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 type taskType = {
   errors: any;
-  handleChange: (props: any) => void;
   values: any;
   setFieldValue: any;
 };
@@ -21,13 +17,13 @@ type taskType = {
 function AddInstallment({
   values,
   errors,
-  handleChange,
   setFieldValue,
 }: taskType) {
   return (
     <>
       <div className="bgPaper ">
       <h3>分期</h3>
+      <p className="errormsg">{errors.installment}</p>
         <FieldArray
           name="percent"
           render={(arrayHelpers) => (

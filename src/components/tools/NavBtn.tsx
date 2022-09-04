@@ -1,5 +1,5 @@
 import React from "react";
-import { navStateType } from "../../../types/common";
+import { navStateType } from "../../types/common";
 
 function NavBtn({ navState, setNavState }: navStateType) {
   return (

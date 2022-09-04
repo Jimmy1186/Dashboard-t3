@@ -1,17 +1,14 @@
-import { useMemo, useState } from "react";
-
-import Link from "next/link";
+import { useState } from "react";
 import { trpc } from "../../../utils/trpc";
-import { useQuery } from "react-query";
-import { alerType, signupUserType } from "../../../types/common";
-import Signup from "../../components/tools/Signup";
+import { signupUserType } from "../../../types/common";
+import Signup from "../../../components/tools/Signup";
 import { useCallback } from "react";
-import AlertBar from "../../components/tools/AlertBar";
+import AlertBar from "../../../components/tools/AlertBar";
 
-function index() {
+function Index() {
   const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
-  // const users = useMemo(() => data, []);
+
 
   const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
     onSuccess: () => {
@@ -40,7 +37,7 @@ function index() {
         role: Number(values.role),
       });
     },
-    [users, insertMutation]
+    [ insertMutation]
   );
 
   const sumbitHandler = async (values: signupUserType, action: any) => {
@@ -111,4 +108,4 @@ function index() {
   );
 }
 
-export default index;
+export default Index;

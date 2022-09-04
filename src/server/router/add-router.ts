@@ -1,6 +1,4 @@
-import * as trpc from "@trpc/server";
 import { z } from "zod";
-import { taskSqlType } from "../../types/task";
 import { createProtectedRouter } from "./protected-router";
 
 export const addRouter = createProtectedRouter()
@@ -17,7 +15,7 @@ export const addRouter = createProtectedRouter()
     resolve: async ({ ctx, input }) => {
       const { ...rest } = input;
 
-      let existColumn = await ctx.prisma.company
+      const existColumn = await ctx.prisma.company
         .count({
           where: {
             OR: [

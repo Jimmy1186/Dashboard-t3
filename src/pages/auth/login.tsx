@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import Image from "next/image";
-import { getProviders, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import * as z from "zod";
 import { baseUserType, baseUserSchema } from "../../types/common";
 
 
@@ -16,11 +14,11 @@ const initialValues = {
 
 
 
-function login() {
+function Login() {
   const router = useRouter();
 const [msg,setMsg]=useState("")
   const onsubmit = async (values: baseUserType) => {
-    const status = await signIn("credentials", {
+    await signIn("credentials", {
       redirect: false,
       id: values.id,
       password: values.password,
@@ -100,4 +98,4 @@ const [msg,setMsg]=useState("")
   );
 }
 
-export default login;
+export default Login;

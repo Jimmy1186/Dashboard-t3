@@ -1,9 +1,9 @@
 import React from "react";
-import { Formik, Form, FieldArray, Field } from "formik";
+import {  FieldArray } from "formik";
 import TextField from "@mui/material/TextField";
 import { z } from "zod";
 import Button from "@mui/material/Button";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -23,7 +23,6 @@ type locationType = {
   errors: any;
   setFieldValue: (dataName: string, v: number | string) => void;
   setErrors: (location: object) => void;
-  handleChange: (props: any) => void;
   values: any;
 };
 
@@ -32,7 +31,6 @@ function AddPriOrSecCompany({
   setFieldValue,
   setErrors,
   values,
-  handleChange,
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
   console.log(errors);
@@ -82,7 +80,7 @@ function AddPriOrSecCompany({
                       }
                       renderOption={(props: any, option: any) => {
                         return (
-                          <li {...props}>{`${option.id}:${option.c_name}`}</li>
+                          <p {...props}>{`${option.id}:${option.c_name}`}</p>
                         );
                       }}
                       renderInput={(params) => {

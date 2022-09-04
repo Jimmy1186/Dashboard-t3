@@ -2,7 +2,7 @@ import * as trpc from "@trpc/server";
 import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
 import argon2 from "argon2";
-import { TRPCError } from "@trpc/server";
+
 
 export const userRouter = createProtectedRouter()
   .query("userData", {

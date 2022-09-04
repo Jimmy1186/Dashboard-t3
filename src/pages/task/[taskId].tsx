@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
-import AddCharge from "../components/widget/AddCharge";
-import AddCompony from "../components/widget/AddCompony";
-import AddInstallment from "../components/widget/AddInstallment";
-import AddLocation from "../components/widget/AddLocation";
-import AddPriOrSecCompany from "../components/widget/AddPriOrSecCompany";
-import AddTask from "../components/widget/AddTask";
+import AddCharge from "../../components/widget/AddCharge";
+import AddCompony from "../../components/widget/AddCompony";
+import AddInstallment from "../../components/widget/AddInstallment";
+import AddLocation from "../../components/widget/AddLocation";
+import AddPriOrSecCompany from "../../components/widget/AddPriOrSecCompany";
+import AddTask from "../../components/widget/AddTask";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
@@ -16,7 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import AddIcon from "@mui/icons-material/Add";
 
 const taskSchema = z.object({
-  id:z.string(),
+  id: z.string(),
   task_name: z.string(),
   p: z.number(),
   pValue: z.number(),
@@ -36,39 +36,37 @@ const taskSchema = z.object({
       ok: z.boolean(),
     })
   ),
-  companyTypes: z.array(
-    z.object({
-      companyId: z.number(),
-      companyType:z.string(),
-      amount: z.number(),
-      cutPayment: z.number(),
-      notes: z.string().nullable(),
-    })
-  ).nullable(),
+  companyTypes: z
+    .array(
+      z.object({
+        companyId: z.number(),
+        companyType: z.string(),
+        amount: z.number(),
+        cutPayment: z.number(),
+        notes: z.string().nullable(),
+      })
+    )
+    .nullable(),
 });
-
 
 export type taskType = z.infer<typeof taskSchema>;
 
-
-function taskId() {
+function TaskId() {
   const router = useRouter();
   const [companyToggle, setCompanyToggle] = useState(false);
   const taskId = router.query.taskId as string;
 
+  const AllMutation = trpc.useMutation(["add.all"]);
 
-
-  const AllMutation = trpc.useMutation(['add.all'])
-
-  let initialValues = {
-    id:taskId,
+  const initialValues = {
+    id: taskId,
     task_name: "",
     p: 0,
     pValue: 0,
     startDate: null,
     endDate: null,
     open: null,
-    createAt:  new Date(),
+    createAt: new Date(),
     locationId: 0,
     userId: [],
     percent: [
@@ -79,7 +77,7 @@ function taskId() {
     ],
     companyTypes: [
       {
-        companyType:"pri",
+        companyType: "pri",
         companyId: 0,
         amount: 0,
         cutPayment: 0,
@@ -88,61 +86,49 @@ function taskId() {
     ],
   };
 
+  const onAll = useCallback(
+    (values: taskType) => {
+      const {
+        id,
+        task_name,
+        p,
+        pValue,
+        startDate,
+        endDate,
+        open,
+        createAt,
+        locationId,
+        userId,
+        percent,
+        companyTypes,
+      } = values;
 
-const onAll = useCallback(
- 
-  (values:taskType)=>{
+      if (companyTypes === null) {
+        return;
+      }
 
-    const {
-      id,
-      task_name,
-      p,
-      pValue,
-      startDate,
-      endDate,
-      open,
-      createAt,
-      locationId,
-      userId,
-      percent,
-      companyTypes,
-    } = values;
-
-
-    if(companyTypes===null){
-      return
-    }
-
-
-
-
-    AllMutation.mutate({
-      id: id,
-      task_name:task_name,
-      p: p,
-      pValue: pValue,
-      startDate: startDate,
-      endDate: endDate,
-      open: open,
-      createAt: createAt,
-      locationId: locationId,
-      userId: userId,
-      percent:percent,
-      companyTypes:companyTypes,
-
-    })
-  },
-  [AllMutation]
-)
-
-
-
+      AllMutation.mutate({
+        id: id,
+        task_name: task_name,
+        p: p,
+        pValue: pValue,
+        startDate: startDate,
+        endDate: endDate,
+        open: open,
+        createAt: createAt,
+        locationId: locationId,
+        userId: userId,
+        percent: percent,
+        companyTypes: companyTypes,
+      });
+    },
+    [AllMutation]
+  );
 
   const sumbitHandler = (values: taskType, action: any) => {
-
-    onAll(values)
+    onAll(values);
     console.log(values);
-    action.resetForm()
+    action.resetForm();
   };
 
   return (
@@ -180,11 +166,8 @@ const onAll = useCallback(
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
-                handleChange={handleChange}
                 values={values}
               />
-
-
 
               <AddLocation
                 errors={errors}
@@ -195,7 +178,6 @@ const onAll = useCallback(
                 values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
-                handleChange={handleChange}
               />
 
               <Button variant="outlined" type="submit" disabled={!isValid}>
@@ -208,7 +190,6 @@ const onAll = useCallback(
 
       {companyToggle ? (
         <>
-        
           <AddCompony
             setCompanyToggle={setCompanyToggle}
             companyToggle={companyToggle}
@@ -221,7 +202,6 @@ const onAll = useCallback(
             startIcon={<AddIcon />}
             onClick={() => setCompanyToggle(!companyToggle)}
           >
-        
             新增公司資料
           </Button>
         </>
@@ -230,4 +210,4 @@ const onAll = useCallback(
   );
 }
 
-export default taskId;
+export default TaskId;

@@ -1,8 +1,6 @@
 import argon2 from "argon2";
 import { PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient();
-
-import { NextApiHandler } from "next";
 import NextAuth, { NextAuthOptions } from "next-auth";
 
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -22,14 +20,16 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
 
- 
+        if(credentials===undefined){
+          return null
+        }
         const registeredUser = await prisma.user.findFirst({
-          where: { id: { equals: credentials?.id } },
+          where: { id: { equals: credentials.id } },
         });
    
         if (registeredUser){
 
-        const match =  await argon2.verify(registeredUser.password,credentials?.password!)
+        const match =  await argon2.verify(registeredUser.password,credentials.password)
         
         if(match){
           return {
@@ -37,7 +37,6 @@ export const authOptions: NextAuthOptions = {
             name: registeredUser.username,
             role: registeredUser.roleId,
           }}
-          return null
         }
           
 

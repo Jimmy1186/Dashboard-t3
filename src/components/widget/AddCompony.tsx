@@ -2,10 +2,9 @@ import React, { useCallback } from "react";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TextField from "@mui/material/TextField";
-import { z } from "zod";
 import Button from "@mui/material/Button";
-import { companySchema, companyType } from "../../../types/common";
-import { trpc } from "../../../utils/trpc";
+import { companySchema, companyType } from "../../types/common";
+import { trpc } from "../../utils/trpc";
 import CloseIcon from "@mui/icons-material/Close";
 
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { glassContainerType } from "../../../types/common";
+import { glassContainerType } from "../../types/common";
 
 function GlassContainer({ children }: glassContainerType) {
   return (

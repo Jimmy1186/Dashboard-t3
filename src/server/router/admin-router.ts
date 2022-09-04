@@ -23,13 +23,13 @@ export const tempRouter = createRouter()
       message: "已有使用者使用該名稱",
     });
     try {
-      let existUserName = await ctx.prisma.user.count({
+      const existUserName = await ctx.prisma.user.count({
         where: {
           username: input.username,
         },
       });
 
-      let existUserId = await ctx.prisma.user.count({
+      const existUserId = await ctx.prisma.user.count({
         where: {
           id: input.id,
         },
@@ -92,13 +92,13 @@ export const adminRouter = createProtectedRouter()
         message: "已有使用者使用該名稱",
       });
       try {
-        let existUserName = await ctx.prisma.user.count({
+        const existUserName = await ctx.prisma.user.count({
           where: {
             username: input.username,
           },
         });
 
-        let existUserId = await ctx.prisma.user.count({
+        const existUserId = await ctx.prisma.user.count({
           where: {
             id: input.id,
           },

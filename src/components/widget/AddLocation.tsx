@@ -1,10 +1,6 @@
-import React, { useCallback } from "react";
-import { Formik, Form } from "formik";
-import { toFormikValidationSchema } from "zod-formik-adapter";
+import React from "react";
 import TextField from "@mui/material/TextField";
-import { z } from "zod";
-import Button from "@mui/material/Button";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import Autocomplete from "@mui/material/Autocomplete";
 
 type locationType = {
@@ -37,10 +33,10 @@ function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
           getOptionLabel={(option) => `${option.id}${option.location_name}`}
           renderOption={(props: any, option: any) => {
             return (
-              <li
+              <p
                 {...props}
                 className="autoList"
-              >{`${option.id}:${option.location_name}`}</li>
+              >{`${option.id}:${option.location_name}`}</p>
             );
           }}
           renderInput={(params) => {

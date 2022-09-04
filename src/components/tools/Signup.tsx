@@ -1,18 +1,7 @@
 import React from 'react'
-
-
-
-
-
-
-import { useReducer, useState } from "react";
 import { Formik, Form } from "formik";
-import { getProviders, signIn } from "next-auth/react";
-import { getCsrfToken } from "next-auth/react";
-import * as z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { trpc } from "../../../utils/trpc";
-import { alerType, signupUserSchema,signupUserType } from "../../../types/common";
+import { signupUserSchema,signupUserType } from "../../types/common";
 
 
 

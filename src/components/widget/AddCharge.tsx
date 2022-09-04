@@ -2,7 +2,7 @@ import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { z } from "zod";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 
 const baseUser = z.object({
   id: z.string(),
@@ -33,7 +33,7 @@ function AddCharge({ errors, setFieldValue, setErrors }: locationType) {
           multiple
           options={users || []}
           onChange={(_, value: any) => {
-            let Uid = value.map((i: any) => {
+            const Uid = value.map((i: any) => {
               return { id: i.id };
             });
 
@@ -48,10 +48,10 @@ function AddCharge({ errors, setFieldValue, setErrors }: locationType) {
           getOptionLabel={(option) => `${option.id}${option.username}`}
           renderOption={(props: any, option: any) => {
             return (
-              <li
+              <p
                 {...props}
                 className="autoList"
-              >{`${option.id}:${option.username}`}</li>
+              >{`${option.id}:${option.username}`}</p>
             );
           }}
           renderInput={(params) => {

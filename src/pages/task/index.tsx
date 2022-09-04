@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { z } from "zod";
 import Skeleton from "@mui/material/Skeleton";
-import AddTaskBtn, { createTaskType } from "../components/tools/AddTaskBtn";
+import AddTaskBtn, { createTaskType } from "../../components/tools/AddTaskBtn";
 import { trpc } from "../../utils/trpc";
 import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
@@ -46,11 +46,10 @@ type tl = {
       }[];
 };
 
-function index() {
+function Index() {
   const {
     data: task,
     isLoading,
-    refetch,
   } = trpc.useQuery(["add.taskList"], {
     keepPreviousData: true,
   });
@@ -75,11 +74,11 @@ function index() {
         accessorFn: (row) => row.charges,
         header: "擔當人",
         Cell: ({ cell }) => {
-          const users = cell.getValue() as Array<String>;
+          const users = cell.getValue() as Array<string>;
 
           return (
             <div className="tableUsers">
-              {users.map((i: any, n: number) => {
+              {users.map((i: any) => {
                 return <p key={uuidv4()}>{i.users.username}</p>;
               })}
 
@@ -173,9 +172,7 @@ function index() {
           type cvType = {
             amount: number;
           }[];
-          type cvTypes = {
-            amount: number;
-          };
+       
 
           const c = cell.getValue() as cvType;
 
@@ -302,4 +299,4 @@ function index() {
   );
 }
 
-export default index;
+export default Index;
