@@ -70,83 +70,35 @@ export const addRouter = createProtectedRouter()
       });
     },
   })
-  .mutation("create", {
+  .mutation("delete", {
     input: z.object({
       id: z.string(),
     }),
-    output: z.object({
-      msg: z.string(),
-      alertStatus: z.string(),
-    }),
     resolve: async ({ ctx, input }) => {
-      const existTask = await ctx.prisma.task.count({
+      return await ctx.prisma.task.delete({
         where: {
           id: input.id,
         },
       });
-
-      if (existTask != 0) {
-        return { msg: "已有該專案編號", alertStatus: "warn" };
-      }
-
-      await ctx.prisma.task.create({
-        data: {
-          id: input.id,
-          createAt: new Date(),
-          locationId: 1,
-        },
-      });
-      return { msg: "新增成功", alertStatus: "success" };
     },
   })
-  // .query("findOneTask", {
-  //   input: z.object({
-  //     taskId: z.string(),
-  //   }),
-  //   resolve: async ({ ctx, input }) => {
-  //     // const tId = await input.taskId;
-  //     return await ctx.prisma
-  //       .$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
-  //   GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
-  //   (SELECT GROUP_CONCAT(percent) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS percent ,
-  //   (SELECT GROUP_CONCAT(ok) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS ok
-  //   FROM Task
-  //   INNER JOIN Location ON Task.locationId = Location.id
-  //   INNER JOIN Charge ON Task.id = Charge.taskId
-  //   INNER JOIN Installment ON Task.id = Installment.TaskId
-  //   WHERE Task.id=${input.taskId}
-  //   group by Task.id;`;
-  //   },
-  // })
-  // .query("findAllTask", {
-  //   resolve: async ({ ctx }) => {
-  //     const allTask: taskSqlType = await ctx.prisma
-  //       .$queryRaw`SELECT Task.id,Task.name,p,pValue,startDate,endDate,open,createAt,locationId,
-  //   GROUP_CONCAT(DISTINCT Charge.userId) AS charge,
-  //   (SELECT GROUP_CONCAT(percent) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS percent ,
-  //   (SELECT GROUP_CONCAT(ok) FROM Installment JOIN Task ON Installment.taskId=TASK.id) AS ok
-  //   FROM Task
-  //   INNER JOIN Location ON Task.locationId = Location.id
-  //   INNER JOIN Charge ON Task.id = Charge.taskId
-  //   INNER JOIN Installment ON Task.id = Installment.TaskId
-  //   group by Task.id;`;
-
-  //     return allTask;
-  //   },
-  // })
   .query("taskList", {
     resolve: async ({ ctx }) => {
       return await ctx.prisma.task.findMany({
         select: {
-          id:true,
+          id: true,
           task_name: true,
+          startDate: true,
+          endDate: true,
+          createAt: true,
+          openDate: true,
           charges: {
             select: {
-              users:{
-                select:{
-                  username:true
-                }
-              } 
+              users: {
+                select: {
+                  username: true,
+                },
+              },
             },
           },
           locations: {
@@ -157,8 +109,8 @@ export const addRouter = createProtectedRouter()
           CompanyTypes: {
             select: {
               amount: true,
-              cutPayment:true,
-              notes:true,
+              cutPayment: true,
+              notes: true,
               company: {
                 select: {
                   c_name: true,
@@ -166,17 +118,17 @@ export const addRouter = createProtectedRouter()
               },
             },
           },
-          installments:{
-            select:{
-              percent:true,
-              ok:true
-            }
-          }
+          installments: {
+            select: {
+              percent: true,
+              ok: true,
+            },
+          },
         },
       });
     },
   })
-  .mutation("all", {
+  .mutation("createTask", {
     input: z.object({
       id: z.string(),
       task_name: z.string(),
@@ -184,31 +136,29 @@ export const addRouter = createProtectedRouter()
       pValue: z.number(),
       startDate: z.date().nullable(),
       endDate: z.date().nullable(),
-      open: z.date().nullable(),
+      openDate: z.date().nullable(),
       createAt: z.date(),
       locationId: z.number(),
-      userId: z.array(
+      charge: z.array(
         z.object({
-          id: z.string(),
+          userId: z.string(),
         })
       ),
-      percent: z.array(
+      installment: z.array(
         z.object({
-          rate: z.number(),
+          percent: z.number(),
           ok: z.boolean(),
         })
       ),
-      companyTypes: z
-        .array(
-          z.object({
-            companyType: z.string(),
-            companyId: z.number(),
-            amount: z.number(),
-            cutPayment: z.number().nullable(),
-            notes: z.string().nullable(),
-          })
-        )
-        .nullable(),
+      companyType: z.array(
+        z.object({
+          c_Type: z.string(),
+          companyId: z.number(),
+          amount: z.number(),
+          cutPayment: z.number().nullable(),
+          notes: z.string().nullable(),
+        })
+      ),
     }),
     resolve: async ({ ctx, input }) => {
       const {
@@ -218,18 +168,15 @@ export const addRouter = createProtectedRouter()
         pValue,
         startDate,
         endDate,
-        open,
+        openDate,
         createAt,
         locationId,
-        userId,
-        percent,
-        companyTypes,
+        charge,
+        installment,
+        companyType,
       } = input;
 
-      await ctx.prisma.task.update({
-        where: {
-          id: id,
-        },
+      return await ctx.prisma.task.create({
         data: {
           id: id,
           task_name: task_name,
@@ -237,52 +184,36 @@ export const addRouter = createProtectedRouter()
           pValue: pValue,
           startDate: startDate,
           endDate: endDate,
-          openDate: open,
+          openDate: openDate,
           createAt: createAt,
           locationId: locationId,
-        },
-      });
-
-      userId.map(async (chargeData) => {
-        return await ctx.prisma.charge.create({
-          data: {
-            taskId: id,
-            userId: chargeData.id,
-          },
-        });
-      });
-
-      if (companyTypes != null) {
-        companyTypes.map(async (i) => {
-        
-          await ctx.prisma.companyType.create({
-            data: {
-              taskId: id,
-              companyType: i.companyType,
-              amount: i.amount,
-              cutPayment: i.cutPayment,
-              companyId: i.companyId,
-              notes:i.notes
+          charges: {
+            createMany: {
+              data: charge,
             },
-          });
-        });
-      }
-
-      await ctx.prisma.history.create({
-        data: {
-          userId: ctx.session.user.id,
-          taskId: id,
-        },
-      });
-
-      percent.map(async (i) => {
-        return await ctx.prisma.installment.create({
-          data: {
-            percent: i.rate,
-            ok: i.ok,
-            taskId: id,
           },
-        });
+          CompanyTypes: {
+            createMany: {
+              data: companyType,
+            },
+          },
+          history: {
+            create: {
+              userId: ctx.session.user.id,
+            },
+          },
+          installments: {
+            createMany: {
+              data: installment,
+            },
+          },
+        },
+        include: {
+          charges: true,
+          CompanyTypes: true,
+          history: true,
+          installments: true,
+        },
       });
     },
   });

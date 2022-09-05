@@ -1,24 +1,29 @@
-import React, { useCallback, useMemo } from "react";
-import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
-import { z } from "zod";
+import React, { useCallback, useMemo, useState } from "react";
+import MaterialReactTable, {
+  MRT_ColumnDef,
+  MRT_Row,
+} from "material-react-table";
 import Skeleton from "@mui/material/Skeleton";
-import AddTaskBtn, { createTaskType } from "../../components/tools/AddTaskBtn";
 import { trpc } from "../../utils/trpc";
 import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
 import { Prisma } from "@prisma/client";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-
-const taskSchema = z.object({
-  id: z.string(),
-});
-
-export type taskType = z.infer<typeof taskSchema>;
+import { format } from "date-fns";
+import { Edit, Delete } from "@mui/icons-material";
+import { Tooltip, IconButton, Box, Autocomplete } from "@mui/material";
+import CreateTask from "../../components/tools/CreateTask";
+import { taskType } from "../../types/task";
+import AddLocation from "../../components/widget/AddLocation";
 
 type tl = {
   id: string;
   task_name: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  createAt: Date;
+  openDate: Date | null;
   locations: {
     location_name: string | null;
   } | null;
@@ -46,14 +51,114 @@ type tl = {
       }[];
 };
 
+
+
+const initialValues = {
+  id: "",
+  task_name: "",
+  p: 0,
+  pValue: 0,
+  startDate: null,
+  endDate: null,
+  openDate: null,
+  createAt: new Date(),
+  locationId: 0,
+  charge: [],
+  installment: [
+    {
+      percent: 0,
+      ok: false,
+    },
+  ],
+  companyType: [
+    {
+      c_Type: "pri",
+      companyId: 0,
+      amount: 0,
+      cutPayment: 0,
+      notes: null,
+    },
+  ],
+};
+
+
+
+
+
+
+
+
 function Index() {
-  const {
-    data: task,
-    isLoading,
-  } = trpc.useQuery(["add.taskList"], {
-    keepPreviousData: true,
+  const [coe,setCoe]=useState(true)
+  const [editData,setEditData]= useState<any>()
+  const [open, setOpen] = React.useState(false);
+  const { data: task, isLoading, refetch } = trpc.useQuery(["add.taskList"]);
+  const AllMutation = trpc.useMutation(["add.createTask"], {
+    onSuccess: () => refetch(),
   });
-  const createTaskMutation = trpc.useMutation(["add.create"]);
+  const onAll = useCallback(
+    (values: taskType) => {
+      const {
+        id,
+        task_name,
+        p,
+        pValue,
+        startDate,
+        endDate,
+        openDate,
+        createAt,
+        locationId,
+        charge,
+        installment,
+        companyType,
+      } = values;
+
+      if (companyType === null) {
+        return;
+      }
+
+      AllMutation.mutate({
+        id: id,
+        task_name: task_name,
+        p: p,
+        pValue: pValue,
+        startDate: startDate,
+        endDate: endDate,
+        openDate: openDate,
+        createAt: createAt,
+        locationId: locationId,
+        charge: charge,
+        installment: installment,
+        companyType: companyType,
+      });
+      setOpen(false);
+    },
+    [task, AllMutation]
+  );
+
+  const editTask =(val:any)=>{
+    setEditData(val)
+    setOpen(!open)
+  }
+
+  const deleteMutation = trpc.useMutation(["add.delete"], {
+    onSuccess: () => refetch(),
+  });
+
+  const onDeleteRow = useCallback(
+    (row: MRT_Row<tl>) => {
+      if (!confirm(`確定刪除 ${row.getValue("id")} ?`)) {
+        return;
+      }
+
+      deleteMutation.mutate({
+        id: row.getValue("id"),
+      });
+    },
+    [task, deleteMutation]
+  );
+
+
 
 
   const columns = useMemo<MRT_ColumnDef<tl>[]>(
@@ -172,7 +277,6 @@ function Index() {
           type cvType = {
             amount: number;
           }[];
-       
 
           const c = cell.getValue() as cvType;
 
@@ -248,8 +352,11 @@ function Index() {
             <div className="tableUsers">
               {cv.map((i: iTypes) => {
                 return (
-                  <div className="installmenttable"  key={uuidv4()}>
-                    <FormControlLabel control={<Checkbox defaultChecked={i.ok} />} label={i.percent} />
+                  <div className="installmenttable" key={uuidv4()}>
+                    <FormControlLabel
+                      control={<Checkbox defaultChecked={i.ok} />}
+                      label={i.percent}
+                    />
                   </div>
                 );
               })}
@@ -257,20 +364,44 @@ function Index() {
           );
         },
       },
+      {
+        accessorFn: (row) => row.createAt,
+        header: "作成日",
+        Cell: ({ cell }) => {
+          const d = cell.getValue() as Date;
+
+          return <p>{format(new Date(d), "yyyy-MM-dd")}</p>;
+        },
+      },
+      {
+        accessorFn: (row) => row.startDate,
+        header: "開工日",
+        Cell: ({ cell }) => {
+          const d = cell.getValue() as Date;
+
+          return <p>{format(new Date(d), "yyyy-MM-dd")}</p>;
+        },
+      },
+      {
+        accessorFn: (row) => row.endDate,
+        header: "完工日",
+        Cell: ({ cell }) => {
+          const d = cell.getValue() as Date;
+
+          return <p>{format(new Date(d), "yyyy-MM-dd")}</p>;
+        },
+      },
+      {
+        accessorFn: (row) => row.openDate,
+        header: "開幕日",
+        Cell: ({ cell }) => {
+          const d = cell.getValue() as Date;
+
+          return <p>{format(new Date(d), "yyyy-MM-dd")}</p>;
+        },
+      },
     ],
     []
-  );
-
-  
-
-  console.log(task);
-  const onCreate = useCallback(
-    (values: createTaskType) => {
-      createTaskMutation.mutate({
-        id: values.id,
-      });
-    },
-    [createTaskMutation]
   );
 
   if (isLoading) {
@@ -284,17 +415,56 @@ function Index() {
   }
   return (
     <>
-    <div className="task-wrapper">
-  <AddTaskBtn onCreateFn={onCreate} />
-      {isLoading ? (
-        <Skeleton animation="wave">
-          <Paper elevation={3} />
-        </Skeleton>
-      ) : (
-        <MaterialReactTable  columns={columns} data={task ? task : []} />
-      )}
+      <div className="task-wrapper">
+        <div className="addTaskBtn" onClick={() => {
+          setOpen(!open)
+          setCoe(true)
+        }}>
+          <svg className="addTaskSvg" viewBox="0 0 24 24">
+            <path
+              className="addTaskSvgPath"
+              fill="currentColor"
+              d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+            />
+          </svg>
+        </div>
 
-    </div>
+        {isLoading ? (
+          <Skeleton animation="wave">
+            <Paper elevation={3} />
+          </Skeleton>
+        ) : (
+          <MaterialReactTable
+            columns={columns}
+            data={task ? task : []}
+            editingMode="modal" //default
+            enableColumnOrdering
+            enableEditing
+            renderRowActions={({ row, table }) => (
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Tooltip arrow placement="left" title="Edit">
+                <IconButton onClick={() => editTask(row.original)}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Delete">
+                  <IconButton color="error" onClick={() => onDeleteRow(row)}>
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
+          />
+        )}
+        {task!=undefined?(
+          <CreateTask 
+          open={open} 
+          setOpen={setOpen} 
+          onAll={onAll} 
+          initialValues={editData}
+          />
+        ):("")}
+      </div>
     </>
   );
 }

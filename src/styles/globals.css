@@ -322,6 +322,7 @@ table > thead > tr > * {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding: 1rem;
 }
 .signupForm>label{
   font-size: 1.5em;
@@ -479,4 +480,11 @@ table > thead > tr > * {
 }
 .selectCompanyBtn{
   margin: 1rem;
+}
+
+.createTaskBox{
+  display: flex;
+  gap: 5rem;
+  justify-content: flex-end;
+  padding: 2rem 1rem;
 }

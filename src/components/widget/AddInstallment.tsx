@@ -8,28 +8,29 @@ import InputAdornment from "@mui/material/InputAdornment";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-type taskType = {
+import { taskType } from "../../types/task";
+type iType = {
   errors: any;
-  values: any;
-  setFieldValue: any;
+  values: taskType;
+  setFieldValue: (i: string, j: number) => void;
 };
 
 function AddInstallment({
   values,
   errors,
   setFieldValue,
-}: taskType) {
+}: iType) {
   return (
     <>
       <div className="bgPaper ">
       <h3>分期</h3>
       <p className="errormsg">{errors.installment}</p>
         <FieldArray
-          name="percent"
+          name="installment"
           render={(arrayHelpers) => (
             <div>
-              {values.percent && values.percent.length > 0 ? (
-                values.percent.map((per: any, index: any) => (
+              {values.installment && values.installment.length > 0 ? (
+                values.installment.map((per: any, index: number) => (
                   <div key={index}>
                     <div className="inputBox">
                    
@@ -37,10 +38,10 @@ function AddInstallment({
                         startAdornment={
                           <InputAdornment position="end">%</InputAdornment>
                         }
-                        name={`percent.${index}.rate`}
+                        name={`installment.${index}.percent`}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setFieldValue(
-                            `percent.${index}.rate`,
+                            `installment.${index}.percent`,
                             Number(e.target.value)
                           );
                         }}
@@ -51,7 +52,7 @@ function AddInstallment({
                       <Field
                         as={FormControlLabel}
                         type="checkbox"
-                        name={`percent.${index}.ok`}
+                        name={`installment.${index}.ok`}
                         control={<Checkbox />}
                         label="OK"
                       />
@@ -73,7 +74,7 @@ function AddInstallment({
                           type="button"
                           startIcon={<AddIcon />}
                           onClick={() =>
-                            arrayHelpers.push({ rate: 0, ok: false })
+                            arrayHelpers.push({ percent: 0, ok: false })
                           }
                         >
                           新增
@@ -89,7 +90,7 @@ function AddInstallment({
                   onClick={() => arrayHelpers.push("")}
                 >
                   {/* show this when user has removed all friends from the list */}
-                  Add a percent
+                  Add a installment
                 </Button>
               )}
             </div>

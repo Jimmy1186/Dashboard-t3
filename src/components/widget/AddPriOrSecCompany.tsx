@@ -10,6 +10,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { taskType } from "../../types/task";
 
 export const selectCompanySchema = z.object({
   companyId: z.number().min(1, "一定要選"),
@@ -21,8 +22,8 @@ export type selectCompanyType = z.infer<typeof selectCompanySchema>;
 
 type locationType = {
   errors: any;
-  setFieldValue: (dataName: string, v: number | string) => void;
-  setErrors: (location: object) => void;
+  setFieldValue: (i: string, j: number | string) => void;
+  setErrors: (i: object) => void;
   values: any;
 };
 
@@ -33,41 +34,41 @@ function AddPriOrSecCompany({
   values,
 }: locationType) {
   const { data: company } = trpc.useQuery(["add.findCompany"]);
-  console.log(errors);
+
+ 
   return (
     <div className="bgPaper inputWrapper">
      
 
       {errors.companyId}
       <FieldArray
-        name="companyTypes"
+        name="companyType"
         validateOnChange={false}
         render={(arrayHelpers) => (
           <>
-            {values.companyTypes && values.companyTypes.length > 0 ? (
-              values.companyTypes.map((per: any, index: any) => (
+            {values.companyType && values.companyType.length > 0 ? (
+              values.companyType.map((per: any, index: number) => (
                 <div key={index} className="selectCompany">
                   <div className="inputBox">
                   <h3>契約公司</h3>
                     <Autocomplete
                       options={company || []}
-                      onChange={(_, value: any | null) => {
+                      onChange={(_, value: any ) => {
                         try {
                           setFieldValue(
-                            `companyTypes.${index}.companyId`,
+                            `companyType.${index}.companyId`,
                             value.id
                           );
                           {
                             index != 0
                               ? setFieldValue(
-                                  `companyTypes.${index}.companyType`,
+                                  `companyType.${index}.c_Type`,
                                   "sec"
                                 )
                               : setFieldValue(
-                                  `companyTypes.${index}.companyType`,
+                                  `companyType.${index}.c_Type`,
                                   "pri"
                                 );
-                            console.log(values.companyTypes);
                           }
                         } catch (e) {
                           setErrors({
@@ -86,7 +87,7 @@ function AddPriOrSecCompany({
                       renderInput={(params) => {
                         return (
                           <TextField
-                            value={`companyTypes.${index}.companyId`}
+                            value={`companyType.${index}.companyId`}
                             {...params}
                             label="選擇公司"
                             variant="outlined"
@@ -103,10 +104,10 @@ function AddPriOrSecCompany({
                       startAdornment={
                         <InputAdornment position="start">$</InputAdornment>
                       }
-                      name={`companyTypes.${index}.amount`}
+                      name={`companyType.${index}.amount`}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setFieldValue(
-                          `companyTypes.${index}.amount`,
+                          `companyType.${index}.amount`,
                           Number(e.target.value)
                         );
                       }}
@@ -120,10 +121,10 @@ function AddPriOrSecCompany({
                       startAdornment={
                         <InputAdornment position="start">$</InputAdornment>
                       }
-                      name={`companyTypes.${index}.cutPayment`}
+                      name={`companyType.${index}.cutPayment`}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setFieldValue(
-                          `companyTypes.${index}.cutPayment`,
+                          `companyType.${index}.cutPayment`,
                           Number(e.target.value)
                         );
                       }}
@@ -135,10 +136,10 @@ function AddPriOrSecCompany({
                     fullWidth
                       id="outlined-basic"
                       label="備註"
-                      name={`companyTypes.${index}.notes`}
+                      name={`companyType.${index}.notes`}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setFieldValue(
-                          `companyTypes.${index}.notes`,
+                          `companyType.${index}.notes`,
                           e.target.value
                         );
                       }}
@@ -150,7 +151,8 @@ function AddPriOrSecCompany({
                       variant="contained"
                       aria-label="outlined primary button group"
                     >
-                      {values.companyTypes[index].companyType === "pri" ? (
+            
+                      {values.companyType[index].c_Type === "pri" ? (
                         ""
                       ) : (
                         <Button
@@ -167,7 +169,7 @@ function AddPriOrSecCompany({
                         startIcon={<AddIcon />}
                         onClick={() =>
                           arrayHelpers.push({
-                            companyType: "sec",
+                            c_Type: "sec",
                             companyId: 0,
                             amount: 0,
                             cutPayment: 0,

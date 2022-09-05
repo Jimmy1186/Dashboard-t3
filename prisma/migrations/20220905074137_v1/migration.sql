@@ -54,7 +54,7 @@ CREATE TABLE `Locations` (
 -- CreateTable
 CREATE TABLE `CompanyType` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `companyType` VARCHAR(191) NOT NULL,
+    `c_Type` VARCHAR(191) NOT NULL,
     `amount` DECIMAL(19, 4) NOT NULL,
     `cutPayment` DECIMAL(19, 4) NULL,
     `taskId` VARCHAR(191) NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `Charge` (
 -- CreateTable
 CREATE TABLE `Task` (
     `id` VARCHAR(6) NOT NULL,
-    `task_name` VARCHAR(50) NOT NULL,
+    `task_name` VARCHAR(50) NULL,
     `p` INTEGER NULL,
     `pValue` DECIMAL(19, 4) NULL,
     `startDate` DATETIME(3) NULL,

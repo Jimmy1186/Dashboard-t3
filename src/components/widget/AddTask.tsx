@@ -1,26 +1,37 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 
-
 import DatePicker from "react-datepicker";
+import { taskType } from "../../types/task";
 
-type taskType = {
+type tType = {
   errors: any;
   setFieldValue: (dataName: string, data: Date) => void;
   handleChange: (props: any) => void;
-  values: any;
+  values: taskType;
 };
 
-function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
+function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
   return (
     <>
       <div className="bgPaper inputWrapper">
         <div className="inputBox">
           <p className="errormsg">{errors.task_name}</p>
-
+          <h3>表單編號</h3>
           <TextField
-          fullWidth
+            label="XX-XXX"
+            name="id"
+            value={values.id}
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </div>
+        <div className="inputBox">
+          <h3>工事名</h3>
+          <TextField
+            fullWidth
             id="outlined-basic"
+            value={values.task_name}
             name="task_name"
             label="工事名"
             onChange={handleChange}
@@ -29,24 +40,28 @@ function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
         </div>
 
         <div className="inputBox">
+          <h3>坪数</h3>
           <p className="errormsg">{errors.p}</p>
           <TextField
             fullWidth
             type="number"
             id="outlined-basic"
+            value={values.p}
             name="p"
-            label="坪数"
+            label={values.p}
             onChange={handleChange}
             variant="outlined"
           />
         </div>
 
         <div className="inputBox">
+          <h3>坪單價</h3>
           <p className="errormsg"> {errors.pValue}</p>
           <TextField
             fullWidth
             type="number"
             onChange={handleChange}
+            value={values.pValue}
             name="pValue"
             label="坪單價"
           />
@@ -56,7 +71,7 @@ function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
           <h3>開工日期</h3>
           <p className="errormsg">{errors.startDate}</p>
           <DatePicker
-          placeholderText="2077/1/1"
+            placeholderText="2077/1/1"
             className="datePicker"
             selected={values.startDate}
             name="startDate"
@@ -70,7 +85,7 @@ function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
           <h3>完工日期</h3>
           <p className="errormsg">{errors.endDate}</p>
           <DatePicker
-           placeholderText="1925/3/5"
+            placeholderText="1925/3/5"
             className="datePicker"
             selected={values.endDate}
             name="endDate"
@@ -82,14 +97,14 @@ function AddTask({ errors, setFieldValue, handleChange, values }: taskType) {
 
         <div className="inputBox">
           <h3>開幕日</h3>
-          <p className="errormsg">{errors.open}</p>
+          <p className="errormsg">{errors.openDate}</p>
           <DatePicker
-           placeholderText="1972/7/2"
+            placeholderText="1972/7/2"
             className="datePicker"
-            selected={values.open}
-            name="open"
+            selected={values.openDate}
+            name="openDate"
             onChange={(date: any) => {
-              setFieldValue("open", date);
+              setFieldValue("openDate", date);
             }}
           />
         </div>

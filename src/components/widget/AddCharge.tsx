@@ -1,23 +1,13 @@
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { z } from "zod";
 import { trpc } from "../../utils/trpc";
 
-const baseUser = z.object({
-  id: z.string(),
-});
-
-export const addUserSchema = z.object({
-  userId: z.array(baseUser),
-});
-
-export type addUserType = z.infer<typeof addUserSchema>;
 
 type locationType = {
   errors: any;
-  setFieldValue: (dataName: string, locationId: number) => void;
-  setErrors: (location: object) => void;
+  setFieldValue: (i: string, j: number) => void;
+  setErrors: (e: object) => void;
 };
 
 function AddCharge({ errors, setFieldValue, setErrors }: locationType) {
@@ -28,20 +18,20 @@ function AddCharge({ errors, setFieldValue, setErrors }: locationType) {
       <div className="bgPaper">
         <h3>担当者</h3>
 
-        {errors.userId}
+        {errors.charge}
         <Autocomplete
           multiple
           options={users || []}
           onChange={(_, value: any) => {
             const Uid = value.map((i: any) => {
-              return { id: i.id };
+              return { userId: i.id };
             });
 
             try {
-              setFieldValue("userId", Uid);
+              setFieldValue("charge", Uid);
             } catch (e) {
               setErrors({
-                userId: "一定要選",
+                charge: "一定要選",
               });
             }
           }}

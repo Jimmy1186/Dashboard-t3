@@ -21,18 +21,18 @@ model User {
 }
 
 model Role {
-  id   Int    @id @default(autoincrement())
+  id    Int    @id @default(autoincrement())
   roles String @db.Char(1)
-  user User[]
+  user  User[]
 
   @@unique([roles])
 }
 
 model Company {
   id           Int           @id @default(autoincrement())
-  c_name         String?       @unique @db.VarChar(20)
-  c_title        String        @unique @db.VarChar(40)
-  c_tax          String?       @unique @db.Char(8)
+  c_name       String?       @unique @db.VarChar(20)
+  c_title      String        @unique @db.VarChar(40)
+  c_tax        String?       @unique @db.Char(8)
   ComparyTypes CompanyType[]
 
   @@unique([c_name, c_title, c_tax])
@@ -47,21 +47,21 @@ model Installment {
 }
 
 model Locations {
-  id       Int    @id @default(autoincrement())
+  id            Int    @id @default(autoincrement())
   location_name String @unique @db.VarChar(10)
-  task     Task[]
+  task          Task[]
 }
 
 model CompanyType {
-  id          Int      @id @default(autoincrement())
-  companyType String
-  amount      Decimal  @db.Decimal(19, 4)
-  cutPayment  Decimal? @db.Decimal(19, 4)
-  task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  taskId      String
-  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  companyId   Int?
-  notes       String?
+  id         Int      @id @default(autoincrement())
+  c_Type     String
+  amount     Decimal  @db.Decimal(19, 4)
+  cutPayment Decimal? @db.Decimal(19, 4)
+  task       Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId     String
+  company    Company? @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  companyId  Int?
+  notes      String?
 }
 
 model History {
@@ -83,7 +83,7 @@ model Charge {
 
 model Task {
   id           String        @id @db.VarChar(6)
-  task_name    String?        @db.VarChar(50)
+  task_name    String?       @db.VarChar(50)
   p            Int?
   pValue       Decimal?      @db.Decimal(19, 4)
   startDate    DateTime?
@@ -94,7 +94,7 @@ model Task {
   installments Installment[]
   charges      Charge[]
   history      History[]
-  locations    Locations?     @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  locations    Locations?    @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   locationId   Int?
 
   @@unique([task_name])

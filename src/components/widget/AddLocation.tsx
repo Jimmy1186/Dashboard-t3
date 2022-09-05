@@ -5,11 +5,11 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 type locationType = {
   errors: any;
-  setFieldValue: (dataName: string, locationId: number) => void;
-  setErrors: (location: object) => void;
+  setFieldValue: (i: string, j: number) => void;
+  setErrors: (e: object) => void;
 };
 function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
-  const { data: lo, isLoading } = trpc.useQuery(["add.location"]);
+  const { data: lo} = trpc.useQuery(["add.location"]);
 
   return (
     <>
