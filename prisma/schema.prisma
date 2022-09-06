@@ -90,7 +90,7 @@ model Task {
   endDate      DateTime?
   openDate     DateTime?
   createAt     DateTime
-  CompanyTypes CompanyType[]
+  companyTypes CompanyType[]
   installments Installment[]
   charges      Charge[]
   history      History[]

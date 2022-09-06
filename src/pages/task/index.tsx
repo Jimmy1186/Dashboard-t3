@@ -15,22 +15,26 @@ import { Edit, Delete } from "@mui/icons-material";
 import { Tooltip, IconButton, Box, Autocomplete } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
 import { taskType } from "../../types/task";
-import AddLocation from "../../components/widget/AddLocation";
+
 
 type tl = {
   id: string;
   task_name: string | null;
+  p:number|null;
+  pValue: Prisma.Decimal | null;
   startDate: Date | null;
   endDate: Date | null;
   createAt: Date;
   openDate: Date | null;
   locations: {
     location_name: string | null;
+    id:number;
   } | null;
   charges:
     | {
         users: {
           username: string;
+          id:string;
         } | null;
       }[]
     | null;
@@ -40,10 +44,12 @@ type tl = {
         ok: boolean;
       }[]
     | null;
-  CompanyTypes:
+  companyTypes:
     | {
         company: {
           c_name: string | null;
+          c_title:string | null;
+          c_tax:string | null;
         } | null;
         amount: Prisma.Decimal;
         cutPayment: Prisma.Decimal | null;
@@ -136,7 +142,8 @@ function Index() {
     [task, AllMutation]
   );
 
-  const editTask =(val:any)=>{
+  const editTask =(val:any,row:any)=>{
+    setCoe(false)
     setEditData(val)
     setOpen(!open)
   }
@@ -172,6 +179,14 @@ function Index() {
         header: "表單名",
       },
       {
+        accessorKey: "p",
+        header: "坪數",
+      },
+      {
+        accessorKey: "pValue",
+        header: "坪單價",
+      },
+      {
         accessorKey: "locations.location_name",
         header: "地區",
       },
@@ -193,7 +208,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "主会社",
         Cell: ({ cell }) => {
           type cType = {
@@ -207,7 +222,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "主総額",
         Cell: ({ cell }) => {
           type cvType = {
@@ -221,7 +236,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "主差し引い",
         Cell: ({ cell }) => {
           type cvType = {
@@ -235,7 +250,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "主備註",
         Cell: ({ cell }) => {
           type cvType = {
@@ -249,7 +264,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "支払業者",
         Cell: ({ cell }) => {
           type cType = {
@@ -271,7 +286,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "支払総額",
         Cell: ({ cell }) => {
           type cvType = {
@@ -289,7 +304,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "支払差し引い",
         Cell: ({ cell }) => {
           type cvType = {
@@ -308,7 +323,7 @@ function Index() {
         },
       },
       {
-        accessorFn: (row) => row.CompanyTypes,
+        accessorFn: (row) => row.companyTypes,
         header: "支払備註",
         Cell: ({ cell }) => {
           type cvType = {
@@ -443,7 +458,7 @@ function Index() {
             renderRowActions={({ row, table }) => (
               <Box sx={{ display: "flex", gap: "1rem" }}>
                 <Tooltip arrow placement="left" title="Edit">
-                <IconButton onClick={() => editTask(row.original)}>
+                <IconButton onClick={() => editTask(row.original,row)}>
                     <Edit />
                   </IconButton>
                 </Tooltip>
@@ -456,14 +471,21 @@ function Index() {
             )}
           />
         )}
-        {task!=undefined?(
+        {editData!=undefined?(
           <CreateTask 
           open={open} 
           setOpen={setOpen} 
           onAll={onAll} 
-          initialValues={editData}
+          initialValues={coe?initialValues:editData}
           />
-        ):("")}
+        ):(
+        <CreateTask 
+        open={open} 
+        setOpen={setOpen} 
+        onAll={onAll} 
+        initialValues={initialValues}
+        />
+        )}
       </div>
     </>
   );

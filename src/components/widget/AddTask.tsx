@@ -12,11 +12,12 @@ type tType = {
 };
 
 function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
+  // console.log(values)
   return (
     <>
       <div className="bgPaper inputWrapper">
         <div className="inputBox">
-          <p className="errormsg">{errors.task_name}</p>
+        <p className="errormsg">{errors.id}</p>
           <h3>表單編號</h3>
           <TextField
             label="XX-XXX"
@@ -28,6 +29,7 @@ function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
         </div>
         <div className="inputBox">
           <h3>工事名</h3>
+          <p className="errormsg">{errors.task_name}</p>
           <TextField
             fullWidth
             id="outlined-basic"

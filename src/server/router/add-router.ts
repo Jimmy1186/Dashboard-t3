@@ -88,6 +88,8 @@ export const addRouter = createProtectedRouter()
         select: {
           id: true,
           task_name: true,
+          p:true,
+          pValue:true,
           startDate: true,
           endDate: true,
           createAt: true,
@@ -97,6 +99,7 @@ export const addRouter = createProtectedRouter()
               users: {
                 select: {
                   username: true,
+                  id:true,
                 },
               },
             },
@@ -104,9 +107,10 @@ export const addRouter = createProtectedRouter()
           locations: {
             select: {
               location_name: true,
+              id:true,
             },
           },
-          CompanyTypes: {
+          companyTypes: {
             select: {
               amount: true,
               cutPayment: true,
@@ -114,6 +118,8 @@ export const addRouter = createProtectedRouter()
               company: {
                 select: {
                   c_name: true,
+                  c_title:true,
+                  c_tax:true
                 },
               },
             },
@@ -192,7 +198,7 @@ export const addRouter = createProtectedRouter()
               data: charge,
             },
           },
-          CompanyTypes: {
+          companyTypes: {
             createMany: {
               data: companyType,
             },
@@ -210,10 +216,26 @@ export const addRouter = createProtectedRouter()
         },
         include: {
           charges: true,
-          CompanyTypes: true,
+          companyTypes: true,
           history: true,
           installments: true,
         },
       });
     },
-  });
+  })
+  .query("findCharge",{
+    input:z.object({
+      username:z.string()
+    }),
+    resolve:async({ctx,input})=>{
+      return await ctx.prisma.charge.findMany({
+        where:{
+          AND:[
+            {
+              
+            }
+          ]
+        }
+      })
+    }
+  })

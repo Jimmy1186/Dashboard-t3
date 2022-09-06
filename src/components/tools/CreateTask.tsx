@@ -63,6 +63,7 @@ function CreateTask({ open, setOpen, onAll, initialValues }: createTaskType) {
                 values={values}
               />
               <AddCharge
+               values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
@@ -76,6 +77,7 @@ function CreateTask({ open, setOpen, onAll, initialValues }: createTaskType) {
               />
 
               <AddLocation
+              //  values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
