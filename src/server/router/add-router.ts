@@ -120,6 +120,7 @@ export const addRouter = createProtectedRouter()
               notes: true,
               company: {
                 select: {
+                  id:true,
                   c_name: true,
                   c_title: true,
                   c_tax: true,
@@ -137,7 +138,7 @@ export const addRouter = createProtectedRouter()
       });
     },
   })
-  .mutation("createTask", {
+  .mutation("edit",{
     input: z.object({
       id: z.string(),
       task_name: z.string(),
@@ -147,12 +148,10 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable(),
       openDate: z.date().nullable(),
       createAt: z.date(),
-      locationId: z.number(),
-      // charge: z.array(
-      //   z.object({
-      //     userId: z.string(),
-      //   })
-      // ),
+      locations: z.object({
+        id:z.number(),
+        location_name:z.string()
+      }),
       charges: z.array(
         z.object({
          users: z.object({
@@ -170,7 +169,132 @@ export const addRouter = createProtectedRouter()
       companyType: z.array(
         z.object({
           c_Type: z.string(),
-          companyId: z.number(),
+          company: z.object({
+            id:z.number(),
+            c_name:z.string(),
+            c_title:z.string(),
+            c_tax:z.string()
+          }),
+          amount: z.number(),
+          cutPayment: z.number().nullable(),
+          notes: z.string().nullable(),
+        })
+      ),
+    }),
+    resolve:async({ctx,input})=>{
+      const {
+        id,
+        task_name,
+        p,
+        pValue,
+        startDate,
+        endDate,
+        openDate,
+        createAt,
+        locations,
+        charges,
+        installment,
+        companyType,
+      } = input;
+
+
+
+type cType ={
+  userId: string;
+}[] | undefined
+
+      const chargePayload:cType = await charges.map((i)=>{
+        return { userId: i.users.id };
+      })
+
+
+
+
+type ctType ={
+  c_Type: string;
+  companyId: number;
+  amount: number;
+  cutPayment: number | null;
+  notes: string | null;
+}[] | undefined
+
+      const companyTypePayload:ctType = await companyType.map((i)=>{
+        return {
+          c_Type: i.c_Type,
+          companyId:i.company.id,
+          amount: i.amount,
+          cutPayment: i.cutPayment,
+          notes: i.notes,
+        }
+      })
+
+
+
+
+
+      return await ctx.prisma.task.update({
+        where:{
+          id:id
+        },
+        data:{
+          id:id,
+          task_name:task_name,
+          p:p,
+          pValue:pValue,
+          startDate: startDate,
+          endDate: endDate,
+          openDate: openDate,
+          createAt: createAt,
+          locationId: locations.id,
+          charges:{
+          
+         
+          }
+        }
+      })
+
+
+
+
+    }
+  })
+  .mutation("createTask", {
+    input: z.object({
+      id: z.string(),
+      task_name: z.string(),
+      p: z.number(),
+      pValue: z.number(),
+      startDate: z.date().nullable(),
+      endDate: z.date().nullable(),
+      openDate: z.date().nullable(),
+      createAt: z.date(),
+      locations: z.object({
+        id:z.number(),
+        location_name:z.string()
+      }),
+      charges: z.array(
+        z.object({
+         users: z.object({
+          id:z.string(),
+          username:z.string()
+         }),
+        })
+      ),
+      installment: z.array(
+        z.object({
+          percent: z.number(),
+          ok: z.boolean(),
+        })
+      ),
+      companyType: z.array(
+        z.object({
+          c_Type: z.string(),
+          company: z.object({
+            id:z.number(),
+            c_name:z.string(),
+            c_title:z.string(),
+            c_tax:z.string()
+          }),
           amount: z.number(),
           cutPayment: z.number().nullable(),
           notes: z.string().nullable(),
@@ -187,7 +311,7 @@ export const addRouter = createProtectedRouter()
         endDate,
         openDate,
         createAt,
-        locationId,
+        locations,
         charges,
         installment,
         companyType,
@@ -195,6 +319,16 @@ export const addRouter = createProtectedRouter()
 
       const chargePayload = await charges.map((i)=>{
         return { userId: i.users.id };
+      })
+
+      const companyTypePayload = await companyType.map((i)=>{
+        return {
+          c_Type: i.c_Type,
+          companyId:i.company.id,
+          amount: i.amount,
+          cutPayment: i.cutPayment,
+          notes: i.notes,
+        }
       })
 
       return await ctx.prisma.task.create({
@@ -207,7 +341,7 @@ export const addRouter = createProtectedRouter()
           endDate: endDate,
           openDate: openDate,
           createAt: createAt,
-          locationId: locationId,
+          locationId: locations.id,
           charges: {
             createMany: {
               data: chargePayload,
@@ -215,7 +349,7 @@ export const addRouter = createProtectedRouter()
           },
           companyTypes: {
             createMany: {
-              data: companyType,
+              data: companyTypePayload,
             },
           },
           history: {
@@ -237,4 +371,4 @@ export const addRouter = createProtectedRouter()
         },
       });
     },
-  });
+  })

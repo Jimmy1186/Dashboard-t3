@@ -2,13 +2,13 @@ import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { trpc } from "../../utils/trpc";
+import { taskType } from "../../types/task";
 
 type locationType = {
-  values: any;
+  values: taskType;
   coe: boolean;
   errors: any;
   setFieldValue: (i: string, j: number) => void;
-  handleChange: (props: any) => void;
   setErrors: (e: object) => void;
 };
 
@@ -16,7 +16,6 @@ function AddCharge({
   errors,
   setFieldValue,
   setErrors,
-  handleChange,
   values,
   coe,
 }: locationType) {

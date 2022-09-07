@@ -14,7 +14,10 @@ export const taskSchema = z.object({
   endDate: z.date().nullable(),
   openDate: z.date().nullable(),
   createAt: z.date(),
-  locationId: z.number(),
+  locations: z.object({
+    id:z.number(),
+    location_name:z.string()
+  }),
   charges: z.array(
     z.object({
      users: z.object({
@@ -23,22 +26,22 @@ export const taskSchema = z.object({
      }),
     })
   ),
-  charge: z.array(
-    z.object({
-     userId: z.string(),
-    })
-  ),
-  installment: z.array(
+  installments: z.array(
     z.object({
       percent: z.number(),
       ok: z.boolean(),
     })
   ),
-  companyType: z
+  companyTypes: z
     .array(
       z.object({
         c_Type: z.string(),
-        companyId: z.number(),
+        company: z.object({
+          id:z.number(),
+          c_name:z.string(),
+          c_title:z.string(),
+          c_tax:z.string()
+        }),
         amount: z.number(),
         cutPayment: z.number().nullable(),
         notes: z.string().nullable(),

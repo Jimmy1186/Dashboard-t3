@@ -2,27 +2,43 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import { trpc } from "../../utils/trpc";
 import Autocomplete from "@mui/material/Autocomplete";
+import { taskType } from "../../types/task";
 
 type locationType = {
+  values:taskType,
+  coe: boolean,
   errors: any;
   setFieldValue: (i: string, j: number) => void;
   setErrors: (e: object) => void;
 };
-function AddLocation({ errors, setFieldValue, setErrors }: locationType) {
-  const { data: lo} = trpc.useQuery(["add.location"]);
+function AddLocation({ errors, setFieldValue, setErrors,values,coe }: locationType) {
+  const { data: lo,isLoading} = trpc.useQuery(["add.location"]);
 
+
+// console.log(values)
+if (values.locations === undefined && coe === false) {
+  return <>loading</>;
+}
+if (isLoading) {
+  return <>isloading</>;
+}
   return (
     <>
       <div className="bgPaper ">
         <h3>地區</h3>
 
-        {errors?.location}
+        {errors.location}
         <Autocomplete
           id="id"
+          value={values.locations}
           options={lo || []}
+          isOptionEqualToValue={(option, value) => {
+  
+            return option.id === value.id;
+          }}
           onChange={(_, value: any) => {
             try {
-              setFieldValue("locationId", value.id);
+              setFieldValue("locationId", value);
               // setFieldValue("location",   value.id!=null? value.id:initialValues.location);
             } catch (e) {
               setErrors({

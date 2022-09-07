@@ -65,7 +65,6 @@ function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType)
               />
               <AddCharge
               coe={coe}
-              handleChange={handleChange}
                values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
@@ -73,6 +72,7 @@ function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType)
               />
 
               <AddPriOrSecCompany
+                     coe={coe}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
@@ -80,12 +80,14 @@ function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType)
               />
 
               <AddLocation
-              //  values={values}
+              coe={coe}
+               values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
               />
               <AddInstallment
+                        coe={coe}
                 values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}

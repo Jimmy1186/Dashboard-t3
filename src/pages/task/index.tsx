@@ -47,6 +47,7 @@ type tl = {
   companyTypes:
     | {
         company: {
+          id:number | null;
           c_name: string | null;
           c_title:string | null;
           c_tax:string | null;
@@ -68,19 +69,29 @@ const initialValues = {
   endDate: null,
   openDate: null,
   createAt: new Date(),
-  locationId: 0,
-  charge: [],
+  locations: {
+    id: 11,
+    location_name: "臺北市南港區"
+  },
   charges:[],
-  installment: [
+  installments: [
     {
       percent: 0,
       ok: false,
     },
   ],
-  companyType: [
+  companyTypes: [
     {
       c_Type: "pri",
-      companyId: 0,
+      company:{
+        
+          id: 1,
+          c_name: "復華",
+          c_title: "復華廣告有限公司",
+          c_tax: "00000000",
+  
+        
+      },
       amount: 0,
       cutPayment: 0,
       notes: null,
@@ -114,13 +125,13 @@ function Index() {
         endDate,
         openDate,
         createAt,
-        locationId,
+        locations,
         charges,
-        installment,
-        companyType,
+        installments,
+        companyTypes,
       } = values;
 
-      if (companyType === null) {
+      if (companyTypes === null) {
         return;
       }
 
@@ -133,17 +144,17 @@ function Index() {
         endDate: endDate,
         openDate: openDate,
         createAt: createAt,
-        locationId: locationId,
+        locations: locations,
         charges: charges,
-        installment: installment,
-        companyType: companyType,
+        installment: installments,
+        companyType: companyTypes,
       });
       setOpen(false);
     },
     [task, AllMutation]
   );
 
-  const editTask =(val:any,row:any)=>{
+  const editTask =(val:any)=>{
     setCoe(false)
     setEditData(val)
     setOpen(!open)
@@ -459,7 +470,7 @@ function Index() {
             renderRowActions={({ row, table }) => (
               <Box sx={{ display: "flex", gap: "1rem" }}>
                 <Tooltip arrow placement="left" title="Edit">
-                <IconButton onClick={() => editTask(row.original,row)}>
+                <IconButton onClick={() => editTask(row.original)}>
                     <Edit />
                   </IconButton>
                 </Tooltip>

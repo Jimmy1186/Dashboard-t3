@@ -11,37 +11,53 @@ import AddIcon from "@mui/icons-material/Add";
 import { taskType } from "../../types/task";
 type iType = {
   errors: any;
+  coe: boolean;
   values: taskType;
   setFieldValue: (i: string, j: number) => void;
 };
 
 function AddInstallment({
+  coe,
   values,
   errors,
   setFieldValue,
 }: iType) {
+
+
+
+
+
+
+
+
+
+if (values.installments === undefined && coe === false) {
+  return <>loading</>;
+}
+
   return (
     <>
       <div className="bgPaper ">
       <h3>分期</h3>
-      <p className="errormsg">{errors.installment}</p>
+      <p className="errormsg">{errors.installments}</p>
         <FieldArray
-          name="installment"
+          name="installments"
           render={(arrayHelpers) => (
             <div>
-              {values.installment && values.installment.length > 0 ? (
-                values.installment.map((per: any, index: number) => (
+              {values.installments && values.installments.length > 0 ? (
+                values.installments.map((per: any, index: number) => (
                   <div key={index}>
                     <div className="inputBox">
                    
                       <OutlinedInput
+                      value={values.installments[index]?.percent}
                         startAdornment={
                           <InputAdornment position="end">%</InputAdornment>
                         }
-                        name={`installment.${index}.percent`}
+                        name={`installments.${index}.percent`}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setFieldValue(
-                            `installment.${index}.percent`,
+                            `installments.${index}.percent`,
                             Number(e.target.value)
                           );
                         }}
@@ -52,7 +68,8 @@ function AddInstallment({
                       <Field
                         as={FormControlLabel}
                         type="checkbox"
-                        name={`installment.${index}.ok`}
+                        name={`installments.${index}.ok`}
+                        // value={values.installments[index].ok}
                         control={<Checkbox />}
                         label="OK"
                       />
