@@ -15,9 +15,17 @@ export const taskSchema = z.object({
   openDate: z.date().nullable(),
   createAt: z.date(),
   locationId: z.number(),
+  charges: z.array(
+    z.object({
+     users: z.object({
+      id:z.string(),
+      username:z.string()
+     }),
+    })
+  ),
   charge: z.array(
     z.object({
-      userId: z.string(),
+     userId: z.string(),
     })
   ),
   installment: z.array(

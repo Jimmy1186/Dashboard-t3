@@ -62,11 +62,14 @@ export const addRouter = createProtectedRouter()
   })
   .query("user", {
     resolve: async ({ ctx }) => {
-      return ctx.prisma.user.findMany({
+      const payload = await ctx.prisma.user.findMany({
         select: {
           id: true,
           username: true,
         },
+      });
+      return payload.map((i) => {
+        return { users: { id: i.id, username: i.username } };
       });
     },
   })
@@ -88,8 +91,8 @@ export const addRouter = createProtectedRouter()
         select: {
           id: true,
           task_name: true,
-          p:true,
-          pValue:true,
+          p: true,
+          pValue: true,
           startDate: true,
           endDate: true,
           createAt: true,
@@ -99,7 +102,7 @@ export const addRouter = createProtectedRouter()
               users: {
                 select: {
                   username: true,
-                  id:true,
+                  id: true,
                 },
               },
             },
@@ -107,7 +110,7 @@ export const addRouter = createProtectedRouter()
           locations: {
             select: {
               location_name: true,
-              id:true,
+              id: true,
             },
           },
           companyTypes: {
@@ -118,8 +121,8 @@ export const addRouter = createProtectedRouter()
               company: {
                 select: {
                   c_name: true,
-                  c_title:true,
-                  c_tax:true
+                  c_title: true,
+                  c_tax: true,
                 },
               },
             },
@@ -145,9 +148,17 @@ export const addRouter = createProtectedRouter()
       openDate: z.date().nullable(),
       createAt: z.date(),
       locationId: z.number(),
-      charge: z.array(
+      // charge: z.array(
+      //   z.object({
+      //     userId: z.string(),
+      //   })
+      // ),
+      charges: z.array(
         z.object({
-          userId: z.string(),
+         users: z.object({
+          id:z.string(),
+          username:z.string()
+         }),
         })
       ),
       installment: z.array(
@@ -177,10 +188,14 @@ export const addRouter = createProtectedRouter()
         openDate,
         createAt,
         locationId,
-        charge,
+        charges,
         installment,
         companyType,
       } = input;
+
+      const chargePayload = await charges.map((i)=>{
+        return { userId: i.users.id };
+      })
 
       return await ctx.prisma.task.create({
         data: {
@@ -195,7 +210,7 @@ export const addRouter = createProtectedRouter()
           locationId: locationId,
           charges: {
             createMany: {
-              data: charge,
+              data: chargePayload,
             },
           },
           companyTypes: {
@@ -222,20 +237,4 @@ export const addRouter = createProtectedRouter()
         },
       });
     },
-  })
-  .query("findCharge",{
-    input:z.object({
-      username:z.string()
-    }),
-    resolve:async({ctx,input})=>{
-      return await ctx.prisma.charge.findMany({
-        where:{
-          AND:[
-            {
-              
-            }
-          ]
-        }
-      })
-    }
-  })
+  });

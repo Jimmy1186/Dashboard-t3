@@ -1,75 +1,71 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { trpc } from "../../utils/trpc";
-import { taskType } from "../../types/task";
 
 type locationType = {
   values: any;
+  coe: boolean;
   errors: any;
   setFieldValue: (i: string, j: number) => void;
+  handleChange: (props: any) => void;
   setErrors: (e: object) => void;
 };
 
-function AddCharge({ errors, setFieldValue, setErrors, values }: locationType) {
-  const { data: users } = trpc.useQuery(["add.user"]);
-  const [pl, setPl] = useState();
+function AddCharge({
+  errors,
+  setFieldValue,
+  setErrors,
+  handleChange,
+  values,
+  coe,
+}: locationType) {
+  const { data, isLoading } = trpc.useQuery(["add.user"]);
 
-
-
- useEffect(()=>{
- if (values.charges != undefined) {
-    const p=values.charges.map((i: any) => {
-      return { id: i.users.id, username: i.users.username };
-    });
-    setPl(pl)
+  if (values.charges === undefined && coe === false) {
+    return <>loading</>;
   }
- },[])
 
-
-
-
-  // console.log(values)
+  if (isLoading) {
+    return <>isloading</>;
+  }
   return (
     <>
       <div className="bgPaper">
         <h3>担当者</h3>
 
-        {errors.charge}
+        {errors.charges}
         <Autocomplete
           multiple
-      
-          isOptionEqualToValue={(option, value) => false}
-          //  isOptionEqualToValue={(option, value) =>{
-          //   // console.log("option :"+option)
-          //   // console.log("value :"+value)
-          //   // console.log(option === value)
-          //   return true
-          //  }}
-          options={users || []}
-          defaultValue={pl}
+          value={values.charges}
+          isOptionEqualToValue={(option, value) => {
+            return option.users.id === value.users.id;
+          }}
+          options={data || []}
           onChange={(_, value: any) => {
-            console.log(value);
-            const Uid = value.map((i: any) => {
-              return { userId: i.id };
-            });
+             
+            //   const Uid = value.map((i: any) => {
+            //     return { userId: i.id };
+            //   });
+
 
             try {
-              setFieldValue("charge", Uid);
-              console.log(values);
+              setFieldValue("charges", value);
             } catch (e) {
               setErrors({
                 charge: "一定要選",
               });
             }
           }}
-          getOptionLabel={(option: any) => `${option.id}${option.username}`}
+          getOptionLabel={(option: any) =>
+            `${option.users.id}${option.users.username}`
+          }
           renderOption={(props: any, option: any) => {
             return (
               <p
                 {...props}
                 className="autoList"
-              >{`${option.id}:${option.username}`}</p>
+              >{`${option.users.id}:${option.users.username}`}</p>
             );
           }}
           renderInput={(params) => {

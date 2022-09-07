@@ -70,6 +70,7 @@ const initialValues = {
   createAt: new Date(),
   locationId: 0,
   charge: [],
+  charges:[],
   installment: [
     {
       percent: 0,
@@ -114,7 +115,7 @@ function Index() {
         openDate,
         createAt,
         locationId,
-        charge,
+        charges,
         installment,
         companyType,
       } = values;
@@ -133,7 +134,7 @@ function Index() {
         openDate: openDate,
         createAt: createAt,
         locationId: locationId,
-        charge: charge,
+        charges: charges,
         installment: installment,
         companyType: companyType,
       });
@@ -473,6 +474,7 @@ function Index() {
         )}
         {editData!=undefined?(
           <CreateTask 
+          coe={coe}
           open={open} 
           setOpen={setOpen} 
           onAll={onAll} 
@@ -481,6 +483,7 @@ function Index() {
         ):(
         <CreateTask 
         open={open} 
+        coe={coe}
         setOpen={setOpen} 
         onAll={onAll} 
         initialValues={initialValues}

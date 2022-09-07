@@ -15,13 +15,14 @@ import Dialog from "@mui/material/Dialog";
 
 
 type createTaskType = {
+  coe:boolean,
   initialValues: taskType;
   open: boolean;
   setOpen: (i: boolean) => void;
   onAll: (v: any) => void;
 };
 
-function CreateTask({ open, setOpen, onAll, initialValues }: createTaskType) {
+function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType) {
   const handleClose = () => {
     setOpen(false);
   };
@@ -63,6 +64,8 @@ function CreateTask({ open, setOpen, onAll, initialValues }: createTaskType) {
                 values={values}
               />
               <AddCharge
+              coe={coe}
+              handleChange={handleChange}
                values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
