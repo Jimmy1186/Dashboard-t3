@@ -38,8 +38,8 @@ if (isLoading) {
           }}
           onChange={(_, value: any) => {
             try {
-              setFieldValue("locationId", value);
-              // setFieldValue("location",   value.id!=null? value.id:initialValues.location);
+              setFieldValue("locations", value);
+          
             } catch (e) {
               setErrors({
                 location: "一定要選",

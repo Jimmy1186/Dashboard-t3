@@ -116,11 +116,12 @@ export const addRouter = createProtectedRouter()
           companyTypes: {
             select: {
               amount: true,
+              c_Type:true,
               cutPayment: true,
               notes: true,
               company: {
                 select: {
-                  id:true,
+                  id: true,
                   c_name: true,
                   c_title: true,
                   c_tax: true,
@@ -138,50 +139,50 @@ export const addRouter = createProtectedRouter()
       });
     },
   })
-  .mutation("edit",{
+  .mutation("edit", {
     input: z.object({
       id: z.string(),
-      task_name: z.string(),
-      p: z.number(),
-      pValue: z.number(),
-      startDate: z.date().nullable(),
-      endDate: z.date().nullable(),
-      openDate: z.date().nullable(),
-      createAt: z.date(),
+      task_name: z.string().or(z.undefined()),
+      p: z.number().or(z.undefined()),
+      pValue: z.number().or(z.undefined()),
+      startDate: z.date().nullable().or(z.undefined()),
+      endDate: z.date().nullable().or(z.undefined()),
+      openDate: z.date().nullable().or(z.undefined()),
+      createAt: z.date().or(z.undefined()),
       locations: z.object({
-        id:z.number(),
-        location_name:z.string()
-      }),
+        id: z.number().or(z.undefined()),
+        location_name: z.string().or(z.undefined()),
+      }).or(z.undefined()),
       charges: z.array(
         z.object({
-         users: z.object({
-          id:z.string(),
-          username:z.string()
-         }),
-        })
-      ),
-      installment: z.array(
-        z.object({
-          percent: z.number(),
-          ok: z.boolean(),
-        })
-      ),
-      companyType: z.array(
-        z.object({
-          c_Type: z.string(),
-          company: z.object({
-            id:z.number(),
-            c_name:z.string(),
-            c_title:z.string(),
-            c_tax:z.string()
+          users: z.object({
+            id: z.string(),
+            username: z.string(),
           }),
-          amount: z.number(),
-          cutPayment: z.number().nullable(),
-          notes: z.string().nullable(),
         })
-      ),
+      ).or(z.undefined()),
+      // installment: z.array(
+      //   z.object({
+      //     percent: z.number(),
+      //     ok: z.boolean(),
+      //   })
+      // ),
+      // companyType: z.array(
+      //   z.object({
+      //     c_Type: z.string(),
+      //     company: z.object({
+      //       id: z.number(),
+      //       c_name: z.string(),
+      //       c_title: z.string(),
+      //       c_tax: z.string(),
+      //     }),
+      //     amount: z.number(),
+      //     cutPayment: z.number().nullable(),
+      //     notes: z.string().nullable(),
+      //   })
+      // ),
     }),
-    resolve:async({ctx,input})=>{
+    resolve: async ({ ctx, input }) => {
       const {
         id,
         task_name,
@@ -193,70 +194,64 @@ export const addRouter = createProtectedRouter()
         createAt,
         locations,
         charges,
-        installment,
-        companyType,
+        // installment,
+        // companyType,
       } = input;
 
+      type cType =
+        | {
+            userId: string;
+          }[]
+        | undefined;
 
-
-type cType ={
-  userId: string;
-}[] | undefined
-
-      const chargePayload:cType = await charges.map((i)=>{
+        let chargePayload:cType=[]
+        if(charges!=undefined)
+        {
+              chargePayload = await charges.map((i) => {
         return { userId: i.users.id };
-      })
-
-
-
-
-type ctType ={
-  c_Type: string;
-  companyId: number;
-  amount: number;
-  cutPayment: number | null;
-  notes: string | null;
-}[] | undefined
-
-      const companyTypePayload:ctType = await companyType.map((i)=>{
-        return {
-          c_Type: i.c_Type,
-          companyId:i.company.id,
-          amount: i.amount,
-          cutPayment: i.cutPayment,
-          notes: i.notes,
+      });
         }
-      })
+  
 
+      type ctType =
+        | {
+            c_Type: string;
+            companyId: number;
+            amount: number;
+            cutPayment: number | null;
+            notes: string | null;
+          }[]
+        | undefined;
 
-
-
+      // const companyTypePayload: ctType = await companyType.map((i) => {
+      //   return {
+      //     c_Type: i.c_Type,
+      //     companyId: i.company.id,
+      //     amount: i.amount,
+      //     cutPayment: i.cutPayment,
+      //     notes: i.notes,
+      //   };
+      // });
 
       return await ctx.prisma.task.update({
-        where:{
-          id:id
+        where: {
+          id: id,
         },
-        data:{
-          id:id,
-          task_name:task_name,
-          p:p,
-          pValue:pValue,
-          startDate: startDate,
-          endDate: endDate,
-          openDate: openDate,
-          createAt: createAt,
-          locationId: locations.id,
+        data: {
+          task_name: task_name||undefined,
+          p: p||undefined,
+          pValue: pValue||undefined,
+          startDate: startDate||undefined,
+          endDate: endDate||undefined,
+          openDate: openDate||undefined,
+          createAt: createAt||undefined,
+          locationId: locations?.id||undefined,
           charges:{
-          
          
           }
-        }
-      })
-
-
-
-
-    }
+        },
+      });
+    },
   })
   .mutation("createTask", {
     input: z.object({
@@ -269,15 +264,15 @@ type ctType ={
       openDate: z.date().nullable(),
       createAt: z.date(),
       locations: z.object({
-        id:z.number(),
-        location_name:z.string()
+        id: z.number(),
+        location_name: z.string(),
       }),
       charges: z.array(
         z.object({
-         users: z.object({
-          id:z.string(),
-          username:z.string()
-         }),
+          users: z.object({
+            id: z.string(),
+            username: z.string(),
+          }),
         })
       ),
       installment: z.array(
@@ -290,13 +285,13 @@ type ctType ={
         z.object({
           c_Type: z.string(),
           company: z.object({
-            id:z.number(),
-            c_name:z.string(),
-            c_title:z.string(),
-            c_tax:z.string()
+            id: z.number(),
+            c_name: z.string(),
+            c_title: z.string(),
+            c_tax: z.string(),
           }),
-          amount: z.number(),
-          cutPayment: z.number().nullable(),
+          amount: z.number().or(z.string()),
+          cutPayment: z.number().nullable().or(z.string()),
           notes: z.string().nullable(),
         })
       ),
@@ -317,19 +312,19 @@ type ctType ={
         companyType,
       } = input;
 
-      const chargePayload = await charges.map((i)=>{
+      const chargePayload = await charges.map((i) => {
         return { userId: i.users.id };
-      })
+      });
 
-      const companyTypePayload = await companyType.map((i)=>{
+      const companyTypePayload = await companyType.map((i) => {
         return {
           c_Type: i.c_Type,
-          companyId:i.company.id,
-          amount: i.amount,
-          cutPayment: i.cutPayment,
+          companyId: i.company.id,
+          amount: Number(i.amount),
+          cutPayment:Number(i.cutPayment),
           notes: i.notes,
-        }
-      })
+        };
+      });
 
       return await ctx.prisma.task.create({
         data: {
@@ -371,4 +366,4 @@ type ctType ={
         },
       });
     },
-  })
+  });

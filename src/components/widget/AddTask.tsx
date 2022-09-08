@@ -5,14 +5,15 @@ import DatePicker from "react-datepicker";
 import { taskType } from "../../types/task";
 
 type tType = {
+  coe: boolean;
   errors: any;
   setFieldValue: (dataName: string, data: Date) => void;
   handleChange: (props: any) => void;
   values: taskType;
 };
 
-function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
-  // console.log(values)
+function AddTask({ errors, setFieldValue, handleChange, values,coe }: tType) {
+
   return (
     <>
       <div className="bgPaper inputWrapper">
@@ -25,6 +26,7 @@ function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
             value={values.id}
             onChange={handleChange}
             variant="outlined"
+            disabled={!coe}
           />
         </div>
         <div className="inputBox">
@@ -56,16 +58,20 @@ function AddTask({ errors, setFieldValue, handleChange, values }: tType) {
           />
         </div>
 
+
+
         <div className="inputBox">
           <h3>坪單價</h3>
           <p className="errormsg"> {errors.pValue}</p>
           <TextField
-            fullWidth
-            type="number"
-            onChange={handleChange}
-            value={values.pValue}
-            name="pValue"
-            label="坪單價"
+         fullWidth
+         type="number"
+         id="outlined-basic"
+         value={values.pValue}
+         name="pValue"
+         label="坪單價"
+         onChange={handleChange}
+         variant="outlined"
           />
         </div>
 

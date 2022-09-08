@@ -39,7 +39,7 @@ function AddPriOrSecCompany({
   const { data: company,isLoading } = trpc.useQuery(["add.findCompany"]);
 
 // console.log(values.companyTypes)
-
+// console.log(errors)
 
   if (values.companyTypes === undefined && coe === false) {
     return <>loading</>;
@@ -52,7 +52,7 @@ function AddPriOrSecCompany({
     <div className="bgPaper inputWrapper">
      
 
-      {errors.company}
+     
       <FieldArray
         name="companyTypes"
         validateOnChange={false}
@@ -63,6 +63,7 @@ function AddPriOrSecCompany({
                 <div key={index} className="selectCompany">
                   <div className="inputBox">
                   <h3>契約公司</h3>
+                  {/* <p className="errormsg">{errors.companyTypes[index]?.company.}</p> */}
                     <Autocomplete
                        isOptionEqualToValue={(option, value) =>  value.c_tax===option.c_tax }
                       options={company || []}

@@ -9,7 +9,7 @@ export const taskSchema = z.object({
   .regex(new RegExp(".*[-].*"), "需要'-'"),
   task_name: z.string(),
   p: z.number(),
-  pValue: z.number(),
+  pValue: z.any(),
   startDate: z.date().nullable(),
   endDate: z.date().nullable(),
   openDate: z.date().nullable(),
@@ -42,8 +42,8 @@ export const taskSchema = z.object({
           c_title:z.string(),
           c_tax:z.string()
         }),
-        amount: z.number(),
-        cutPayment: z.number().nullable(),
+        amount: z.number().or(z.string()),
+        cutPayment: z.number().nullable().or(z.string()),
         notes: z.string().nullable(),
       })
     )

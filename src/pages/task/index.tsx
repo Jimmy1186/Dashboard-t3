@@ -21,7 +21,7 @@ type tl = {
   id: string;
   task_name: string | null;
   p:number|null;
-  pValue: Prisma.Decimal | null;
+  pValue: Prisma.Decimal | null ;
   startDate: Date | null;
   endDate: Date | null;
   createAt: Date;
@@ -52,6 +52,7 @@ type tl = {
           c_title:string | null;
           c_tax:string | null;
         } | null;
+        c_Type:string;
         amount: Prisma.Decimal;
         cutPayment: Prisma.Decimal | null;
         notes: string | null;
@@ -108,14 +109,55 @@ const initialValues = {
 
 function Index() {
   const [coe,setCoe]=useState(true)
-  const [editData,setEditData]= useState<any>()
+  const [editData,setEditData]= useState<taskType>()
   const [open, setOpen] = React.useState(false);
   const { data: task, isLoading, refetch } = trpc.useQuery(["add.taskList"]);
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
+  const editMutation = trpc.useMutation(['add.edit'],{
+    onSuccess:()=>refetch()
+  })
+
+const onEdit = useCallback((values:taskType)=>{
+  const {
+    id,
+    task_name,
+    p,
+    pValue,
+    startDate,
+    endDate,
+    openDate,
+    createAt,
+    locations,
+    charges
+  } = values;
+
+
+
+  editMutation.mutate({
+    id: id,
+    task_name: task_name===editData?.task_name? undefined:task_name,
+    p: p===editData?.p? undefined:p,
+    pValue: pValue===editData?.pValue? undefined:Number(pValue),
+    startDate: startDate===editData?.startDate? undefined:startDate,
+    endDate: endDate===editData?.endDate? undefined:endDate,
+    openDate: openDate===editData?.openDate? undefined:openDate,
+    createAt: createAt===editData?.createAt? undefined:createAt,
+    locations: locations===editData?.locations? undefined:locations,
+    charges: charges===editData?.charges? undefined:charges,
+  })
+
+
+  setOpen(false);
+
+
+},[editMutation])
+
   const onAll = useCallback(
     (values: taskType) => {
+
+
       const {
         id,
         task_name,
@@ -131,15 +173,13 @@ function Index() {
         companyTypes,
       } = values;
 
-      if (companyTypes === null) {
-        return;
-      }
+  
 
       AllMutation.mutate({
         id: id,
         task_name: task_name,
-        p: p,
-        pValue: pValue,
+        p:p,
+        pValue: Number(pValue),
         startDate: startDate,
         endDate: endDate,
         openDate: openDate,
@@ -156,6 +196,7 @@ function Index() {
 
   const editTask =(val:any)=>{
     setCoe(false)
+    console.log(val)
     setEditData(val)
     setOpen(!open)
   }
@@ -185,6 +226,7 @@ function Index() {
       {
         accessorKey: "id",
         header: "編號",
+        enableEditing: false,
       },
       {
         accessorKey: "task_name",
@@ -197,6 +239,9 @@ function Index() {
       {
         accessorKey: "pValue",
         header: "坪單價",
+        muiTableBodyCellEditTextFieldProps: {
+          type: 'number',
+        },
       },
       {
         accessorKey: "locations.location_name",
@@ -489,6 +534,7 @@ function Index() {
           open={open} 
           setOpen={setOpen} 
           onAll={onAll} 
+          onEdit={onEdit}
           initialValues={coe?initialValues:editData}
           />
         ):(
@@ -497,6 +543,7 @@ function Index() {
         coe={coe}
         setOpen={setOpen} 
         onAll={onAll} 
+        onEdit={onEdit}
         initialValues={initialValues}
         />
         )}

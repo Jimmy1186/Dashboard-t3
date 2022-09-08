@@ -20,15 +20,17 @@ type createTaskType = {
   open: boolean;
   setOpen: (i: boolean) => void;
   onAll: (v: any) => void;
+  onEdit: (v: any) => void;
 };
 
-function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType) {
+function CreateTask({ open, setOpen, onAll,onEdit, initialValues,coe }: createTaskType) {
   const handleClose = () => {
     setOpen(false);
   };
 
   const sumbitHandler = (values: taskType, action: any) => {
-    onAll(values);
+    
+    coe?onAll(values):onEdit(values)
     console.log(values);
     action.resetForm();
   };
@@ -58,6 +60,7 @@ function CreateTask({ open, setOpen, onAll, initialValues,coe }: createTaskType)
             <Form className="signupForm">
               <h2>編輯表單</h2>
               <AddTask
+                coe={coe}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
