@@ -17,7 +17,6 @@ model User {
   role     Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId   Int
   charges  Charge[]
-  history  History[]
 }
 
 model Role {
@@ -64,21 +63,16 @@ model CompanyType {
   notes      String?
 }
 
-model History {
-  id     Int      @id @default(autoincrement())
-  editAt DateTime @default(now())
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  taskId String
-}
+
 
 model Charge {
-  id     Int    @id @default(autoincrement())
+
   users  User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   taskId String
+
+  @@id([userId,taskId])
 }
 
 model Task {
@@ -93,7 +87,6 @@ model Task {
   companyTypes CompanyType[]
   installments Installment[]
   charges      Charge[]
-  history      History[]
   locations    Locations?    @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   locationId   Int?
 

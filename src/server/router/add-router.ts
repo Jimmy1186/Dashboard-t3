@@ -116,7 +116,7 @@ export const addRouter = createProtectedRouter()
           companyTypes: {
             select: {
               amount: true,
-              c_Type:true,
+              c_Type: true,
               cutPayment: true,
               notes: true,
               company: {
@@ -149,38 +149,46 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable().or(z.undefined()),
       openDate: z.date().nullable().or(z.undefined()),
       createAt: z.date().or(z.undefined()),
-      locations: z.object({
-        id: z.number().or(z.undefined()),
-        location_name: z.string().or(z.undefined()),
-      }).or(z.undefined()),
-      charges: z.array(
-        z.object({
-          users: z.object({
-            id: z.string(),
-            username: z.string(),
-          }),
+      locations: z
+        .object({
+          id: z.number().or(z.undefined()),
+          location_name: z.string().or(z.undefined()),
         })
-      ).or(z.undefined()),
-      // installment: z.array(
-      //   z.object({
-      //     percent: z.number(),
-      //     ok: z.boolean(),
-      //   })
-      // ),
-      // companyType: z.array(
-      //   z.object({
-      //     c_Type: z.string(),
-      //     company: z.object({
-      //       id: z.number(),
-      //       c_name: z.string(),
-      //       c_title: z.string(),
-      //       c_tax: z.string(),
-      //     }),
-      //     amount: z.number(),
-      //     cutPayment: z.number().nullable(),
-      //     notes: z.string().nullable(),
-      //   })
-      // ),
+        .or(z.undefined()),
+      charges: z
+        .array(
+          z.object({
+            users: z.object({
+              id: z.string(),
+              username: z.string(),
+            }),
+          })
+        )
+        .or(z.undefined()),
+      installment: z
+        .array(
+          z.object({
+            percent: z.number(),
+            ok: z.boolean(),
+          })
+        )
+        .or(z.undefined()),
+      companyType: z
+        .array(
+          z.object({
+            c_Type: z.string(),
+            company: z.object({
+              id: z.number(),
+              c_name: z.string(),
+              c_title: z.string(),
+              c_tax: z.string(),
+            }),
+            amount: z.number().or(z.string()),
+            cutPayment: z.number().nullable().or(z.string()),
+            notes: z.string().nullable(),
+          })
+        )
+        .or(z.undefined()),
     }),
     resolve: async ({ ctx, input }) => {
       const {
@@ -194,8 +202,8 @@ export const addRouter = createProtectedRouter()
         createAt,
         locations,
         charges,
-        // installment,
-        // companyType,
+        installment,
+        companyType,
       } = input;
 
       type cType =
@@ -204,14 +212,12 @@ export const addRouter = createProtectedRouter()
           }[]
         | undefined;
 
-        let chargePayload:cType=[]
-        if(charges!=undefined)
-        {
-              chargePayload = await charges.map((i) => {
-        return { userId: i.users.id };
-      });
-        }
-  
+      let chargePayload: cType = [];
+      if (charges != undefined) {
+        chargePayload = await charges.map((i) => {
+          return { userId: i.users.id };
+        });
+      }
 
       type ctType =
         | {
@@ -223,32 +229,66 @@ export const addRouter = createProtectedRouter()
           }[]
         | undefined;
 
-      // const companyTypePayload: ctType = await companyType.map((i) => {
-      //   return {
-      //     c_Type: i.c_Type,
-      //     companyId: i.company.id,
-      //     amount: i.amount,
-      //     cutPayment: i.cutPayment,
-      //     notes: i.notes,
-      //   };
-      // });
+      let companyTypePayload: ctType = [];
 
-      return await ctx.prisma.task.update({
+      if (companyType != undefined) {
+        companyTypePayload = await companyType.map((i) => {
+          return {
+            c_Type: i.c_Type,
+            companyId: i.company.id,
+            amount: Number(i.amount),
+            cutPayment: Number(i.cutPayment),
+            notes: i.notes,
+          };
+        });
+      }
+      // console.log(charges===undefined)
+      await ctx.prisma.task.update({
         where: {
           id: id,
         },
         data: {
-          task_name: task_name||undefined,
-          p: p||undefined,
-          pValue: pValue||undefined,
-          startDate: startDate||undefined,
-          endDate: endDate||undefined,
-          openDate: openDate||undefined,
-          createAt: createAt||undefined,
-          locationId: locations?.id||undefined,
-          charges:{
-         
-          }
+          task_name: task_name || undefined,
+          p: p || undefined,
+          pValue: pValue || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          openDate: openDate || undefined,
+          createAt: createAt || undefined,
+          locationId: locations?.id || undefined,
+          charges:
+            charges != undefined
+              ? {
+                  deleteMany: {},
+                  createMany: {
+                    data: chargePayload,
+                  },
+                }
+              : undefined,
+          companyTypes:
+            companyType != undefined
+              ? {
+                  deleteMany: {},
+                  createMany: {
+                    data: companyTypePayload,
+                  },
+                }
+              : undefined,
+          installments:
+            installment != undefined
+              ? {
+                  deleteMany: {},
+                  createMany: {
+                    data: installment,
+                  },
+                }
+              : undefined,
+        },
+
+        include: {
+          charges: true,
+          companyTypes: true,
+          installments: true,
         },
       });
     },
@@ -321,7 +361,7 @@ export const addRouter = createProtectedRouter()
           c_Type: i.c_Type,
           companyId: i.company.id,
           amount: Number(i.amount),
-          cutPayment:Number(i.cutPayment),
+          cutPayment: Number(i.cutPayment),
           notes: i.notes,
         };
       });
@@ -347,11 +387,6 @@ export const addRouter = createProtectedRouter()
               data: companyTypePayload,
             },
           },
-          history: {
-            create: {
-              userId: ctx.session.user.id,
-            },
-          },
           installments: {
             createMany: {
               data: installment,
@@ -361,7 +396,6 @@ export const addRouter = createProtectedRouter()
         include: {
           charges: true,
           companyTypes: true,
-          history: true,
           installments: true,
         },
       });

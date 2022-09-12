@@ -56,7 +56,7 @@ type tl = {
         amount: Prisma.Decimal;
         cutPayment: Prisma.Decimal | null;
         notes: string | null;
-      }[];
+      }[] | null;
 };
 
 
@@ -130,10 +130,14 @@ const onEdit = useCallback((values:taskType)=>{
     openDate,
     createAt,
     locations,
-    charges
+    charges,
+    installments,
+    companyTypes,
   } = values;
 
-
+// console.log(charges===editData?.charges? true:false)
+// console.log(JSON.stringify(charges)===JSON.stringify(editData?.charges))
+console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes))
 
   editMutation.mutate({
     id: id,
@@ -145,7 +149,9 @@ const onEdit = useCallback((values:taskType)=>{
     openDate: openDate===editData?.openDate? undefined:openDate,
     createAt: createAt===editData?.createAt? undefined:createAt,
     locations: locations===editData?.locations? undefined:locations,
-    charges: charges===editData?.charges? undefined:charges,
+    charges: JSON.stringify(charges)===JSON.stringify(editData?.charges)? undefined:charges,
+    companyType:JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes)? undefined:companyTypes,
+    installment:JSON.stringify(installments)===JSON.stringify(editData?.installments)? undefined:installments
   })
 
 
