@@ -4,8 +4,9 @@ import { signupUserType } from "../../../types/common";
 import Signup from "../../../components/tools/Signup";
 import { useCallback } from "react";
 import AlertBar from "../../../components/tools/AlertBar";
-
+import { useSession } from "next-auth/react"
 function Index() {
+  const { data: session, status } = useSession()
   const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
 
@@ -46,6 +47,9 @@ function Index() {
     action.resetForm();
   };
 
+  if(session?.user?.role!="X"){
+    return <h1>無權限</h1>
+  }
   return (
     <>
       <div className="controlBox">

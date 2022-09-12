@@ -3,14 +3,16 @@ import Image from "next/image";
 import mainLogo from "/public/mainLogo.gif";
 import { pageIndexNavStateType } from "../../types/common";
 import Link from "next/link";
+import { useSession } from "next-auth/react"
+
 function Navbar({
   navState,
   setNavState,
   pageIndex,
   setPageIndex,
 }: pageIndexNavStateType) {
-
-
+  const { data: session, status } = useSession()
+console.log(session)
 const pageHandler =(n:number)=>{
     setNavState(!navState)
     setPageIndex(n)
@@ -60,7 +62,7 @@ const pageHandler =(n:number)=>{
               </a>
             </Link>
           </li>
-          <li className={`${pageIndex===5?"active":""}`}>
+          <li className={`${pageIndex===5?"active":""} ${session?.user?.role==="X"? "":"hiddenAdim"}`} >
           <Link href={"/auth/admin"}>
             <a onClick={()=>pageHandler(5)}>
                 <svg className="icon" viewBox="0 0 24 24">

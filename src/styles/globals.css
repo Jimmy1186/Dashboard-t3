@@ -416,11 +416,7 @@ table > thead > tr > * {
   width: 100%;
 }
 
-.tableUsers{
-  display: flex;
-  gap: 1rem;
-  flex-direction: row;
-}
+
 
 .bgPaper{
   background: var(--bg-white);
@@ -487,4 +483,33 @@ table > thead > tr > * {
   gap: 5rem;
   justify-content: flex-end;
   padding: 2rem 1rem;
+}
+
+.mainTotal{
+  font-size: larger;
+  font-weight: bolder;
+  color:var(--purple)
+}
+
+.tableUsers{
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+}
+
+.profit{
+  font-size: larger;
+  font-weight: bolder;
+  color:var(--pink)
+}
+
+.cost{
+  font-size: larger;
+  font-weight: bolder;
+  color:var(--green-text)
+}
+
+
+.hiddenAdim{
+  display: none;
 }

@@ -1,4 +1,4 @@
-import { createProtectedRouter } from "./protected-router";
+import { adminProtectedRouter } from "./protected-router";
 import argon2  from "argon2";
 import { z } from "zod";
 import * as trpc from "@trpc/server";
@@ -62,7 +62,7 @@ export const tempRouter = createRouter()
   },
 })
 // Example router with queries that can only be hit if the user requesting is signed in
-export const adminRouter = createProtectedRouter()
+export const adminRouter = adminProtectedRouter()
   .query("getSession", {
     resolve({ ctx }) {
       return ctx.session;

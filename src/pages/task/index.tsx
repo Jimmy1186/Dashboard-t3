@@ -8,33 +8,33 @@ import { trpc } from "../../utils/trpc";
 import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
 import { Prisma } from "@prisma/client";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";
-import { Tooltip, IconButton, Box, Autocomplete } from "@mui/material";
+import { Tooltip, IconButton, Box } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
 import { taskType } from "../../types/task";
-
+import NavigationIcon from "@mui/icons-material/Navigation";
+import Fab from "@mui/material/Fab";
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 
 type tl = {
   id: string;
   task_name: string | null;
-  p:number|null;
-  pValue: Prisma.Decimal | null ;
+  p: number | null;
+  pValue: Prisma.Decimal | null;
   startDate: Date | null;
   endDate: Date | null;
   createAt: Date;
   openDate: Date | null;
   locations: {
     location_name: string | null;
-    id:number;
+    id: number;
   } | null;
   charges:
     | {
         users: {
           username: string;
-          id:string;
+          id: string;
         } | null;
       }[]
     | null;
@@ -47,19 +47,18 @@ type tl = {
   companyTypes:
     | {
         company: {
-          id:number | null;
+          id: number | null;
           c_name: string | null;
-          c_title:string | null;
-          c_tax:string | null;
+          c_title: string | null;
+          c_tax: string | null;
         } | null;
-        c_Type:string;
+        c_Type: string;
         amount: Prisma.Decimal;
         cutPayment: Prisma.Decimal | null;
         notes: string | null;
-      }[] | null;
+      }[]
+    | null;
 };
-
-
 
 const initialValues = {
   id: "",
@@ -72,9 +71,9 @@ const initialValues = {
   createAt: new Date(),
   locations: {
     id: 11,
-    location_name: "臺北市南港區"
+    location_name: "臺北市南港區",
   },
-  charges:[],
+  charges: [],
   installments: [
     {
       percent: 0,
@@ -84,14 +83,11 @@ const initialValues = {
   companyTypes: [
     {
       c_Type: "pri",
-      company:{
-        
-          id: 1,
-          c_name: "復華",
-          c_title: "復華廣告有限公司",
-          c_tax: "00000000",
-  
-        
+      company: {
+        id: 1,
+        c_name: "復華",
+        c_title: "復華廣告有限公司",
+        c_tax: "00000000",
       },
       amount: 0,
       cutPayment: 0,
@@ -100,70 +96,65 @@ const initialValues = {
   ],
 };
 
-
-
-
-
-
-
-
 function Index() {
-  const [coe,setCoe]=useState(true)
-  const [editData,setEditData]= useState<taskType>()
+  const [coe, setCoe] = useState(true);
+  const [editData, setEditData] = useState<taskType>();
   const [open, setOpen] = React.useState(false);
-  const { data: task, isLoading, refetch } = trpc.useQuery(["add.taskList"]);
+  const { data: task, isLoading, refetch } = trpc.useQuery(["guest.taskList"]);
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
-  const editMutation = trpc.useMutation(['add.edit'],{
-    onSuccess:()=>refetch()
-  })
 
-const onEdit = useCallback((values:taskType)=>{
-  const {
-    id,
-    task_name,
-    p,
-    pValue,
-    startDate,
-    endDate,
-    openDate,
-    createAt,
-    locations,
-    charges,
-    installments,
-    companyTypes,
-  } = values;
-
-// console.log(charges===editData?.charges? true:false)
-// console.log(JSON.stringify(charges)===JSON.stringify(editData?.charges))
-console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes))
-
-  editMutation.mutate({
-    id: id,
-    task_name: task_name===editData?.task_name? undefined:task_name,
-    p: p===editData?.p? undefined:p,
-    pValue: pValue===editData?.pValue? undefined:Number(pValue),
-    startDate: startDate===editData?.startDate? undefined:startDate,
-    endDate: endDate===editData?.endDate? undefined:endDate,
-    openDate: openDate===editData?.openDate? undefined:openDate,
-    createAt: createAt===editData?.createAt? undefined:createAt,
-    locations: locations===editData?.locations? undefined:locations,
-    charges: JSON.stringify(charges)===JSON.stringify(editData?.charges)? undefined:charges,
-    companyType:JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes)? undefined:companyTypes,
-    installment:JSON.stringify(installments)===JSON.stringify(editData?.installments)? undefined:installments
-  })
+// const [cost,setCost] = useState()
+const numberWithCommas=(x:number|undefined)=> {
+  if(x===undefined) x=0
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 
-  setOpen(false);
 
 
-},[editMutation])
 
-  const onAll = useCallback(
+
+
+
+
+
+  const profit = useMemo(
+    () => task?.map((i)=>{
+      let mainpro = Number(i.companyTypes[0]?.amount) - Number(i.companyTypes[0]?.cutPayment)
+ 
+      let lol = i.companyTypes.slice(1).reduce((acc,curr)=>{
+        return acc+ Number(curr.amount) -Number(curr.cutPayment)
+      },0)
+      return mainpro - lol
+    }),
+    [task,editData],
+  );
+
+  const cost = useMemo(
+    () => task?.map((i)=>{
+ 
+      return i.companyTypes.slice(1).reduce((acc,curr)=>{
+        return acc+ Number(curr.amount) -Number(curr.cutPayment)
+      },0)
+      
+    }),
+    [task,editData],
+  );
+
+// console.log(task?.map((i)=>{
+//   return i.companyTypes.reduce((acc,curr)=>{
+//     return acc+ Number(curr.amount) -Number(curr.cutPayment)
+//   },0)
+// }))
+
+  const editMutation = trpc.useMutation(["add.edit"], {
+    onSuccess: () => refetch(),
+  });
+
+  const onEdit = useCallback(
     (values: taskType) => {
-
-
       const {
         id,
         task_name,
@@ -179,12 +170,58 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
         companyTypes,
       } = values;
 
-  
+      editMutation.mutate({
+        id: id,
+        task_name: task_name === editData?.task_name ? undefined : task_name,
+        p: p === editData?.p ? undefined : p,
+        pValue: pValue === editData?.pValue ? undefined : Number(pValue),
+        startDate: startDate === editData?.startDate ? undefined : startDate,
+        endDate: endDate === editData?.endDate ? undefined : endDate,
+        openDate: openDate === editData?.openDate ? undefined : openDate,
+        createAt: createAt === editData?.createAt ? undefined : createAt,
+        locations: locations === editData?.locations ? undefined : locations,
+        charges:
+          JSON.stringify(charges) === JSON.stringify(editData?.charges)
+            ? undefined
+            : charges,
+        companyType:
+          JSON.stringify(companyTypes) ===
+          JSON.stringify(editData?.companyTypes)
+            ? undefined
+            : companyTypes,
+        installment:
+          JSON.stringify(installments) ===
+          JSON.stringify(editData?.installments)
+            ? undefined
+            : installments,
+      });
+
+      setOpen(false);
+    },
+    [editMutation]
+  );
+
+  const onAll = useCallback(
+    (values: taskType) => {
+      const {
+        id,
+        task_name,
+        p,
+        pValue,
+        startDate,
+        endDate,
+        openDate,
+        createAt,
+        locations,
+        charges,
+        installments,
+        companyTypes,
+      } = values;
 
       AllMutation.mutate({
         id: id,
         task_name: task_name,
-        p:p,
+        p: p,
         pValue: Number(pValue),
         startDate: startDate,
         endDate: endDate,
@@ -200,12 +237,11 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
     [task, AllMutation]
   );
 
-  const editTask =(val:any)=>{
-    setCoe(false)
-    console.log(val)
-    setEditData(val)
-    setOpen(!open)
-  }
+  const editTask = (val: any) => {
+    setCoe(false);
+    setEditData(val);
+    setOpen(!open);
+  };
 
   const deleteMutation = trpc.useMutation(["add.delete"], {
     onSuccess: () => refetch(),
@@ -223,9 +259,6 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
     },
     [task, deleteMutation]
   );
-
-
-
 
   const columns = useMemo<MRT_ColumnDef<tl>[]>(
     () => [
@@ -246,7 +279,7 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
         accessorKey: "pValue",
         header: "坪單價",
         muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
+          type: "number",
         },
       },
       {
@@ -295,12 +328,13 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
           }[];
           const cv = cell.getValue() as cvType;
 
-          return <div className="tableUsers">{cv[0]?.amount}</div>;
+          return <p className="mainTotal">{cv[0]?.amount}</p>;
         },
       },
       {
         accessorFn: (row) => row.companyTypes,
         header: "主差し引い",
+
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -315,6 +349,7 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
       {
         accessorFn: (row) => row.companyTypes,
         header: "主備註",
+
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -431,10 +466,10 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
               {cv.map((i: iTypes) => {
                 return (
                   <div className="installmenttable" key={uuidv4()}>
-                    <FormControlLabel
-                      control={<Checkbox defaultChecked={i.ok} />}
-                      label={i.percent}
-                    />
+                    <Fab variant="extended" disabled={i.ok} color="success">
+                      <PriceCheckIcon />
+                      <h4>{i.percent}</h4>
+                    </Fab>
                   </div>
                 );
               })}
@@ -478,6 +513,24 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
           return <p>{format(new Date(d), "yyyy-MM-dd")}</p>;
         },
       },
+      {
+        header: "利益",
+        Cell: ({ row }) => {
+          // const total = cell.getValue() as any;
+     
+          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
+          return profit===undefined?(""):(<p className="profit">{numberWithCommas(profit[Number(row.id)])}</p>);
+        },
+      },
+      {
+        header: "総原価合計",
+        Cell: ({ row }) => {
+          // const total = cell.getValue() as any;
+     
+          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
+          return cost===undefined?(""):(<p className="cost">{numberWithCommas(cost[Number(row.id)])}</p>);
+        },
+      },
     ],
     []
   );
@@ -494,10 +547,13 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
   return (
     <>
       <div className="task-wrapper">
-        <div className="addTaskBtn" onClick={() => {
-          setOpen(!open)
-          setCoe(true)
-        }}>
+        <div
+          className="addTaskBtn"
+          onClick={() => {
+            setOpen(!open);
+            setCoe(true);
+          }}
+        >
           <svg className="addTaskSvg" viewBox="0 0 24 24">
             <path
               className="addTaskSvgPath"
@@ -518,10 +574,15 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
             editingMode="modal" //default
             enableColumnOrdering
             enableEditing
+            displayColumnDefOptions={{
+              'mrt-row-numbers': {
+                enableHiding: true, //now row numbers are hidable too
+              },
+            }}
             renderRowActions={({ row, table }) => (
               <Box sx={{ display: "flex", gap: "1rem" }}>
                 <Tooltip arrow placement="left" title="Edit">
-                <IconButton onClick={() => editTask(row.original)}>
+                  <IconButton onClick={() => editTask(row.original)}>
                     <Edit />
                   </IconButton>
                 </Tooltip>
@@ -534,24 +595,24 @@ console.log(JSON.stringify(companyTypes)===JSON.stringify(editData?.companyTypes
             )}
           />
         )}
-        {editData!=undefined?(
-          <CreateTask 
-          coe={coe}
-          open={open} 
-          setOpen={setOpen} 
-          onAll={onAll} 
-          onEdit={onEdit}
-          initialValues={coe?initialValues:editData}
+        {editData != undefined ? (
+          <CreateTask
+            coe={coe}
+            open={open}
+            setOpen={setOpen}
+            onAll={onAll}
+            onEdit={onEdit}
+            initialValues={coe ? initialValues : editData}
           />
-        ):(
-        <CreateTask 
-        open={open} 
-        coe={coe}
-        setOpen={setOpen} 
-        onAll={onAll} 
-        onEdit={onEdit}
-        initialValues={initialValues}
-        />
+        ) : (
+          <CreateTask
+            open={open}
+            coe={coe}
+            setOpen={setOpen}
+            onAll={onAll}
+            onEdit={onEdit}
+            initialValues={initialValues}
+          />
         )}
       </div>
     </>

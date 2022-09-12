@@ -7,7 +7,7 @@ import { taskType } from "../../types/task";
 type locationType = {
   values: taskType;
   coe: boolean;
-  errors: any;
+  errors: { [field: string]: string };
   setFieldValue: (i: string, j: number) => void;
   setErrors: (e: object) => void;
 };
@@ -42,11 +42,6 @@ function AddCharge({
           }}
           options={data || []}
           onChange={(_, value: any) => {
-             
-            //   const Uid = value.map((i: any) => {
-            //     return { userId: i.id };
-            //   });
-
 
             try {
               setFieldValue("charges", value);

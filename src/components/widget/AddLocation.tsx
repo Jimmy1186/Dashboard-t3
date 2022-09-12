@@ -5,41 +5,44 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { taskType } from "../../types/task";
 
 type locationType = {
-  values:taskType,
-  coe: boolean,
-  errors: any;
+  values: taskType;
+  coe: boolean;
+  errors: { [field: string]: string };
   setFieldValue: (i: string, j: number) => void;
   setErrors: (e: object) => void;
 };
-function AddLocation({ errors, setFieldValue, setErrors,values,coe }: locationType) {
-  const { data: lo,isLoading} = trpc.useQuery(["add.location"]);
+function AddLocation({
+  errors,
+  setFieldValue,
+  setErrors,
+  values,
+  coe,
+}: locationType) {
+  const { data: lo, isLoading } = trpc.useQuery(["add.location"]);
 
-
-// console.log(values)
-if (values.locations === undefined && coe === false) {
-  return <>loading</>;
-}
-if (isLoading) {
-  return <>isloading</>;
-}
+  // console.log(values)
+  if (values.locations === undefined && coe === false) {
+    return <>loading</>;
+  }
+  if (isLoading) {
+    return <>isloading</>;
+  }
   return (
     <>
       <div className="bgPaper ">
         <h3>地區</h3>
 
-        {errors.location}
+        {errors.locations ? <p className="errormsg">必填</p> : ""}
         <Autocomplete
           id="id"
           value={values.locations}
           options={lo || []}
           isOptionEqualToValue={(option, value) => {
-  
             return option.id === value.id;
           }}
           onChange={(_, value: any) => {
             try {
               setFieldValue("locations", value);
-          
             } catch (e) {
               setErrors({
                 location: "一定要選",

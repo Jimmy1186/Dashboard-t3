@@ -1,11 +1,9 @@
 import argon2 from "argon2";
-import { PrismaClient} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import NextAuth, { NextAuthOptions } from "next-auth";
 
 import CredentialsProvider from "next-auth/providers/credentials";
-
-
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -19,26 +17,30 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-
-        if(credentials===undefined){
-          return null
+        if (credentials === undefined) {
+          return null;
         }
         const registeredUser = await prisma.user.findFirst({
           where: { id: { equals: credentials.id } },
+          include: {
+            role: true,
+          },
         });
-   
-        if (registeredUser){
 
-        const match =  await argon2.verify(registeredUser.password,credentials.password)
-        
-        if(match){
-          return {
-            id: registeredUser.id,
-            name: registeredUser.username,
-            role: registeredUser.roleId,
-          }}
+        if (registeredUser) {
+          const match = await argon2.verify(
+            registeredUser.password,
+            credentials.password
+          );
+
+          if (match) {
+            return {
+              id: registeredUser.id,
+              name: registeredUser.username,
+              role: registeredUser.role.roles,
+            };
+          }
         }
-          
 
         return null;
       },
@@ -66,9 +68,9 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.name = user.name;
+        token.role = user.role;
       }
-          
-      
+
       return token;
     },
 
@@ -77,13 +79,12 @@ export const authOptions: NextAuthOptions = {
       // console.log("session", session);
       // console.log("token", token);
       // console.log("user", user);
-     
 
-    
-      if (token&& session.user!=undefined) {
-        session.user.id = token.id as string
+      if (token && session.user != undefined) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
-      return session
+      return session;
     },
   },
 };

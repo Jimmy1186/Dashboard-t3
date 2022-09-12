@@ -1,5 +1,5 @@
 import React from "react";
-import {  FieldArray } from "formik";
+import { FieldArray } from "formik";
 import TextField from "@mui/material/TextField";
 import { z } from "zod";
 import Button from "@mui/material/Button";
@@ -13,7 +13,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { taskType } from "../../types/task";
 
 export const selectCompanySchema = z.object({
-
   companyId: z.number().min(1, "一定要選"),
   amount: z.number().min(1, "要大於1"),
   cutPayment: z.number().min(0),
@@ -22,8 +21,8 @@ export const selectCompanySchema = z.object({
 export type selectCompanyType = z.infer<typeof selectCompanySchema>;
 
 type locationType = {
-  coe: boolean,
-  errors: any;
+  coe: boolean;
+  errors: { [field: string]: string };
   setFieldValue: (i: string, j: number | string) => void;
   setErrors: (i: object) => void;
   values: taskType;
@@ -36,10 +35,9 @@ function AddPriOrSecCompany({
   setErrors,
   values,
 }: locationType) {
-  const { data: company,isLoading } = trpc.useQuery(["add.findCompany"]);
+  const { data: company, isLoading } = trpc.useQuery(["add.findCompany"]);
 
-// console.log(values.companyTypes)
-// console.log(errors)
+  // console.log(values.companyTypes)
 
   if (values.companyTypes === undefined && coe === false) {
     return <>loading</>;
@@ -50,9 +48,6 @@ function AddPriOrSecCompany({
   }
   return (
     <div className="bgPaper inputWrapper">
-     
-
-     
       <FieldArray
         name="companyTypes"
         validateOnChange={false}
@@ -62,20 +57,17 @@ function AddPriOrSecCompany({
               values.companyTypes.map((per: any, index: number) => (
                 <div key={index} className="selectCompany">
                   <div className="inputBox">
-                  <h3>契約公司</h3>
-                  {/* <p className="errormsg">{errors.companyTypes[index]?.company.}</p> */}
+                    <h3>契約公司</h3>
+                    {/* <p className="errormsg">{errors.companyTypes[index]?.company.}</p> */}
                     <Autocomplete
-                       isOptionEqualToValue={(option, value) =>  value.c_tax===option.c_tax }
+                      isOptionEqualToValue={(option, value) =>
+                        value.c_tax === option.c_tax
+                      }
                       options={company || []}
                       value={values.companyTypes[index]?.company}
-                      onChange={(_, value: any ) => {
-
+                      onChange={(_, value: any) => {
                         try {
-                          setFieldValue(
-                            `companyTypes.${index}.company`,
-                            value
-                          );
-
+                          setFieldValue(`companyTypes.${index}.company`, value);
 
                           {
                             index != 0
@@ -88,8 +80,6 @@ function AddPriOrSecCompany({
                                   "pri"
                                 );
                           }
-
-
                         } catch (e) {
                           setErrors({
                             companyId: "一定要選",
@@ -120,8 +110,8 @@ function AddPriOrSecCompany({
                   <div className="inputBox">
                     <h3>金額</h3>
                     <OutlinedInput
-                    value={values.companyTypes[index]?.amount||0}
-                     fullWidth
+                      value={values.companyTypes[index]?.amount || 0}
+                      fullWidth
                       startAdornment={
                         <InputAdornment position="start">$</InputAdornment>
                       }
@@ -138,8 +128,8 @@ function AddPriOrSecCompany({
                   <div className="inputBox">
                     <h3>扣除金額</h3>
                     <OutlinedInput
-                    value={values.companyTypes[index]?.cutPayment||0}
-                     fullWidth
+                      value={values.companyTypes[index]?.cutPayment || 0}
+                      fullWidth
                       startAdornment={
                         <InputAdornment position="start">$</InputAdornment>
                       }
@@ -154,9 +144,19 @@ function AddPriOrSecCompany({
                   </div>
                   <div className="inputBox">
                     <h3>備註</h3>
+                    {errors.companyTypes != undefined ? (
+                      <p className="errormsg">
+                        {errors.companyTypes[index] != undefined
+                          ? "填一下"
+                          : ""}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
                     <TextField
-                    fullWidth
-                    value={values.companyTypes[index]?.notes||""}
+                      fullWidth
+                      value={values.companyTypes[index]?.notes || ""}
                       id="outlined-basic"
                       label="備註"
                       name={`companyTypes.${index}.notes`}
@@ -174,7 +174,6 @@ function AddPriOrSecCompany({
                       variant="contained"
                       aria-label="outlined primary button group"
                     >
-            
                       {values.companyTypes[index]?.c_Type === "pri" ? (
                         ""
                       ) : (

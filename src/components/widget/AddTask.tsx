@@ -6,7 +6,7 @@ import { taskType } from "../../types/task";
 
 type tType = {
   coe: boolean;
-  errors: any;
+  errors: { [field: string]: string };
   setFieldValue: (dataName: string, data: Date) => void;
   handleChange: (props: any) => void;
   values: taskType;
@@ -83,7 +83,7 @@ function AddTask({ errors, setFieldValue, handleChange, values,coe }: tType) {
             className="datePicker"
             selected={values.startDate}
             name="startDate"
-            onChange={(date: any) => {
+            onChange={(date:Date) => {
               setFieldValue("startDate", date);
             }}
           />
@@ -97,7 +97,7 @@ function AddTask({ errors, setFieldValue, handleChange, values,coe }: tType) {
             className="datePicker"
             selected={values.endDate}
             name="endDate"
-            onChange={(date: any) => {
+            onChange={(date: Date) => {
               setFieldValue("endDate", date);
             }}
           />
@@ -111,7 +111,7 @@ function AddTask({ errors, setFieldValue, handleChange, values,coe }: tType) {
             className="datePicker"
             selected={values.openDate}
             name="openDate"
-            onChange={(date: any) => {
+            onChange={(date: Date) => {
               setFieldValue("openDate", date);
             }}
           />
@@ -124,7 +124,7 @@ function AddTask({ errors, setFieldValue, handleChange, values,coe }: tType) {
             className="datePicker"
             selected={values.createAt}
             name="createAt"
-            onChange={(date: any) => {
+            onChange={(date: Date) => {
               setFieldValue("createAt", date);
             }}
           />
