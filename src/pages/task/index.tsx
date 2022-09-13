@@ -26,9 +26,10 @@ const initialValues = {
   endDate: null,
   openDate: null,
   createAt: new Date(),
+  adapt:"新店",
   locations: {
     id: 11,
-    location_name: "臺北市南港區",
+    location_name: "臺北市",
   },
   charges: [],
   installments: [
@@ -163,6 +164,7 @@ function Index() {
         endDate,
         openDate,
         createAt,
+        adapt,
         locations,
         charges,
         installments,
@@ -178,6 +180,7 @@ function Index() {
         endDate: endDate === editData?.endDate ? undefined : endDate,
         openDate: openDate === editData?.openDate ? undefined : openDate,
         createAt: createAt === editData?.createAt ? undefined : createAt,
+        adapt:adapt===editData?.adapt? undefined:adapt,
         locations: locations === editData?.locations ? undefined : locations,
         charges:
           JSON.stringify(charges) === JSON.stringify(editData?.charges)
@@ -211,6 +214,7 @@ function Index() {
         endDate,
         openDate,
         createAt,
+        adapt,
         locations,
         charges,
         installments,
@@ -226,6 +230,7 @@ function Index() {
         endDate: endDate,
         openDate: openDate,
         createAt: createAt,
+        adapt:adapt,
         locations: locations,
         charges: charges,
         installment: installments,
@@ -283,6 +288,10 @@ function Index() {
         Cell: ({ cell }) => (
           <p className="pValue">{numberWithCommas(cell.getValue<number>())}</p>
         ),
+      },
+      {
+        accessorKey: "adapt",
+        header: "工程",
       },
       {
         accessorKey: "locations.location_name",
@@ -637,7 +646,7 @@ function Index() {
                     setCoe(true);
                   }}
                 >
-                  列印
+                  新增
                 </Button>
                 <Button
                   disabled={

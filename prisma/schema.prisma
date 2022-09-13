@@ -11,10 +11,10 @@ datasource db {
 }
 
 model User {
-  id       String    @id @db.Char(6)
-  username String    @unique @db.VarChar(20)
+  id       String   @id @db.Char(6)
+  username String   @unique @db.VarChar(20)
   password String
-  role     Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  role     Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId   Int
   charges  Charge[]
 }
@@ -63,16 +63,13 @@ model CompanyType {
   notes      String?
 }
 
-
-
 model Charge {
-
   users  User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   taskId String
 
-  @@id([userId,taskId])
+  @@id([userId, taskId])
 }
 
 model Task {
@@ -84,6 +81,7 @@ model Task {
   endDate      DateTime?
   openDate     DateTime?
   createAt     DateTime
+  adapt        String        @db.Char(2)
   companyTypes CompanyType[]
   installments Installment[]
   charges      Charge[]

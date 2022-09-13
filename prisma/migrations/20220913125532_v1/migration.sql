@@ -65,22 +65,11 @@ CREATE TABLE `CompanyType` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `History` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `editAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `userId` VARCHAR(191) NOT NULL,
-    `taskId` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `Charge` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` VARCHAR(191) NOT NULL,
     `taskId` VARCHAR(191) NOT NULL,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`userId`, `taskId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -93,6 +82,7 @@ CREATE TABLE `Task` (
     `endDate` DATETIME(3) NULL,
     `openDate` DATETIME(3) NULL,
     `createAt` DATETIME(3) NOT NULL,
+    `adapt` CHAR(2) NOT NULL,
     `locationId` INTEGER NULL,
 
     UNIQUE INDEX `Task_task_name_key`(`task_name`),
@@ -110,12 +100,6 @@ ALTER TABLE `CompanyType` ADD CONSTRAINT `CompanyType_taskId_fkey` FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE `CompanyType` ADD CONSTRAINT `CompanyType_companyId_fkey` FOREIGN KEY (`companyId`) REFERENCES `Company`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `History` ADD CONSTRAINT `History_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `History` ADD CONSTRAINT `History_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Charge` ADD CONSTRAINT `Charge_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -14,6 +14,7 @@ export const guestRouter = createRouter()
           endDate: true,
           createAt: true,
           openDate: true,
+          adapt:true,
           charges: {
             select: {
               users: {

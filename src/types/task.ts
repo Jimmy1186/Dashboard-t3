@@ -14,6 +14,7 @@ export const taskSchema = z.object({
   endDate: z.date().nullable(),
   openDate: z.date().nullable(),
   createAt: z.date(),
+  adapt:z.string(),
   locations: z.object({
     id:z.number(),
     location_name:z.string()
@@ -64,6 +65,7 @@ export type tl = {
   endDate: Date | null;
   createAt: Date;
   openDate: Date | null;
+  adapt:string;
   locations: {
     location_name: string | null;
     id: number;

@@ -95,6 +95,7 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable().or(z.undefined()),
       openDate: z.date().nullable().or(z.undefined()),
       createAt: z.date().or(z.undefined()),
+      adapt:z.string().or(z.undefined()),
       locations: z
         .object({
           id: z.number().or(z.undefined()),
@@ -146,6 +147,7 @@ export const addRouter = createProtectedRouter()
         endDate,
         openDate,
         createAt,
+        adapt,
         locations,
         charges,
         installment,
@@ -201,6 +203,7 @@ export const addRouter = createProtectedRouter()
           endDate: endDate || undefined,
           openDate: openDate || undefined,
           createAt: createAt || undefined,
+          adapt:adapt||undefined,
           locationId: locations?.id || undefined,
           charges:
             charges != undefined
@@ -249,6 +252,7 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable(),
       openDate: z.date().nullable(),
       createAt: z.date(),
+      adapt:z.string(),
       locations: z.object({
         id: z.number(),
         location_name: z.string(),
@@ -292,6 +296,7 @@ export const addRouter = createProtectedRouter()
         endDate,
         openDate,
         createAt,
+        adapt,
         locations,
         charges,
         installment,
@@ -323,6 +328,7 @@ export const addRouter = createProtectedRouter()
           openDate: openDate,
           createAt: createAt,
           locationId: locations.id,
+          adapt:adapt,
           charges: {
             createMany: {
               data: chargePayload,
