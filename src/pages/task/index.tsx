@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import MaterialReactTable, {
   MRT_ColumnDef,
   MRT_Row,
@@ -7,59 +7,16 @@ import Skeleton from "@mui/material/Skeleton";
 import { trpc } from "../../utils/trpc";
 import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
-import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";
-import { Tooltip, IconButton, Box } from "@mui/material";
+import { Tooltip, IconButton, Box, Button } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
-import { taskType } from "../../types/task";
-import NavigationIcon from "@mui/icons-material/Navigation";
 import Fab from "@mui/material/Fab";
-import PriceCheckIcon from '@mui/icons-material/PriceCheck';
-
-type tl = {
-  id: string;
-  task_name: string | null;
-  p: number | null;
-  pValue: Prisma.Decimal | null;
-  startDate: Date | null;
-  endDate: Date | null;
-  createAt: Date;
-  openDate: Date | null;
-  locations: {
-    location_name: string | null;
-    id: number;
-  } | null;
-  charges:
-    | {
-        users: {
-          username: string;
-          id: string;
-        } | null;
-      }[]
-    | null;
-  installments:
-    | {
-        percent: number | null;
-        ok: boolean;
-      }[]
-    | null;
-  companyTypes:
-    | {
-        company: {
-          id: number | null;
-          c_name: string | null;
-          c_title: string | null;
-          c_tax: string | null;
-        } | null;
-        c_Type: string;
-        amount: Prisma.Decimal;
-        cutPayment: Prisma.Decimal | null;
-        notes: string | null;
-      }[]
-    | null;
-};
-
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import { taskType, tl } from "../../types/task";
+import { useSession } from "next-auth/react";
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import AddIcon from "@mui/icons-material/Add";
 const initialValues = {
   id: "",
   task_name: "",
@@ -98,56 +55,98 @@ const initialValues = {
 
 function Index() {
   const [coe, setCoe] = useState(true);
+  const [print,setPrint] =useState(false);
   const [editData, setEditData] = useState<taskType>();
   const [open, setOpen] = React.useState(false);
-  const { data: task, isLoading, refetch } = trpc.useQuery(["guest.taskList"]);
+  const { data: session, status } = useSession();
+  const {
+    data: task,
+    isLoading,
+    refetch,
+    isFetching,
+    isError,
+  } = trpc.useQuery(["guest.taskList"]);
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
 
-// const [cost,setCost] = useState()
-const numberWithCommas=(x:number|undefined)=> {
-  if(x===undefined) x=0
+  // const [cost, setCost] = useState<number[]>([]);
+  const numberWithCommas = (x: number | undefined) => {
+    if (x === undefined) x = 0;
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+  };
 
+  // useEffect(() => {
+  //   if (isLoading) return;
+  //   if (task===undefined) return;
+  //   const costFn = () =>
+  //   task.map((i) => {
+  //     return i.companyTypes.slice(1).reduce((acc, curr) => {
+  //       return acc + Number(curr.amount) - Number(curr.cutPayment);
+  //     }, 0);
 
+  //   });
 
-
-
-
-
-
-
+  //   setCost(costFn);
+  //   console.log(cost);
+  // }, [task]);
 
   const profit = useMemo(
-    () => task?.map((i)=>{
-      let mainpro = Number(i.companyTypes[0]?.amount) - Number(i.companyTypes[0]?.cutPayment)
- 
-      let lol = i.companyTypes.slice(1).reduce((acc,curr)=>{
-        return acc+ Number(curr.amount) -Number(curr.cutPayment)
-      },0)
-      return mainpro - lol
-    }),
-    [task,editData],
+    () =>
+      task &&
+      task.map((i) => {
+        const mainpro =
+          Number(i.companyTypes[0]?.amount) -
+          Number(i.companyTypes[0]?.cutPayment);
+
+        const lol = i.companyTypes.slice(1).reduce((acc, curr) => {
+          return acc + Number(curr.amount) - Number(curr.cutPayment);
+        }, 0);
+        return mainpro - lol;
+      }),
+    [task]
   );
 
   const cost = useMemo(
-    () => task?.map((i)=>{
- 
-      return i.companyTypes.slice(1).reduce((acc,curr)=>{
-        return acc+ Number(curr.amount) -Number(curr.cutPayment)
-      },0)
-      
-    }),
-    [task,editData],
+    () =>
+      task &&
+      task.map((i) => {
+        return i.companyTypes.slice(1).reduce((acc, curr) => {
+          return acc + Number(curr.amount) - Number(curr.cutPayment);
+        }, 0);
+      }),
+    [task]
   );
 
-// console.log(task?.map((i)=>{
-//   return i.companyTypes.reduce((acc,curr)=>{
-//     return acc+ Number(curr.amount) -Number(curr.cutPayment)
-//   },0)
-// }))
+  // const costFn = useMemo(
+  //   () =>
+  //     task.map((i) => {
+  //       return i.companyTypes.slice(1).reduce((acc, curr) => {
+  //         return acc + Number(curr.amount) - Number(curr.cutPayment);
+  //       }, 0);
+  //     }),
+  //   []
+  // );
+
+  const outbound = useMemo(
+    () =>
+      task?.map((i) => {
+        let mainpro =
+          Number(i.companyTypes[0]?.amount) -
+          Number(i.companyTypes[0]?.cutPayment);
+
+        let lol = i.companyTypes.slice(1).reduce((acc, curr) => {
+          return acc + Number(curr.amount) - Number(curr.cutPayment);
+        }, 0);
+        return parseFloat(((lol / mainpro) * 100).toFixed(2));
+      }),
+    []
+  );
+  // console.log(task?.map((i)=>{
+  //   return i.companyTypes.reduce((acc,curr)=>{
+  //     return acc+ Number(curr.amount) -Number(curr.cutPayment)
+  //   },0)
+  // }))
 
   const editMutation = trpc.useMutation(["add.edit"], {
     onSuccess: () => refetch(),
@@ -281,6 +280,9 @@ const numberWithCommas=(x:number|undefined)=> {
         muiTableBodyCellEditTextFieldProps: {
           type: "number",
         },
+        Cell: ({ cell }) => (
+          <p className="pValue">{numberWithCommas(cell.getValue<number>())}</p>
+        ),
       },
       {
         accessorKey: "locations.location_name",
@@ -328,7 +330,7 @@ const numberWithCommas=(x:number|undefined)=> {
           }[];
           const cv = cell.getValue() as cvType;
 
-          return <p className="mainTotal">{cv[0]?.amount}</p>;
+          return <p className="mainTotal">{numberWithCommas(cv[0]?.amount)}</p>;
         },
       },
       {
@@ -343,7 +345,11 @@ const numberWithCommas=(x:number|undefined)=> {
           }[];
           const cv = cell.getValue() as cvType;
 
-          return <div className="tableUsers">{cv[0]?.cutPayment}</div>;
+          return (
+            <div className="tableUsers">
+              {numberWithCommas(cv[0]?.cutPayment)}
+            </div>
+          );
         },
       },
       {
@@ -395,7 +401,9 @@ const numberWithCommas=(x:number|undefined)=> {
 
           return (
             <div className="tableUsers">
-              {c.slice(1).reduce((n, { amount }) => n + Number(amount), 0)}
+              {numberWithCommas(
+                c.slice(1).reduce((n, { amount }) => n + Number(amount), 0)
+              )}
               <br />
             </div>
           );
@@ -413,9 +421,11 @@ const numberWithCommas=(x:number|undefined)=> {
 
           return (
             <div className="tableUsers">
-              {c
-                .slice(1)
-                .reduce((n, { cutPayment }) => n + Number(cutPayment), 0)}
+              {numberWithCommas(
+                c
+                  .slice(1)
+                  .reduce((n, { cutPayment }) => n + Number(cutPayment), 0)
+              )}
             </div>
           );
         },
@@ -468,7 +478,7 @@ const numberWithCommas=(x:number|undefined)=> {
                   <div className="installmenttable" key={uuidv4()}>
                     <Fab variant="extended" disabled={i.ok} color="success">
                       <PriceCheckIcon />
-                      <h4>{i.percent}</h4>
+                      <h4>{i.percent}%</h4>
                     </Fab>
                   </div>
                 );
@@ -517,25 +527,56 @@ const numberWithCommas=(x:number|undefined)=> {
         header: "利益",
         Cell: ({ row }) => {
           // const total = cell.getValue() as any;
-     
+
           // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
-          return profit===undefined?(""):(<p className="profit">{numberWithCommas(profit[Number(row.id)])}</p>);
+          if (isLoading) {
+            return <>loading</>;
+          }
+          return profit === undefined ? (
+            ""
+          ) : (
+            <p className="profit">{numberWithCommas(profit[Number(row.id)])}</p>
+          );
         },
       },
       {
         header: "総原価合計",
         Cell: ({ row }) => {
           // const total = cell.getValue() as any;
-     
+
           // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
-          return cost===undefined?(""):(<p className="cost">{numberWithCommas(cost[Number(row.id)])}</p>);
+          // return <><p>{cost}</p></>
+
+          return (
+            <p className="cost">
+              {numberWithCommas(cost && cost[Number(row.id)])}
+            </p>
+          );
+        },
+      },
+      {
+        header: "外注率",
+        Cell: ({ row }) => {
+          // const total = cell.getValue() as any;
+
+          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
+          if (isLoading) {
+            return <>loading</>;
+          }
+          return outbound === undefined ? (
+            ""
+          ) : (
+            <p className="cost">
+              {numberWithCommas(outbound[Number(row.id)])}%
+            </p>
+          );
         },
       },
     ],
     []
   );
 
-  if (isLoading) {
+  if (isLoading || task === undefined) {
     return (
       <>
         <Skeleton />
@@ -547,22 +588,6 @@ const numberWithCommas=(x:number|undefined)=> {
   return (
     <>
       <div className="task-wrapper">
-        <div
-          className="addTaskBtn"
-          onClick={() => {
-            setOpen(!open);
-            setCoe(true);
-          }}
-        >
-          <svg className="addTaskSvg" viewBox="0 0 24 24">
-            <path
-              className="addTaskSvgPath"
-              fill="currentColor"
-              d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
-            />
-          </svg>
-        </div>
-
         {isLoading ? (
           <Skeleton animation="wave">
             <Paper elevation={3} />
@@ -573,11 +598,12 @@ const numberWithCommas=(x:number|undefined)=> {
             data={task ? task : []}
             editingMode="modal" //default
             enableColumnOrdering
+            enableRowSelection
             enableEditing
-            displayColumnDefOptions={{
-              'mrt-row-numbers': {
-                enableHiding: true, //now row numbers are hidable too
-              },
+            state={{
+              isLoading,
+              showAlertBanner: isError,
+              showProgressBars: isFetching,
             }}
             renderRowActions={({ row, table }) => (
               <Box sx={{ display: "flex", gap: "1rem" }}>
@@ -591,6 +617,40 @@ const numberWithCommas=(x:number|undefined)=> {
                     <Delete />
                   </IconButton>
                 </Tooltip>
+              </Box>
+            )}
+            renderTopToolbarCustomActions={({ table }) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "1rem",
+                  p: "0.5rem",
+                  flexWrap: "wrap",
+                }}
+              >
+                <Button
+                  disabled={session?.user?.role === "R"}
+                  startIcon={<AddIcon />}
+                  variant="contained"
+                  onClick={() => {
+                    setOpen(!open);
+                    setCoe(true);
+                  }}
+                >
+                  列印
+                </Button>
+                <Button
+                  disabled={
+                    !table.getIsSomeRowsSelected() &&
+                    !table.getIsAllRowsSelected()
+                  }
+                  //only export selected rows
+                  // onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+                  startIcon={<LocalPrintshopIcon />}
+                  variant="contained"
+                >
+                  列印
+                </Button>
               </Box>
             )}
           />
@@ -614,6 +674,10 @@ const numberWithCommas=(x:number|undefined)=> {
             initialValues={initialValues}
           />
         )}
+
+        {
+          print 
+        }
       </div>
     </>
   );

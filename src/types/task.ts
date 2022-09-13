@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { Prisma } from "@prisma/client";
 
 export const taskSchema = z.object({
   id: z.string()
@@ -51,3 +51,51 @@ export const taskSchema = z.object({
 });
 
 export type taskType = z.infer<typeof taskSchema>;
+
+
+
+
+export type tl = {
+  id: string;
+  task_name: string | null;
+  p: number | null;
+  pValue: Prisma.Decimal | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  createAt: Date;
+  openDate: Date | null;
+  locations: {
+    location_name: string | null;
+    id: number;
+  } | null;
+  charges:
+    | {
+        users: {
+          username: string;
+          id: string;
+        } | null;
+      }[]
+    | null;
+  installments:
+    | {
+        percent: number | null;
+        ok: boolean;
+      }[]
+    | null;
+  companyTypes:
+    | {
+        company: {
+          id: number | null;
+          c_name: string | null;
+          c_title: string | null;
+          c_tax: string | null;
+        } | null;
+        c_Type: string;
+        amount: Prisma.Decimal;
+        cutPayment: Prisma.Decimal | null;
+        notes: string | null;
+      }[]
+    | null;
+};
+
+

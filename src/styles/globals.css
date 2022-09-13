@@ -509,7 +509,25 @@ table > thead > tr > * {
   color:var(--green-text)
 }
 
-
+.pValue{
+  font-size: larger;
+  font-weight: bolder;
+}
 .hiddenAdim{
   display: none;
 }
+
+.printTable{
+  border-color: #07032B;
+  border-style: solid;
+  border-collapse: collapse;
+  /* height: 3508px;
+  width: 2480px; */
+}
+
+.printTable>tbody>tr>td { 
+  border-width: 2px;
+  border-color: #07032B;
+  border-style: solid;
+  padding: 5px;
+} 
