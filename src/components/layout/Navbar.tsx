@@ -12,7 +12,7 @@ function Navbar({
   setPageIndex,
 }: pageIndexNavStateType) {
   const { data: session, status } = useSession()
-console.log(session)
+// console.log(session)
 const pageHandler =(n:number)=>{
     setNavState(!navState)
     setPageIndex(n)

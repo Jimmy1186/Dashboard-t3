@@ -7,7 +7,7 @@ import { taskType } from "../../types/task";
 type locationType = {
   values: taskType;
   coe: boolean;
-  errors: { [field: string]: string };
+  errors: any;
   setFieldValue: (i: string, j: number) => void;
   setErrors: (e: object) => void;
 };

@@ -10,7 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { taskType } from "../../types/task";
 type iType = {
-  errors: { [field: string]: string };
+  errors: any;
   coe: boolean;
   values: taskType;
   setFieldValue: (i: string, j: number) => void;

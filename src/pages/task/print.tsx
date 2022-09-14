@@ -4,11 +4,46 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 
+
+import { GetServerSideProps } from 'next'
+import { trpc } from "../../utils/trpc";
+
+// let workbook= new ExcelJs.Workbook()
+// let nameFileExcel = '../publuc/01.xlsx'
+// workbook.xlsx.readFile(nameFileExcel)
+// .then(function()  {
+//   var worksheet = workbook.getWorksheet(2);
+//   var lastRow = worksheet.lastRow;
+//   var getRowInsert = worksheet.getRow(1);
+//   getRowInsert.getCell('A').value = 'yo';
+//   getRowInsert.commit();
+//   return workbook.xlsx.writeFile(nameFileExcel);
+// });
+
+
+// await wb.xlsx.readFile(filePath).then(function()  {
+// 	var worksheet = wb.getWorksheet(2);
+// 	var lastRow = worksheet.lastRow;
+// 	var getRowInsert = worksheet.getRow(++(lastRow.number));
+// 	getRowInsert.getCell('A').value = 'yo';
+// 	getRowInsert.commit();
+// 	return wb.xlsx.writeFile(filePath);
+// });
+
 function Print() {
+
+  const xlsxMutation = trpc.useMutation(['guest.xlsx'])
+
+  const onDownload = React.useCallback(()=>{
+    xlsxMutation.mutate({
+      id:"test"
+    })
+  },[xlsxMutation])
   const [open, setOpen] = React.useState(true);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    onDownload()
+    // setOpen(true);
   };
 
   const handleClose = () => {
@@ -19,488 +54,7 @@ function Print() {
     <button onClick={()=>handleClickOpen()}>asdasdssss</button>
      <Dialog fullWidth={true} maxWidth="xl" open={open} onClose={handleClose}>
       <DialogContent>
-        <table className="printTable">
-          <tbody>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={4}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={7}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={5}>das</td>
-              <td colSpan={2}>das</td>
-              
-              <td colSpan={3}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={1}>das</td>
-
-              <td colSpan={4}>das</td>
-              <td colSpan={4}>das</td>
-              <td colSpan={2}>das</td>
-
-
-              <td colSpan={6}>das</td>
-              <td colSpan={7}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={3}>das</td>
-              <td colSpan={14}>das</td>
-              <td colSpan={4}>das</td>
-              
-              <td colSpan={4}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={13}>das</td>
-
-             
-            </tr>
-
-            <tr>
-              <td colSpan={5}>das</td>
-              <td colSpan={12}>das</td>
-              <td colSpan={8}>das</td>
-              
-              <td colSpan={13}>das</td>
-              <td colSpan={7}>das</td>
-            </tr>
-
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            <tr>
-              <td colSpan={7}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-
-              <td colSpan={1}>das</td>
-              <td colSpan={6}>das</td>
-              <td colSpan={3}>das</td>
-              <td colSpan={7}>das</td>
-              <td colSpan={6}>das</td>
-            </tr>
-            
-          </tbody>
-        </table>
+     
       </DialogContent>
       <DialogActions>
       </DialogActions>
@@ -511,3 +65,26 @@ function Print() {
 }
 
 export default Print;
+
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+
+//   workbook.xlsx.readFile(nameFileExcel)
+//   .then(function()  {
+//     var worksheet = workbook.getWorksheet(2);
+//     var lastRow = worksheet.lastRow;
+//     var getRowInsert = worksheet.getRow(1);
+//     getRowInsert.getCell('A').value = 'yo';
+//     getRowInsert.commit();
+//     return workbook.xlsx.writeFile(nameFileExcel);
+//   });
+
+
+
+
+//   return {
+//     props:{
+//       data:"sad"
+//     }
+//   }
+// }

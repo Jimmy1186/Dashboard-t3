@@ -15,8 +15,10 @@ import Fab from "@mui/material/Fab";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
-import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+
 import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from '@mui/icons-material/Download';
+
 const initialValues = {
   id: "",
   task_name: "",
@@ -67,9 +69,22 @@ function Index() {
     isFetching,
     isError,
   } = trpc.useQuery(["guest.taskList"]);
+
+
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
+
+
+  const handleExportRows = (rows: MRT_Row<tl>[]) => {
+    console.log(rows.map((row) => row.original))
+  };
+
+
+
+
+
+
 
   // const [cost, setCost] = useState<number[]>([]);
   const numberWithCommas = (x: number | undefined) => {
@@ -655,10 +670,11 @@ function Index() {
                   }
                   //only export selected rows
                   // onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-                  startIcon={<LocalPrintshopIcon />}
+                  startIcon={<DownloadIcon />}
+                  onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
                   variant="contained"
                 >
-                  列印
+                  下載
                 </Button>
               </Box>
             )}

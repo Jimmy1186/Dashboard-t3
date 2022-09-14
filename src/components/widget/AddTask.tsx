@@ -8,7 +8,7 @@ import { FormControlLabel } from "@mui/material";
 
 type tType = {
   coe: boolean;
-  errors: { [field: string]: string };
+  errors: any;
   setFieldValue: (dataName: string, data: Date) => void;
   handleChange: (props: any) => void;
   values: taskType;

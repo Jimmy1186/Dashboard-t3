@@ -22,7 +22,7 @@ export type selectCompanyType = z.infer<typeof selectCompanySchema>;
 
 type locationType = {
   coe: boolean;
-  errors: { [field: string]: string };
+  errors: any;
   setFieldValue: (i: string, j: number | string) => void;
   setErrors: (i: object) => void;
   values: taskType;

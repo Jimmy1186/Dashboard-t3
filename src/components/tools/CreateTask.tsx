@@ -31,7 +31,7 @@ function CreateTask({ open, setOpen, onAll,onEdit, initialValues,coe }: createTa
   const sumbitHandler = (values: taskType, action: any) => {
     
     coe?onAll(values):onEdit(values)
-    console.log(values);
+   
     action.resetForm();
   };
 
