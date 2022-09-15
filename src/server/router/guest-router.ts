@@ -63,17 +63,44 @@ export const guestRouter = createRouter()
   })
   .mutation("xlsx", {
     input: z.object({
-      xlsx: z.array(
-        z.any()
-      ),
+      xlsx: z.array(z.any()),
+      profit: z.array(z.number()).or(z.undefined()),
+      cost: z.array(z.number()).or(z.undefined()),
+      outbound: z.array(z.number()).or(z.undefined()),
     }),
 
-    resolve: async ({ ctx,input }) => {
-      console.log(input.xlsx)
+    resolve: async ({ ctx, input }) => {
+      // console.log(input.xlsx)
+
+      // let payload: Array<string> = [];
+
+      // return stream.toString("base64");
+    
+        // payload = input.xlsx.map((v) => {
+        //   // console.log(v);
+        //   wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+        //     var ws = wb.getWorksheet(1);
+        //     ws.getCell("H4").value = v.companyTypes[0]?.company.c_name;
+        //   });
+
+        //   wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+
+        //   const stream = fs.readFileSync(PUBLIC_FILE_PATH);
+        //   return stream.toString("base64");
+         
+        // });
+   
+
+      // console.log(payload.length);
+  
+
+
+
+
       const wb = await new ExcelJs.Workbook();
       await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
         var ws = wb.getWorksheet(1);
-        ws.getCell("H4").value = "OKM";
+        ws.getCell("H4").value = input.profit?input.profit[0]:0;
       });
 
       await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
@@ -81,5 +108,8 @@ export const guestRouter = createRouter()
       const stream = fs.readFileSync(PUBLIC_FILE_PATH);
 
       return { xxx: stream.toString("base64") };
+
+
+
     },
   });

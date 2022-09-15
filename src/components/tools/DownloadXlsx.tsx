@@ -4,46 +4,77 @@ import { Button } from "@mui/material";
 import { MRT_Row } from "material-react-table";
 import { tl } from "../../types/task";
 import { trpc } from "../../utils/trpc";
+const mediaType =
+  "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
 
 type downloadXlsxBtnType = {
   clickableState: boolean;
   rowValue: any;
-  profit:Array<number>|undefined;
-  cost:Array<number>|undefined;
-  outbound:Array<number>|undefined;
+  profit: Array<number> | undefined;
+  cost: Array<number> | undefined;
+  outbound: Array<number> | undefined;
 };
 
-function DownloadXlsx({ clickableState, rowValue,profit,cost,outbound }: downloadXlsxBtnType) {
+function DownloadXlsx({
+  clickableState,
+  rowValue,
+  profit,
+  cost,
+  outbound,
+}: downloadXlsxBtnType) {
   const xlsxMutation = trpc.useMutation(["guest.xlsx"]);
 
   const onDownload = React.useCallback(
-    (xlsxData:any,
-    p:Array<number>|undefined,
-    c:Array<number>|undefined,
-    o:Array<number>|undefined,
-    i:Array<number>|undefined,) => {
-        
-    xlsxMutation.mutate({
-      xlsx:xlsxData
-    });
-  }, [xlsxMutation]);
+    (
+      xlsxData: any,
+      p: Array<number> | undefined,
+      c: Array<number> | undefined,
+      o: Array<number> | undefined
+    ) => {
+     
+      xlsxMutation
+        .mutateAsync({
+          xlsx: xlsxData,
+          profit: p,
+          cost: c,
+        })
+        .then((res) => {
+          window.location.href = `${mediaType}${res.xxx}`;
+        });
+
+      // .forEach((v)=>{
+      //   window.location.href = `${mediaType}${v}`;
+      // })
+      
+    },
+    [xlsxMutation]
+  );
 
   const handleExportRows = (rows: MRT_Row<tl>[]) => {
-    const kk = profit?.filter((_v,i,_a)=>{
-        const y =rows.map(v=> Number(v.id))
-       return y.some(j=>i===j)
-    })
-    
-    console.log(rows.map(v=> Number(v.id)))
-    console.log(profit)
-    console.log(kk)
-    // onDownload(
-    //     rows.map(i=>i.original),
-    //     profit,
-    //     cost,
-    //     outbound,
-    //     rows.map(i=>Number(i.id))
-    // )
+    const p = profit?.filter((_v, i, _a) => {
+      const y = rows.map((v) => Number(v.id));
+      return y.some((j) => i === j);
+    });
+
+    const c = cost?.filter((_v, i, _a) => {
+      const y = rows.map((v) => Number(v.id));
+      return y.some((j) => i === j);
+    });
+
+    const o = outbound?.filter((_v, i, _a) => {
+      const y = rows.map((v) => Number(v.id));
+      return y.some((j) => i === j);
+    });
+
+    // console.log(rows.map(v=> Number(v.id)))
+    // console.log(o)
+
+    onDownload(
+      rows.map((i) => i.original),
+      p,
+      c,
+      o
+    );
   };
 
   return (

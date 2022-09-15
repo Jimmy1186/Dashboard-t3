@@ -75,7 +75,7 @@ model Charge {
 model Task {
   id           String        @id @db.VarChar(6)
   task_name    String?       @db.VarChar(50)
-  p            Int?
+  p            Float?
   pValue       Decimal?      @db.Decimal(19, 4)
   startDate    DateTime?
   endDate      DateTime?
