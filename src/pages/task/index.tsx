@@ -17,7 +17,8 @@ import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
 
 import AddIcon from "@mui/icons-material/Add";
-import DownloadIcon from '@mui/icons-material/Download';
+
+import DownloadXlsx from "../../components/tools/DownloadXlsx";
 
 const initialValues = {
   id: "",
@@ -76,9 +77,6 @@ function Index() {
   });
 
 
-  const handleExportRows = (rows: MRT_Row<tl>[]) => {
-    console.log(rows.map((row) => row.original))
-  };
 
 
 
@@ -86,39 +84,25 @@ function Index() {
 
 
 
-  // const [cost, setCost] = useState<number[]>([]);
+
   const numberWithCommas = (x: number | undefined) => {
     if (x === undefined) x = 0;
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // useEffect(() => {
-  //   if (isLoading) return;
-  //   if (task===undefined) return;
-  //   const costFn = () =>
-  //   task.map((i) => {
-  //     return i.companyTypes.slice(1).reduce((acc, curr) => {
-  //       return acc + Number(curr.amount) - Number(curr.cutPayment);
-  //     }, 0);
-
-  //   });
-
-  //   setCost(costFn);
-  //   console.log(cost);
-  // }, [task]);
-
   const profit = useMemo(
     () =>
       task &&
       task.map((i) => {
-        const mainpro =
+        const mainProfit =
           Number(i.companyTypes[0]?.amount) -
           Number(i.companyTypes[0]?.cutPayment);
 
-        const lol = i.companyTypes.slice(1).reduce((acc, curr) => {
+        const cutValue = i.companyTypes.slice(1).reduce((acc, curr) => {
           return acc + Number(curr.amount) - Number(curr.cutPayment);
         }, 0);
-        return mainpro - lol;
+
+        return mainProfit - cutValue;
       }),
     [task]
   );
@@ -134,15 +118,7 @@ function Index() {
     [task]
   );
 
-  // const costFn = useMemo(
-  //   () =>
-  //     task.map((i) => {
-  //       return i.companyTypes.slice(1).reduce((acc, curr) => {
-  //         return acc + Number(curr.amount) - Number(curr.cutPayment);
-  //       }, 0);
-  //     }),
-  //   []
-  // );
+
 
   const outbound = useMemo(
     () =>
@@ -663,19 +639,14 @@ function Index() {
                 >
                   新增
                 </Button>
-                <Button
-                  disabled={
-                    !table.getIsSomeRowsSelected() &&
-                    !table.getIsAllRowsSelected()
-                  }
-                  //only export selected rows
-                  // onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-                  startIcon={<DownloadIcon />}
-                  onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
-                  variant="contained"
-                >
-                  下載
-                </Button>
+              <DownloadXlsx 
+              clickableState = {table.getIsSomeRowsSelected()}
+              rowValue={table.getSelectedRowModel().rows}
+profit={profit}
+cost={cost}
+outbound={outbound}
+              />
+      
               </Box>
             )}
           />

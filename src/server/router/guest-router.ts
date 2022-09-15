@@ -3,7 +3,7 @@ import ExcelJs from "exceljs";
 import { z } from "zod";
 import { createBox } from "framer-motion";
 import fs from "fs";
-const FILE_PATH = "./src/utils/01.xlsx";
+const PUBLIC_FILE_PATH = "./public/01.xlsx";
 
 export const guestRouter = createRouter()
   .query("taskList", {
@@ -63,23 +63,23 @@ export const guestRouter = createRouter()
   })
   .mutation("xlsx", {
     input: z.object({
-      id: z.string(),
+      xlsx: z.array(
+        z.any()
+      ),
     }),
-    resolve: async ({ ctx }) => {
-      const FILE_PATH = "./src/utils/01.xlsx";
 
+    resolve: async ({ ctx,input }) => {
+      console.log(input.xlsx)
       const wb = await new ExcelJs.Workbook();
-      await wb.xlsx.readFile(FILE_PATH).then(() => {
+      await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
         var ws = wb.getWorksheet(1);
-        ws.getCell("H4").value = "fkfk";
+        ws.getCell("H4").value = "OKM";
       });
 
-      await wb.xlsx.writeFile(FILE_PATH);
-      const manifestBuffer = fs.createReadStream(FILE_PATH);
-      const stream = fs.readFileSync(FILE_PATH);
-      ctx.res?.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-      // ctx.res?.send(stream)
-      ctx.res?.pipe(manifestBuffer)
-      return 
+      await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+
+      const stream = fs.readFileSync(PUBLIC_FILE_PATH);
+
+      return { xxx: stream.toString("base64") };
     },
   });
