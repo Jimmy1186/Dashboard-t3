@@ -1,6 +1,6 @@
 import { createRouter } from "./context";
 import ExcelJs from "exceljs";
-import { z } from "zod";
+import { promise, z } from "zod";
 import { createBox } from "framer-motion";
 import fs from "fs";
 const PUBLIC_FILE_PATH = "./public/01.xlsx";
@@ -72,41 +72,46 @@ export const guestRouter = createRouter()
     resolve: async ({ ctx, input }) => {
       // console.log(input.xlsx)
 
-      // let payload: Array<string> = [];
       const wb = await new ExcelJs.Workbook();
+      await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+        let ws = wb.getWorksheet(1);
+        const sd = input.xlsx[0].charges.map((i:any)=>`${i.users.id}${i.users.username}`)
+        console.log(sd[0])
 
-      const payload = await Promise.all(
-        input.xlsx.map(async (v) => {
-          // console.log(v);
-          await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
-            var ws = wb.getWorksheet(1);
-            ws.getCell("H4").value = v.companyTypes[0]?.company.c_name;
-          });
+        ws.getCell("M2").value=input.xlsx[0].id
+        ws.getCell("H4").value = input.xlsx[0].companyTypes[0].company.c_title;
+        ws.getCell("R4").value =input.xlsx[0].locations.location_name;
+        ws.getCell("Z4").value=input.xlsx[0].task_name;
+        ws.getCell("AL4").value=input.xlsx[0].charges.map((i:any)=>{return `${i.users.id}${i.users.username}`})
+        ws.getCell("H5").value= input.xlsx[0].companyTypes[0].amount;
+        ws.getCell("R5").value=input.xlsx[0].p;
+        ws.getCell("Z5").value=input.xlsx[0].pValue;
+        ws.getCell("AF5").value=input.xlsx[0].adapt;
+        // ws.getCell("").value=input.xlsx[0]
+        // ws.getCell("").value=input.xlsx[0]
+        ws.getCell("V6").value=input.xlsx[0].openDate;
+        // ws.getCell("").value=input.xlsx[0]
+        // ws.getCell("").value=input.xlsx[0]
+      });
 
-          await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+      await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
 
-          const stream = await fs
-            .readFileSync(PUBLIC_FILE_PATH)
-            .toString("base64");
+      return {
+        xlsxPayload: fs.readFileSync(PUBLIC_FILE_PATH).toString("base64"),
+      };
+      // const payload = await Promise.all(
+      //   input.xlsx.map(async (v) => {
+      //     return await wb.xlsx
+      //       .readFile(PUBLIC_FILE_PATH)
+      //       .then(() => {
+      //         let ws = wb.getWorksheet(1);
+      //         ws.getCell("H4").value = v.pValue;
+      //         wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+      //         return fs.readFileSync(PUBLIC_FILE_PATH).toString("base64");
+      //       })
+      //   })
+      // );
 
-          return stream;
-        })
-      );
-
-     
-
-      return { xlsxPayload: payload };
-
-      // const wb = await new ExcelJs.Workbook();
-      // await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
-      //   var ws = wb.getWorksheet(1);
-      //   ws.getCell("H4").value = input.profit?input.profit[0]:0;
-      // });
-
-      // await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
-
-      // const stream = fs.readFileSync(PUBLIC_FILE_PATH);
-
-      // return { xxx: stream.toString("base64") };
+      // console.log(payload);
     },
   });
