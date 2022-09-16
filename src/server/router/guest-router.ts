@@ -73,43 +73,40 @@ export const guestRouter = createRouter()
       // console.log(input.xlsx)
 
       // let payload: Array<string> = [];
-
-      // return stream.toString("base64");
-    
-        // payload = input.xlsx.map((v) => {
-        //   // console.log(v);
-        //   wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
-        //     var ws = wb.getWorksheet(1);
-        //     ws.getCell("H4").value = v.companyTypes[0]?.company.c_name;
-        //   });
-
-        //   wb.xlsx.writeFile(PUBLIC_FILE_PATH);
-
-        //   const stream = fs.readFileSync(PUBLIC_FILE_PATH);
-        //   return stream.toString("base64");
-         
-        // });
-   
-
-      // console.log(payload.length);
-  
-
-
-
-
       const wb = await new ExcelJs.Workbook();
-      await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
-        var ws = wb.getWorksheet(1);
-        ws.getCell("H4").value = input.profit?input.profit[0]:0;
-      });
 
-      await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+      const payload = await Promise.all(
+        input.xlsx.map(async (v) => {
+          // console.log(v);
+          await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+            var ws = wb.getWorksheet(1);
+            ws.getCell("H4").value = v.companyTypes[0]?.company.c_name;
+          });
 
-      const stream = fs.readFileSync(PUBLIC_FILE_PATH);
+          await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
 
-      return { xxx: stream.toString("base64") };
+          const stream = await fs
+            .readFileSync(PUBLIC_FILE_PATH)
+            .toString("base64");
 
+          return stream;
+        })
+      );
 
+     
 
+      return { xlsxPayload: payload };
+
+      // const wb = await new ExcelJs.Workbook();
+      // await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+      //   var ws = wb.getWorksheet(1);
+      //   ws.getCell("H4").value = input.profit?input.profit[0]:0;
+      // });
+
+      // await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+
+      // const stream = fs.readFileSync(PUBLIC_FILE_PATH);
+
+      // return { xxx: stream.toString("base64") };
     },
   });
