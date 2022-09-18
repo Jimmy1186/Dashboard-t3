@@ -53,7 +53,6 @@ function Setting() {
 
   return (
     <>
-      <div>setting</div>
       {data ? (
         <ChangePasswordTab id={data?.id} sumbitHandler={sumbitHandler} />
       ) : (

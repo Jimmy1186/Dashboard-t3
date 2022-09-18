@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import MaterialReactTable, {
   MRT_ColumnDef,
   MRT_Row,
@@ -9,16 +9,17 @@ import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";
-import { Tooltip, IconButton, Box, Button } from "@mui/material";
+import { Tooltip, IconButton, Box, Button, Stack } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
 import Fab from "@mui/material/Fab";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
-
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import AddIcon from "@mui/icons-material/Add";
 
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
+import AddCompony from "../../components/widget/AddCompony";
 
 const initialValues = {
   id: "",
@@ -29,7 +30,7 @@ const initialValues = {
   endDate: null,
   openDate: null,
   createAt: new Date(),
-  adapt:"新店",
+  adapt: "新店",
   locations: {
     id: 11,
     location_name: "臺北市",
@@ -59,10 +60,10 @@ const initialValues = {
 
 function Index() {
   const [coe, setCoe] = useState(true);
-  const [print,setPrint] =useState(false);
   const [editData, setEditData] = useState<taskType>();
+  const [openAddCompany, setOpenAddCompany] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const {
     data: task,
     isLoading,
@@ -71,19 +72,9 @@ function Index() {
     isError,
   } = trpc.useQuery(["guest.taskList"]);
 
-
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
-
-
-
-
-
-
-
-
-
 
   const numberWithCommas = (x: number | undefined) => {
     if (x === undefined) x = 0;
@@ -118,27 +109,20 @@ function Index() {
     [task]
   );
 
-
-
   const outbound = useMemo(
     () =>
       task?.map((i) => {
-        let mainpro =
+        const mainpro =
           Number(i.companyTypes[0]?.amount) -
           Number(i.companyTypes[0]?.cutPayment);
 
-        let lol = i.companyTypes.slice(1).reduce((acc, curr) => {
+        const lol = i.companyTypes.slice(1).reduce((acc, curr) => {
           return acc + Number(curr.amount) - Number(curr.cutPayment);
         }, 0);
         return parseFloat(((lol / mainpro) * 100).toFixed(2));
       }),
     []
   );
-  // console.log(task?.map((i)=>{
-  //   return i.companyTypes.reduce((acc,curr)=>{
-  //     return acc+ Number(curr.amount) -Number(curr.cutPayment)
-  //   },0)
-  // }))
 
   const editMutation = trpc.useMutation(["add.edit"], {
     onSuccess: () => refetch(),
@@ -171,7 +155,7 @@ function Index() {
         endDate: endDate === editData?.endDate ? undefined : endDate,
         openDate: openDate === editData?.openDate ? undefined : openDate,
         createAt: createAt === editData?.createAt ? undefined : createAt,
-        adapt:adapt===editData?.adapt? undefined:adapt,
+        adapt: adapt === editData?.adapt ? undefined : adapt,
         locations: locations === editData?.locations ? undefined : locations,
         charges:
           JSON.stringify(charges) === JSON.stringify(editData?.charges)
@@ -221,7 +205,7 @@ function Index() {
         endDate: endDate,
         openDate: openDate,
         createAt: createAt,
-        adapt:adapt,
+        adapt: adapt,
         locations: locations,
         charges: charges,
         installment: installments,
@@ -229,7 +213,7 @@ function Index() {
       });
       setOpen(false);
     },
-    [task, AllMutation]
+    [ AllMutation]
   );
 
   const editTask = (val: any) => {
@@ -252,7 +236,7 @@ function Index() {
         id: row.getValue("id"),
       });
     },
-    [task, deleteMutation]
+    [deleteMutation]
   );
 
   const columns = useMemo<MRT_ColumnDef<tl>[]>(
@@ -579,9 +563,35 @@ function Index() {
   if (isLoading || task === undefined) {
     return (
       <>
-        <Skeleton />
+        <Stack spacing={1}>
+          <Stack direction="row" spacing={2}>
+            <Skeleton variant="rectangular" width={80} height={30} />
+            <Skeleton variant="rectangular" width={80} height={30} />
+          </Stack>
 
-        <Skeleton animation={false} />
+          {/* For variant="text", adjust the height via font-size */}
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+        </Stack>
       </>
     );
   }
@@ -639,14 +649,23 @@ function Index() {
                 >
                   新增
                 </Button>
-              <DownloadXlsx 
-              clickableState = {table.getIsSomeRowsSelected()}
-              rowValue={table.getSelectedRowModel().rows}
-profit={profit}
-cost={cost}
-outbound={outbound}
-              />
-      
+                <DownloadXlsx
+                  clickableState={table.getIsSomeRowsSelected()}
+                  rowValue={table.getSelectedRowModel().rows}
+                  profit={profit}
+                  cost={cost}
+                  outbound={outbound}
+                />
+
+<Button
+                  startIcon={<AddBusinessIcon  />}
+                  variant="contained"
+                  onClick={() => {
+                    setOpenAddCompany(true);
+                  }}
+                >
+                  新增公司資料
+                </Button>
               </Box>
             )}
           />
@@ -670,10 +689,12 @@ outbound={outbound}
             initialValues={initialValues}
           />
         )}
-
-        {
-          print 
-        }
+        <AddCompony
+        openAddCompany={openAddCompany}
+        setOpenAddCompany={setOpenAddCompany}
+        />
+          
+    
       </div>
     </>
   );

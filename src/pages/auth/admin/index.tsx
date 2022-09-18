@@ -1,16 +1,58 @@
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
+import MaterialReactTable, {
+  MRT_ColumnDef,
+  MRT_Row,
+} from "material-react-table";
 import { trpc } from "../../../utils/trpc";
-import { signupUserType } from "../../../types/common";
+import { signupUserType, userTableType } from "../../../types/common";
 import Signup from "../../../components/tools/Signup";
 import { useCallback } from "react";
 import AlertBar from "../../../components/tools/AlertBar";
-import { useSession } from "next-auth/react"
+import { useSession } from "next-auth/react";
+import { Box, Button, Dialog, IconButton, Tooltip } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
+const initialValues = {
+  id: "",
+  username: "",
+  password: "",
+  role: {
+    roles: "",
+  },
+};
 function Index() {
-  const { data: session, status } = useSession()
-  const { data: users, refetch } = trpc.useQuery(["admin.findAllUser"]);
+  const [open, setOpen] = React.useState(false);
+  const [editData, setEditData] = useState<userTableType>();
+  const [coe, setCoe] = useState(true);
+  const { data: session, status } = useSession();
+  const {
+    data: users,
+    refetch,
+    isError,
+    isFetching,
+    isLoading,
+  } = trpc.useQuery(["admin.findAllUser"]);
+  const deleteMutation = trpc.useMutation(["admin.deleteUser"], {
+    onSuccess: () => refetch(),
+  });
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
+  const editMutation = trpc.useMutation(["temp.editUser"], {
+    onSuccess: () => {
+      setShowingAlert(true);
+      refetch();
 
-
+      setTimeout(() => {
+        setShowingAlert(false);
+      }, 3000);
+    },
+    onError: (e) => {
+      console.log(e);
+      setShowingAlert(true);
+      setTimeout(() => {
+        setShowingAlert(false);
+      }, 3000);
+    },
+  });
   const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
     onSuccess: () => {
       setShowingAlert(true);
@@ -29,74 +71,152 @@ function Index() {
     },
   });
 
+  const onDelete = useCallback(
+    (row: MRT_Row<userTableType>) => {
+      if (!confirm(`確定刪除 ${row.getValue("username")}`)) {
+        return;
+      }
+      deleteMutation.mutate({
+        id: row.original.id,
+      });
+    },
+    [deleteMutation, users]
+  );
+
   const OnInsertUser = useCallback(
     (values: signupUserType) => {
       insertMutation.mutate({
         id: values.id,
         username: values.username,
         password: values.password,
-        role: Number(values.role),
+        role: {
+          roles: values.role.roles,
+        },
       });
     },
-    [ insertMutation]
+    [insertMutation]
   );
+
+  const onEdit = useCallback((values: userTableType) => {
+    const { id, username, role } = values;
+    editMutation.mutate({
+      id: id,
+      username: username === editData?.username ? undefined : username,
+      role:
+        JSON.stringify(role) === JSON.stringify(editData?.role)
+          ? undefined
+          : role,
+    });
+  }, []);
+
+  const editHandler = (val: userTableType) => {
+    setOpen(true);
+    setEditData(val);
+    setCoe(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const editSubmit = async (values: userTableType, action: any) => {
+    onEdit(values);
+    action.resetForm();
+    setOpen(false);
+  };
 
   const sumbitHandler = async (values: signupUserType, action: any) => {
     OnInsertUser(values);
-
+    setOpen(false);
     action.resetForm();
   };
 
-  if(session?.user?.role!="X"){
-    return <h1>無權限</h1>
+  const columns = useMemo<MRT_ColumnDef<userTableType>[]>(
+    () => [
+      {
+        accessorKey: "id", //access nested data with dot notation
+        header: "員工編號",
+      },
+      {
+        accessorKey: "username",
+        header: "名稱",
+      },
+      {
+        accessorKey: "role", //normal accessorKey
+        header: "權限",
+        Cell: ({ row }) => {
+          return <>{row.original.role.roles}</>;
+        },
+      },
+    ],
+    []
+  );
+
+  if (session?.user?.role != "X") {
+    return <h1>無權限</h1>;
   }
   return (
     <>
-      <div className="controlBox">
-        <div className="addUser">
-          <svg className="icon" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="M15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4M15,5.9C16.16,5.9 17.1,6.84 17.1,8C17.1,9.16 16.16,10.1 15,10.1A2.1,2.1 0 0,1 12.9,8A2.1,2.1 0 0,1 15,5.9M4,7V10H1V12H4V15H6V12H9V10H6V7H4M15,13C12.33,13 7,14.33 7,17V20H23V17C23,14.33 17.67,13 15,13M15,14.9C17.97,14.9 21.1,16.36 21.1,17V18.1H8.9V17C8.9,16.36 12,14.9 15,14.9Z"
-            />
-          </svg>
-          <span>新增使用著</span>
+      <Dialog fullWidth={true} open={open} onClose={handleClose}>
+        <div className="bgPaper">
+          <Signup
+            sumbitHandler={sumbitHandler}
+            editSubmit={editSubmit}
+            coe={coe}
+            initialValues={coe ? initialValues : editData}
+          />
         </div>
-        <div className="deleteUser">
-          <svg className="icon" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="M1.46,8.88L2.88,7.46L5,9.59L7.12,7.46L8.54,8.88L6.41,11L8.54,13.12L7.12,14.54L5,12.41L2.88,14.54L1.46,13.12L3.59,11L1.46,8.88M15,4A4,4 0 0,1 19,8A4,4 0 0,1 15,12A4,4 0 0,1 11,8A4,4 0 0,1 15,4M15,5.9A2.1,2.1 0 0,0 12.9,8A2.1,2.1 0 0,0 15,10.1C16.16,10.1 17.1,9.16 17.1,8C17.1,6.84 16.16,5.9 15,5.9M15,13C17.67,13 23,14.33 23,17V20H7V17C7,14.33 12.33,13 15,13M15,14.9C12,14.9 8.9,16.36 8.9,17V18.1H21.1V17C21.1,16.36 17.97,14.9 15,14.9Z"
-            />
-          </svg>
-          <span>刪除使用著</span>
-        </div>
-      </div>
+      </Dialog>
 
-      <div className="multiPanel">
-        <Signup sumbitHandler={sumbitHandler} />
-        <div className="table-box">
-          <table className="home-table">
-            <thead>
-              <tr>
-                <th>id</th>
-                <th>Name</th>
-                <th>role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users?.map((user, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{user.id}</td>
-                    <td>{user.username}</td>
-                    <td>{user.roleId}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      <div className="bgPaper">
+        <MaterialReactTable
+          columns={columns}
+          data={users ? users : []}
+          enableEditing
+          state={{
+            isLoading,
+            showAlertBanner: isError,
+            showProgressBars: isFetching,
+          }}
+          renderRowActions={({ row, table }) => (
+            <Box sx={{ display: "flex", gap: "1rem" }}>
+              <Tooltip arrow placement="left" title="Edit">
+                <IconButton onClick={() => editHandler(row.original)}>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+              <Tooltip arrow placement="right" title="Delete">
+                <IconButton color="error" onClick={() => onDelete(row)}>
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
+          renderTopToolbarCustomActions={({ table }) => (
+            <Box
+              sx={{
+                display: "flex",
+                gap: "1rem",
+                p: "0.5rem",
+                flexWrap: "wrap",
+              }}
+            >
+              <Button
+                disabled={
+                  session?.user?.role === "R" || session?.user?.role === "W"
+                }
+                startIcon={<AddIcon />}
+                variant="contained"
+                onClick={() => {
+                  setOpen(!open);
+                  setCoe(true);
+                }}
+              >
+                新增
+              </Button>
+            </Box>
+          )}
+        />
       </div>
 
       {insertMutation.data != undefined ? (

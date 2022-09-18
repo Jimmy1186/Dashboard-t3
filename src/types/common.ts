@@ -22,7 +22,9 @@ export const signupUserSchema = baseUserSchema.extend({
     .min(2, "太短")
     .max(12, "太長")
     .regex(new RegExp("[^\x00-\xff]+$"), "只能中文"),
-  role: z.string().min(1, { message: "Required" }).max(1),
+  role:z.object({
+    roles: z.string().min(1, { message: "Required" }).max(1),
+  })
 });
 
 export const changePasswordSchema = z.object({
@@ -82,7 +84,20 @@ export type userType = {
   onUpdate: () => void;
 };
 
+export type userTableType = {
+  id: string;
+  username: string;
+  role:{
+    roles:string
+  };
+};
 
+export const editUserSchema= z.object({
+  username: z.string(),
+  role:z.object({
+    roles: z.string().min(1, { message: "Required" }).max(1),
+  })
+})
 
 export const companySchema = z.object({
   c_name: z.string()

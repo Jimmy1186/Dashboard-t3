@@ -6,30 +6,24 @@ import Button from "@mui/material/Button";
 import { companySchema, companyType } from "../../types/common";
 import { trpc } from "../../utils/trpc";
 import CloseIcon from "@mui/icons-material/Close";
+import Dialog, { DialogProps } from "@mui/material/Dialog";
 
-
-
-
-
-
-  const initialValues = {
-    c_name: "",
-    c_title: "",
-    c_tax: "",
-  };
+const initialValues = {
+  c_name: "",
+  c_title: "",
+  c_tax: "",
+};
 
 type toggleCompanyType = {
-  companyToggle:boolean,
-  setCompanyToggle:(toggle:boolean)=>void
-}
+  openAddCompany: boolean;
+  setOpenAddCompany: (toggle: boolean) => void;
+};
 
-
-
-function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
-
-
+function AddCompony({ openAddCompany,setOpenAddCompany }: toggleCompanyType) {
   const addCompanyMutation = trpc.useMutation(["add.company"]);
-
+  const handleClose = () => {
+    setOpenAddCompany(false);
+  };
   const onAddCompany = useCallback(
     ({ c_name, c_title, c_tax }: companyType) => {
       addCompanyMutation.mutate({
@@ -41,7 +35,7 @@ function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
     [addCompanyMutation]
   );
 
-  const sumbitHandler = (values: companyType,action:any) => {
+  const sumbitHandler = (values: companyType, action: any) => {
     onAddCompany(values);
     action.resetForm();
   };
@@ -52,47 +46,50 @@ function AddCompony( {setCompanyToggle,companyToggle}:toggleCompanyType) {
       onSubmit={sumbitHandler}
     >
       {({ errors, values, handleChange, isValid }) => (
-        <Form className="signupForm">
-          <h3>新增公司</h3>
-          <Button
-            type="button"
-            startIcon={<CloseIcon />}
-            onClick={() => setCompanyToggle(!companyToggle)}
-          ></Button>
-          {addCompanyMutation.data?.msg}
-          {errors.c_name}
-          <TextField
-            id="outlined-basic"
-            label="公司名稱"
-            name="c_name"
-            value={values.c_name}
-            onChange={handleChange}
-            variant="outlined"
-          />
+        <Dialog
+          open={openAddCompany}
+          onClose={handleClose}
+        >
+          <Form className="signupForm">
+            <h3>新增公司</h3>
+         {addCompanyMutation.data?.msg}
 
-          {errors.c_title}
-          <TextField
-            id="outlined-basic"
-            label="公司抬頭"
-            name="c_title"
-            value={values.c_title}
-            onChange={handleChange}
-            variant="outlined"
-          />
 
-          {errors.c_tax}
-          <TextField
-            id="outlined-basic"
-            label="統編"
-            name="c_tax"
-            value={values.c_tax}
-            onChange={handleChange}
-          />
+         <p className="errormsg">{errors.c_name}</p>
+          
+            <TextField
+              id="outlined-basic"
+              label="公司名稱"
+              name="c_name"
+              value={values.c_name}
+              onChange={handleChange}
+              variant="outlined"
+            />
+ <p className="errormsg">{errors.c_title}</p>
+          
+            <TextField
+              id="outlined-basic"
+              label="公司抬頭"
+              name="c_title"
+              value={values.c_title}
+              onChange={handleChange}
+              variant="outlined"
+            />
+ <p className="errormsg">{errors.c_tax}</p>
+            
+            <TextField
+              id="outlined-basic"
+              label="統編"
+              name="c_tax"
+              value={values.c_tax}
+              onChange={handleChange}
+            />
 
-          <Button variant="outlined" type="submit" disabled={!isValid}>
-            存檔
-          </Button>
-        </Form>
+            <Button variant="outlined" type="submit" disabled={!isValid}>
+              存檔
+            </Button>
+          </Form>
+        </Dialog>
       )}
     </Formik>
   );

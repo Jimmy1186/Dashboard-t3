@@ -1,7 +1,6 @@
 import { createRouter } from "./context";
 import ExcelJs from "exceljs";
-import { promise, z } from "zod";
-import { createBox } from "framer-motion";
+import { z } from "zod";
 import fs from "fs";
 const PUBLIC_FILE_PATH = "./public/01.xlsx";
 
@@ -74,7 +73,7 @@ export const guestRouter = createRouter()
 
       const wb = await new ExcelJs.Workbook();
       await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
-        let ws = wb.getWorksheet(1);
+        const ws = wb.getWorksheet(1);
         const sd = input.xlsx[0].charges.map((i:any)=>`${i.users.id}${i.users.username}`)
         console.log(sd[0])
 

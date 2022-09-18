@@ -153,6 +153,7 @@ ul>li>a:hover{
   position: fixed;
   right: 1em;
   top: 1em;
+  z-index: 999;
 }
 nav {
   position: fixed;
@@ -455,6 +456,7 @@ table > thead > tr > * {
 
 .errormsg{
   color: #f4845f;
+  margin: 0;
 }
 
 .inputWrapper{
@@ -531,3 +533,16 @@ table > thead > tr > * {
   border-style: solid;
   padding: 5px;
 } 
+
+.signupTitle{
+  margin: 0;
+}
+
+.passwordTab{
+  max-width: 425px;
+}
+
+.fakeTable{
+  width: 100%;
+  height: 50vh;
+}

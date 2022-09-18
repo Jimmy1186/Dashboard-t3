@@ -9,6 +9,7 @@ import Navbar from "../components/layout/Navbar";
 import { useState } from "react";
 import GlassContainer from "../components/layout/GlassContainer";
 import NavBtn from "../components/tools/NavBtn";
+import Head from "next/head";
 
 const MyApp: AppType = ({
   Component,
@@ -18,7 +19,12 @@ const MyApp: AppType = ({
   const [pageIndex, setPageIndex] = useState<number>(0);
 
   return (
+    <>
+    <Head>
+      <link rel="shortcut icon" href="/favicon.ico" />
+    </Head>
     <SessionProvider session={session}>
+    
       <NavBtn navState={navState} setNavState={setNavState} />
       <Navbar
         navState={navState}
@@ -30,6 +36,8 @@ const MyApp: AppType = ({
         <Component {...pageProps} />
       </GlassContainer>
     </SessionProvider>
+    </>
+    
   );
 };
 
