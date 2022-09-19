@@ -2,7 +2,7 @@ import { createRouter } from "./context";
 import ExcelJs from "exceljs";
 import { z } from "zod";
 import fs from "fs";
-import { format, compareAsc } from "date-fns";
+import { format } from "date-fns";
 
 const PUBLIC_FILE_PATH = "./public/01.xlsx";
 
@@ -130,7 +130,7 @@ export const guestRouter = createRouter()
           Number(input.xlsx[0]?.companyTypes[0]?.amount)
         );
 
-        const iLength = input.xlsx[0]?.installments.length as Number;
+        const iLength = input.xlsx[0]?.installments.length as number;
         const installPayload = input.xlsx[0]?.installments;
         const secComypany = input.xlsx[0]?.companyTypes.splice(1);
 
@@ -144,17 +144,17 @@ export const guestRouter = createRouter()
         const od = input.xlsx[0]?.openDate as Date;
 
         // const sd = input.xlsx[0]?.charges.map((i:any)=>`${i.users.id}${i.users.username}`)
+
+
         const c = input.cost?.toString();
         const p = input.profit?.toString();
         const o = input.outbound?.toString();
-        let ww = input.xlsx[0]?.charges
-          .map((i: any) => {
+        const ww = input.xlsx[0]?.charges
+          .map((i) => {
             return `${i.users.id}${i.users.username} `;
           })
           .join("");
-        console.log(c);
-        console.log(p);
-        console.log(o);
+      
 
         ws.getCell("M2").value = input.xlsx[0]?.id;
 

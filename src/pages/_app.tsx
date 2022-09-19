@@ -16,7 +16,6 @@ const MyApp: AppType = ({
   pageProps: { session, ...pageProps },
 }) => {
   const [navState, setNavState] = useState<boolean>(false);
-  const [pageIndex, setPageIndex] = useState<number>(0);
 
   return (
     <>
@@ -29,8 +28,6 @@ const MyApp: AppType = ({
       <Navbar
         navState={navState}
         setNavState={setNavState}
-        pageIndex={pageIndex}
-        setPageIndex={setPageIndex}
       />
       <GlassContainer>
         <Component {...pageProps} />

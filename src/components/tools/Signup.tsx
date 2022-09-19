@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { editUserSchema, signupUserSchema, signupUserType, userTableType } from "../../types/common";
+import { editUserSchema, signupUserSchema, signupUserType, userInitial, userTableType } from "../../types/common";
 import { Box, Button, TextField } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
@@ -15,7 +15,7 @@ type signupFromType = {
   sumbitHandler: (values: signupUserType, action: any) => void;
   editSubmit:(values:userTableType,action:any)=>void;
   coe: boolean;
-  initialValues: any;
+  initialValues: userInitial;
 };
 
 function Signup({ sumbitHandler, coe, initialValues, editSubmit }: signupFromType) {

@@ -31,7 +31,7 @@ function DownloadXlsx({
       c: Array<number> | undefined,
       o: Array<number> | undefined
     ) => {
-      console.log(xlsxData)
+      // console.log(xlsxData)
       xlsxMutation
         .mutateAsync({
           xlsx: xlsxData,
@@ -41,17 +41,14 @@ function DownloadXlsx({
         })
         .then((res) => {
     
-          console.log(res.xlsxPayload[0]===res.xlsxPayload[1]) 
-          var link = document.createElement("a");
+          // console.log(res.xlsxPayload[0]===res.xlsxPayload[1]) 
+          const link = document.createElement("a");
           link.setAttribute("download", `${xlsxData[0].id}`);
           link.style.display = "none";
           document.body.appendChild(link);
           link.setAttribute("href", `${mediaType}${res.xlsxPayload}`);
           link.click();
-          for (let i = 0; i < res.xlsxPayload.length; i++) {
-            link.setAttribute("href", `${mediaType}${res.xlsxPayload[i]}`);
-            link.click();
-          }
+      
         });
     },
     [xlsxMutation]

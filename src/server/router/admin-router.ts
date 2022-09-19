@@ -135,12 +135,13 @@ export const adminRouter = adminProtectedRouter()
       });
     },
   })
-
   .mutation("inertOneUser", {
     input: z.object({
       id: z.string(),
       username: z.string(),
-      role: z.number(),
+      role: z.object({
+        roles: z.string(),
+      }),
       password: z.string(),
     }),
     output: z.object({
@@ -175,7 +176,12 @@ export const adminRouter = adminProtectedRouter()
             id: input.id,
             username: input.username,
             password: hash,
-            roleId: input.role,
+            role: {
+              connect: {
+                roles: input.role.roles,
+              },
+            },
+            // roleId:input.role.roles
           },
         });
 
@@ -187,6 +193,40 @@ export const adminRouter = adminProtectedRouter()
           return { alertStatus: "error", msg: "後端出狀況 請聯絡工程師" };
         }
         throw e;
+      }
+    },
+  })
+  .mutation("editUser", {
+    input: z.object({
+      id: z.string(),
+      username: z.string().or(z.undefined()),
+      role: z
+        .object({
+          roles: z.string(),
+        })
+        .or(z.undefined()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            username: input.username || undefined,
+            role:
+              input.role === undefined
+                ? undefined
+                : {
+                    connect: {
+                      roles: input.role.roles,
+                    },
+                  },
+          },
+        });
+        return { alertStatus: "success", msg: "修改成功" };
+      } catch (e) {
+        return { alertStatus: "error", msg: "後端出狀況 請聯絡工程師" };
       }
     },
   });

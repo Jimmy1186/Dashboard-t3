@@ -22,9 +22,9 @@ const initialValues = {
 };
 function Index() {
   const [open, setOpen] = React.useState(false);
-  const [editData, setEditData] = useState<userTableType>();
+  const [editData, setEditData] = useState<any>();
   const [coe, setCoe] = useState(true);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const {
     data: users,
     refetch,

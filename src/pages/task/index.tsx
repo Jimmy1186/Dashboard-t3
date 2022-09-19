@@ -112,7 +112,7 @@ function Index() {
 
   const outbound = useMemo(
     () =>
-      task?.map((i) => {
+       task &&task.map((i) => {
         const mainpro =
           Number(i.companyTypes[0]?.amount) -
           Number(i.companyTypes[0]?.cutPayment);
@@ -122,8 +122,9 @@ function Index() {
         }, 0);
         return parseFloat(((lol / mainpro) * 100).toFixed(2));
       }),
-    []
+    [task]
   );
+ 
 
   const editMutation = trpc.useMutation(["add.edit"], {
     onSuccess: () => refetch(),
@@ -461,7 +462,7 @@ function Index() {
               {cv.map((i: iTypes) => {
                 return (
                   <div className="installmenttable" key={uuidv4()}>
-                    <Fab variant="extended" disabled={i.ok} color="success">
+                    <Fab variant="extended" disabled={!(i.ok)} color="success">
                       <PriceCheckIcon />
                       <h4>{i.percent}%</h4>
                     </Fab>
@@ -558,7 +559,7 @@ function Index() {
         },
       },
     ],
-    []
+    [profit,cost,outbound]
   );
 
   if (isLoading || task === undefined) {

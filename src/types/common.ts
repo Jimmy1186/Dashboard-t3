@@ -59,10 +59,6 @@ export type navStateType = {
   setNavState: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export interface pageIndexNavStateType extends navStateType {
-  pageIndex: number;
-  setPageIndex: React.Dispatch<React.SetStateAction<number>>;
-}
 
 export type glassContainerType = {
   children: React.ReactNode;
@@ -91,6 +87,10 @@ export type userTableType = {
     roles:string
   };
 };
+
+export interface userInitial extends userTableType{
+password:string;
+}
 
 export const editUserSchema= z.object({
   username: z.string(),
