@@ -15,7 +15,7 @@ import Fab from "@mui/material/Fab";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
-import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import AddIcon from "@mui/icons-material/Add";
 
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
@@ -57,6 +57,10 @@ const initialValues = {
     },
   ],
 };
+ const numberWithCommas = (x: number | undefined) => {
+  if (x === undefined) x = 0;
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 function Index() {
   const [coe, setCoe] = useState(true);
@@ -76,10 +80,7 @@ function Index() {
     onSuccess: () => refetch(),
   });
 
-  const numberWithCommas = (x: number | undefined) => {
-    if (x === undefined) x = 0;
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+
 
   const profit = useMemo(
     () =>
@@ -213,7 +214,7 @@ function Index() {
       });
       setOpen(false);
     },
-    [ AllMutation]
+    [AllMutation]
   );
 
   const editTask = (val: any) => {
@@ -603,72 +604,76 @@ function Index() {
             <Paper elevation={3} />
           </Skeleton>
         ) : (
-          <MaterialReactTable
-            columns={columns}
-            data={task ? task : []}
-            editingMode="modal" //default
-            enableColumnOrdering
-            enableRowSelection
-            enableEditing
-            state={{
-              isLoading,
-              showAlertBanner: isError,
-              showProgressBars: isFetching,
-            }}
-            renderRowActions={({ row, table }) => (
-              <Box sx={{ display: "flex", gap: "1rem" }}>
-                <Tooltip arrow placement="left" title="Edit">
-                  <IconButton onClick={() => editTask(row.original)}>
-                    <Edit />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip arrow placement="right" title="Delete">
-                  <IconButton color="error" onClick={() => onDeleteRow(row)}>
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            )}
-            renderTopToolbarCustomActions={({ table }) => (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: "1rem",
-                  p: "0.5rem",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Button
-                  disabled={session?.user?.role === "R"}
-                  startIcon={<AddIcon />}
-                  variant="contained"
-                  onClick={() => {
-                    setOpen(!open);
-                    setCoe(true);
+          <div className="bgPaper">
+            {" "}
+            <MaterialReactTable
+              columns={columns}
+              data={task ? task : []}
+              editingMode="modal" //default
+              enableColumnOrdering
+              enableRowSelection
+              enableEditing
+              enableMultiRowSelection={false}
+              state={{
+                isLoading,
+                showAlertBanner: isError,
+                showProgressBars: isFetching,
+              }}
+              renderRowActions={({ row, table }) => (
+                <Box sx={{ display: "flex", gap: "1rem" }}>
+                  <Tooltip arrow placement="left" title="Edit">
+                    <IconButton onClick={() => editTask(row.original)}>
+                      <Edit />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip arrow placement="right" title="Delete">
+                    <IconButton color="error" onClick={() => onDeleteRow(row)}>
+                      <Delete />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              )}
+              renderTopToolbarCustomActions={({ table }) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "1rem",
+                    p: "0.5rem",
+                    flexWrap: "wrap",
                   }}
                 >
-                  新增
-                </Button>
-                <DownloadXlsx
-                  clickableState={table.getIsSomeRowsSelected()}
-                  rowValue={table.getSelectedRowModel().rows}
-                  profit={profit}
-                  cost={cost}
-                  outbound={outbound}
-                />
+                  <Button
+                    disabled={session?.user?.role === "R"}
+                    startIcon={<AddIcon />}
+                    variant="contained"
+                    onClick={() => {
+                      setOpen(!open);
+                      setCoe(true);
+                    }}
+                  >
+                    新增
+                  </Button>
+                  <DownloadXlsx
+                    clickableState={table.getIsSomeRowsSelected()}
+                    rowValue={table.getSelectedRowModel().rows}
+                    profit={profit}
+                    cost={cost}
+                    outbound={outbound}
+                  />
 
-<Button
-                  startIcon={<AddBusinessIcon  />}
-                  variant="contained"
-                  onClick={() => {
-                    setOpenAddCompany(true);
-                  }}
-                >
-                  新增公司資料
-                </Button>
-              </Box>
-            )}
-          />
+                  <Button
+                    startIcon={<AddBusinessIcon />}
+                    variant="contained"
+                    onClick={() => {
+                      setOpenAddCompany(true);
+                    }}
+                  >
+                    新增公司資料
+                  </Button>
+                </Box>
+              )}
+            />
+          </div>
         )}
         {editData != undefined ? (
           <CreateTask
@@ -690,11 +695,9 @@ function Index() {
           />
         )}
         <AddCompony
-        openAddCompany={openAddCompany}
-        setOpenAddCompany={setOpenAddCompany}
+          openAddCompany={openAddCompany}
+          setOpenAddCompany={setOpenAddCompany}
         />
-          
-    
       </div>
     </>
   );
