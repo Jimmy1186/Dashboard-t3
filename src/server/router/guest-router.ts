@@ -231,7 +231,7 @@ export const guestRouter = createRouter()
           Number(p === undefined ? 0 : p)
         );
         ws.getCell("AC35").value = o === undefined ? "" : `${o}%`;
-        
+        ws.getCell("AL39").value =  `NT$${main_amount}`;
       });
 
       const Xdata=await wb.xlsx.writeBuffer()
