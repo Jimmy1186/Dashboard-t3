@@ -60,7 +60,7 @@ export const userRouter = createProtectedRouter()
         oldHashPassword.password,
         input.oldPassword
       );
-      console.log(match)
+      // console.log(match)
       if (!match) {
         return {msg:"舊密碼錯誤",alertStatus:"warn"}
       }

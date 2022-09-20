@@ -4,9 +4,9 @@ import { z } from "zod";
 import fs from "fs";
 import { format } from "date-fns";
 import path from "path";
-const PUBLIC_FILE_PATH = "./01.xlsx";
+import { rawX } from "../../utils/rawXlsx";
 // const PUBLIC_FILE_PATH = "./public/01.xlsx";
-// const filePath = path.join(process.cwd(), "/01.xlsx");
+const PUBLIC_FILE_PATH  = path.join(process.cwd(), "/public/01.xlsx");
 const numberWithCommas = (x: number | undefined) => {
   if (x === undefined) x = 0;
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -121,10 +121,19 @@ export const guestRouter = createRouter()
     }),
 
     resolve: async ({ ctx, input }) => {
+      // console.log("outbound here")
+      // console.log(input.outbound)
       // console.log(input.xlsx)
-
+      const xPayload = rawX
       const wb = await new ExcelJs.Workbook();
-      await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+   
+      const buf = Buffer.from(xPayload, 'base64');
+
+     await wb.xlsx.load(buf)
+
+
+
+       await wb.xlsx.load(buf).then(() => {
         const ws = wb.getWorksheet(1);
 
         const main_amount = numberWithCommas(
@@ -155,7 +164,7 @@ export const guestRouter = createRouter()
             return `${i.users.id}${i.users.username} `;
           })
           .join("");
-      
+        
 
         ws.getCell("M2").value = input.xlsx[0]?.id;
 
@@ -222,26 +231,13 @@ export const guestRouter = createRouter()
           Number(p === undefined ? 0 : p)
         );
         ws.getCell("AC35").value = o === undefined ? "" : `${o}%`;
+        
       });
 
-      await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+      const Xdata=await wb.xlsx.writeBuffer()
 
       return {
-        xlsxPayload: fs.readFileSync(PUBLIC_FILE_PATH).toString("base64"),
+        xlsxPayload: Buffer.from(Xdata).toString("base64"),
       };
-      // const payload = await Promise.all(
-      //   input.xlsx.map(async (v) => {
-      //     return await wb.xlsx
-      //       .readFile(PUBLIC_FILE_PATH)
-      //       .then(() => {
-      //         let ws = wb.getWorksheet(1);
-      //         ws.getCell("H4").value = v.pValue;
-      //         wb.xlsx.writeFile(PUBLIC_FILE_PATH);
-      //         return fs.readFileSync(PUBLIC_FILE_PATH).toString("base64");
-      //       })
-      //   })
-      // );
-
-      // console.log(payload);
     },
   });

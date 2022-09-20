@@ -4,15 +4,15 @@ import mainLogo from "/public/mainLogo.gif";
 import { navStateType } from "../../types/common";
 import Link from "next/link";
 import { useSession } from "next-auth/react"
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 
 function Navbar({
   navState,
   setNavState,
 }: navStateType) {
-  const router = useRouter()
+  // const router = useRouter()
   const { data: session } = useSession()
-console.log(router.asPath)
+
 
 
   return (

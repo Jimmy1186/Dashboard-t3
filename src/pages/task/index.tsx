@@ -120,7 +120,9 @@ function Index() {
         const lol = i.companyTypes.slice(1).reduce((acc, curr) => {
           return acc + Number(curr.amount) - Number(curr.cutPayment);
         }, 0);
-        return parseFloat(((lol / mainpro) * 100).toFixed(2));
+        const o = parseFloat(((lol / mainpro) * 100).toFixed(2))
+     
+        return isNaN(o)?0:o;
       }),
     [task]
   );

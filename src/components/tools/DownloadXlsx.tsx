@@ -23,7 +23,7 @@ function DownloadXlsx({
   outbound,
 }: downloadXlsxBtnType) {
   const xlsxMutation = trpc.useMutation(["guest.xlsx"]);
-
+  // console.log(outbound)
   const onDownload = React.useCallback(
     (
       xlsxData: any,
@@ -71,7 +71,7 @@ function DownloadXlsx({
     });
 
     // console.log(rows.map(v=> Number(v.id)))
-    // console.log(o)
+
 
     onDownload(
       rows.map((i) => i.original),
