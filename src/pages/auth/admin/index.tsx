@@ -31,7 +31,9 @@ function Index() {
     isError,
     isFetching,
     isLoading,
-  } = trpc.useQuery(["admin.findAllUser"]);
+  } = trpc.useQuery(["admin.findAllUser"],{
+    keepPreviousData:true
+  });
   const deleteMutation = trpc.useMutation(["admin.deleteUser"], {
     onSuccess: () => refetch(),
   });
@@ -162,6 +164,7 @@ function Index() {
           <Signup
             sumbitHandler={sumbitHandler}
             editSubmit={editSubmit}
+            handleClose={handleClose}
             coe={coe}
             initialValues={coe ? initialValues : editData}
           />

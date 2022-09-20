@@ -53,7 +53,7 @@ function AddTask({ errors, setFieldValue, handleChange, values, coe }: tType) {
             id="outlined-basic"
             value={values.p}
             name="p"
-            label={values.p}
+            label="坪数"
             onChange={handleChange}
             variant="outlined"
           />

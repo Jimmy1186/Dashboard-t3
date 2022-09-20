@@ -81,8 +81,10 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
               value={values.c_tax}
               onChange={handleChange}
             />
-
-            <Button variant="outlined" type="submit" disabled={!isValid}>
+            <Button variant="outlined" onClick={() => handleClose}>
+              取消
+            </Button>
+            <Button variant="contained" type="submit" disabled={!isValid}>
               存檔
             </Button>
           </Form>

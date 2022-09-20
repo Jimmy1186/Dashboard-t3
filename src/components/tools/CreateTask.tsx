@@ -12,10 +12,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { taskSchema, taskType } from "../../types/task";
 import Dialog from "@mui/material/Dialog";
 
-
-
 type createTaskType = {
-  coe:boolean,
+  coe: boolean;
   initialValues: taskType;
   open: boolean;
   setOpen: (i: boolean) => void;
@@ -23,15 +21,21 @@ type createTaskType = {
   onEdit: (v: any) => void;
 };
 
-function CreateTask({ open, setOpen, onAll,onEdit, initialValues,coe }: createTaskType) {
+function CreateTask({
+  open,
+  setOpen,
+  onAll,
+  onEdit,
+  initialValues,
+  coe,
+}: createTaskType) {
   const handleClose = () => {
     setOpen(false);
   };
 
   const sumbitHandler = (values: taskType, action: any) => {
-    
-    coe?onAll(values):onEdit(values)
-   
+    coe ? onAll(values) : onEdit(values);
+
     action.resetForm();
   };
 
@@ -67,15 +71,15 @@ function CreateTask({ open, setOpen, onAll,onEdit, initialValues,coe }: createTa
                 values={values}
               />
               <AddCharge
-              coe={coe}
-               values={values}
+                coe={coe}
+                values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
               />
 
               <AddPriOrSecCompany
-                     coe={coe}
+                coe={coe}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
@@ -83,21 +87,21 @@ function CreateTask({ open, setOpen, onAll,onEdit, initialValues,coe }: createTa
               />
 
               <AddLocation
-              coe={coe}
-               values={values}
+                coe={coe}
+                values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
                 setErrors={setErrors}
               />
               <AddInstallment
-                        coe={coe}
+                coe={coe}
                 values={values}
                 errors={errors}
                 setFieldValue={setFieldValue}
               />
               <div className="bgPaper createTaskBox">
-                <Button onClick={handleClose}>取消</Button>
-                <Button variant="outlined" type="submit" disabled={!isValid}>
+                <Button variant="outlined" onClick={handleClose}>取消</Button>
+                <Button variant="contained" type="submit" disabled={!isValid}>
                   存檔
                 </Button>
               </div>

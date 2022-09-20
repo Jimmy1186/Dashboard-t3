@@ -1,7 +1,13 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { editUserSchema, signupUserSchema, signupUserType, userInitial, userTableType } from "../../types/common";
+import {
+  editUserSchema,
+  signupUserSchema,
+  signupUserType,
+  userInitial,
+  userTableType,
+} from "../../types/common";
 import { Box, Button, TextField } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
@@ -13,18 +19,27 @@ import FormLabel from "@mui/material/FormLabel";
 
 type signupFromType = {
   sumbitHandler: (values: signupUserType, action: any) => void;
-  editSubmit:(values:userTableType,action:any)=>void;
+  editSubmit: (values: userTableType, action: any) => void;
+  handleClose: (i: boolean) => void;
   coe: boolean;
   initialValues: userInitial;
 };
 
-function Signup({ sumbitHandler, coe, initialValues, editSubmit }: signupFromType) {
+function Signup({
+  sumbitHandler,
+  coe,
+  initialValues,
+  editSubmit,
+  handleClose,
+}: signupFromType) {
   return (
     <Formik
       enableReinitialize={true}
       initialValues={initialValues}
-      validationSchema={toFormikValidationSchema(coe?signupUserSchema:editUserSchema)}
-      onSubmit={coe?sumbitHandler:editSubmit}
+      validationSchema={toFormikValidationSchema(
+        coe ? signupUserSchema : editUserSchema
+      )}
+      onSubmit={coe ? sumbitHandler : editSubmit}
     >
       {({ errors, values, handleChange, isValid }) => (
         <Form className="signupForm">
@@ -63,7 +78,7 @@ function Signup({ sumbitHandler, coe, initialValues, editSubmit }: signupFromTyp
             </Box>
           </div>
 
-          <div className={`inputBox ${coe? "":"hiddenAdim"}`}>
+          <div className={`inputBox ${coe ? "" : "hiddenAdim"}`}>
             <p className="errormsg">{errors.password}</p>
             <Box sx={{ display: "flex", alignItems: "flex-end" }}>
               <KeyIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
@@ -88,7 +103,7 @@ function Signup({ sumbitHandler, coe, initialValues, editSubmit }: signupFromTyp
               <FormLabel id="demo-row-radio-buttons-group-label">
                 權限
               </FormLabel>
-   
+
               <RadioGroup name="radio-buttons-group" value={values.role.roles}>
                 <FormControlLabel
                   name="role.roles"
@@ -115,14 +130,20 @@ function Signup({ sumbitHandler, coe, initialValues, editSubmit }: signupFromTyp
             </Box>
           </div>
 
-     
-          <Button
-            className={`signupBtn ${isValid ? "" : "forbidBtn"}`}
-            type="submit"
-            disabled={!isValid}
-          >
-            新增
-          </Button>
+            <Button variant="outlined" onClick={() => handleClose}>
+              取消
+            </Button>
+            <Button
+
+              className={`signupBtn ${isValid ? "" : "forbidBtn"}`}
+              type="submit"
+              disabled={!isValid}
+              variant="contained"
+            >
+              新增
+            </Button>
+         
+            
         </Form>
       )}
     </Formik>
