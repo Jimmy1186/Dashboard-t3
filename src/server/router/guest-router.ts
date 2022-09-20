@@ -3,9 +3,10 @@ import ExcelJs from "exceljs";
 import { z } from "zod";
 import fs from "fs";
 import { format } from "date-fns";
+import path from "path";
 
-const PUBLIC_FILE_PATH = "./public/01.xlsx";
-
+// const PUBLIC_FILE_PATH = "./public/01.xlsx";
+const filePath = path.join(process.cwd(), "/public/01.xlsx");
 const numberWithCommas = (x: number | undefined) => {
   if (x === undefined) x = 0;
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -123,7 +124,7 @@ export const guestRouter = createRouter()
       // console.log(input.xlsx)
 
       const wb = await new ExcelJs.Workbook();
-      await wb.xlsx.readFile(PUBLIC_FILE_PATH).then(() => {
+      await wb.xlsx.readFile(filePath).then(() => {
         const ws = wb.getWorksheet(1);
 
         const main_amount = numberWithCommas(
@@ -223,10 +224,10 @@ export const guestRouter = createRouter()
         ws.getCell("AC35").value = o === undefined ? "" : `${o}%`;
       });
 
-      await wb.xlsx.writeFile(PUBLIC_FILE_PATH);
+      await wb.xlsx.writeFile(filePath);
 
       return {
-        xlsxPayload: fs.readFileSync(PUBLIC_FILE_PATH).toString("base64"),
+        xlsxPayload: fs.readFileSync(filePath).toString("base64"),
       };
       // const payload = await Promise.all(
       //   input.xlsx.map(async (v) => {
