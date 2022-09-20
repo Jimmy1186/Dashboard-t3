@@ -36,7 +36,7 @@ function Index() {
     onSuccess: () => refetch(),
   });
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
-  const editMutation = trpc.useMutation(["temp.editUser"], {
+  const editMutation = trpc.useMutation(["admin.editUser"], {
     onSuccess: () => {
       setShowingAlert(true);
       refetch();
@@ -53,7 +53,7 @@ function Index() {
       }, 3000);
     },
   });
-  const insertMutation = trpc.useMutation(["temp.inertOneUser"], {
+  const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
     onSuccess: () => {
       setShowingAlert(true);
       refetch();
