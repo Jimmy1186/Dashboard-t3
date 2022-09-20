@@ -47,9 +47,9 @@ const initialValues = {
       c_Type: "pri",
       company: {
         id: 1,
-        c_name: "復華",
-        c_title: "復華廣告有限公司",
-        c_tax: "00000000",
+        c_name: "聚思怡",
+        c_title: "台灣聚思怡股份有限公司",
+        c_tax: "90443462",
       },
       amount: 0,
       cutPayment: 0,

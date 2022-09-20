@@ -76,7 +76,7 @@ CREATE TABLE `Charge` (
 CREATE TABLE `Task` (
     `id` VARCHAR(6) NOT NULL,
     `task_name` VARCHAR(50) NULL,
-    `p` INTEGER NULL,
+    `p` DOUBLE NULL,
     `pValue` DECIMAL(19, 4) NULL,
     `startDate` DATETIME(3) NULL,
     `endDate` DATETIME(3) NULL,

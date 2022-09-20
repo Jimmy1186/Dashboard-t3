@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { companySchema, companyType } from "../../types/common";
 import { trpc } from "../../utils/trpc";
 import CloseIcon from "@mui/icons-material/Close";
-import Dialog, { DialogProps } from "@mui/material/Dialog";
+import Dialog from "@mui/material/Dialog";
 
 const initialValues = {
   c_name: "",
@@ -19,7 +19,7 @@ type toggleCompanyType = {
   setOpenAddCompany: (toggle: boolean) => void;
 };
 
-function AddCompony({ openAddCompany,setOpenAddCompany }: toggleCompanyType) {
+function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
   const addCompanyMutation = trpc.useMutation(["add.company"]);
   const handleClose = () => {
     setOpenAddCompany(false);
@@ -46,17 +46,14 @@ function AddCompony({ openAddCompany,setOpenAddCompany }: toggleCompanyType) {
       onSubmit={sumbitHandler}
     >
       {({ errors, values, handleChange, isValid }) => (
-        <Dialog
-          open={openAddCompany}
-          onClose={handleClose}
-        >
+        <Dialog open={openAddCompany} onClose={handleClose}>
           <Form className="signupForm">
             <h3>新增公司</h3>
-         {addCompanyMutation.data?.msg}
 
+            {addCompanyMutation.data?.msg}
 
-         <p className="errormsg">{errors.c_name}</p>
-          
+            <p className="errormsg">{errors.c_name}</p>
+
             <TextField
               id="outlined-basic"
               label="公司名稱"
@@ -65,8 +62,8 @@ function AddCompony({ openAddCompany,setOpenAddCompany }: toggleCompanyType) {
               onChange={handleChange}
               variant="outlined"
             />
- <p className="errormsg">{errors.c_title}</p>
-          
+            <p className="errormsg">{errors.c_title}</p>
+
             <TextField
               id="outlined-basic"
               label="公司抬頭"
@@ -75,8 +72,8 @@ function AddCompony({ openAddCompany,setOpenAddCompany }: toggleCompanyType) {
               onChange={handleChange}
               variant="outlined"
             />
- <p className="errormsg">{errors.c_tax}</p>
-            
+            <p className="errormsg">{errors.c_tax}</p>
+
             <TextField
               id="outlined-basic"
               label="統編"
