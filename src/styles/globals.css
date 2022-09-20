@@ -1,47 +1,47 @@
 :root {
-  --html-bg:#6B9080;
-   --nav-hover:#f6fff842;
+  --html-bg: #6b9080;
+  --nav-hover: #f6fff842;
 
   --yellow: linear-gradient(180deg, #f8d49a -146.42%, #fad79d -46.42%);
   --orange: #fca61f;
-  --orange-bg:#fca61f96;
-  --orange-text:#794a00;
+  --orange-bg: #fca61f96;
+  --orange-text: #794a00;
 
-  --bg-white:#ffff;
+  --bg-white: #ffff;
   --black: #242d49;
   --gray: #788097;
   --purple: linear-gradient(180deg, #bb67ff 0%, #c484f3 100%);
 
   --pink: #ff919d;
-  --pink-bg:#ff919da8;
-  --pink-text:#c30015;
+  --pink-bg: #ff919da8;
+  --pink-text: #c30015;
 
-  --green:#b2ff91;
-  --green-bg:#b2ff91a3;
-  --green-text:#278100;
+  --green: #b2ff91;
+  --green-bg: #b2ff91a3;
+  --green-text: #278100;
 
-  --glass: #F6FFF8;
-  --box-shadow: #A4C3B2;
+  --glass: #f6fff8;
+  --box-shadow: #a4c3b2;
   --activeItem: #f799a354;
 }
 
 ::-webkit-scrollbar {
-  width: .4em; 
+  width: 0.4em;
 }
 ::-webkit-scrollbar,
 ::-webkit-scrollbar-thumb {
-  overflow:visible;
+  overflow: visible;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,.2); 
+  background: rgba(0, 0, 0, 0.2);
 }
 
-a{
+a {
   color: unset;
   text-decoration: none;
 }
-button{
+button {
   transition: all 150ms ease-in;
 }
 
@@ -58,7 +58,7 @@ body,
 
 html {
   color: var(--black);
-  background:var(--html-bg);
+  background: var(--html-bg);
 }
 #__next {
   display: flex;
@@ -100,9 +100,9 @@ html {
   width: 2rem;
   height: 2rem;
 }
-nav>ul {
+nav > ul {
   list-style: none;
-  color:var(--bg-white);
+  color: var(--bg-white);
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -110,10 +110,9 @@ nav>ul {
   height: 100%;
 }
 
-nav>ul>li:last-child{
+nav > ul > li:last-child {
   position: absolute;
   bottom: 4rem;
-
 }
 .active {
   display: flex;
@@ -130,7 +129,6 @@ nav>ul>li:last-child{
   position: absolute;
 }
 
-
 ul > li {
   display: flex;
   width: auto;
@@ -142,7 +140,6 @@ ul > li {
   height: 3rem;
 }
 
-
 ul > li > a {
   display: flex;
   width: 100%;
@@ -151,9 +148,9 @@ ul > li > a {
   transition: all 150ms ease-out;
 }
 
-ul>li>a:hover{
+ul > li > a:hover {
   background: var(--nav-hover);
-  }
+}
 
 .navBtn {
   position: fixed;
@@ -215,111 +212,107 @@ nav {
   .active::before {
     width: 30%;
   }
-
 }
 
-
-
 /* ----------admin----------- */
-.controlBox{
+.controlBox {
   display: flex;
   gap: 1rem;
   padding-bottom: 2rem;
-
 }
 
-.addUser,.deleteUser{
+.addUser,
+.deleteUser {
   display: flex;
   height: 4rem;
   align-items: center;
   color: white;
   font-weight: bolder;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 3rem;
   transition: all 150ms ease-in-out;
 }
-.addUser{
-  background:var(--green);
+.addUser {
+  background: var(--green);
   /* box-shadow: 0 10px 20px 0px #53ff528f; */
 }
-.deleteUser{
+.deleteUser {
   background: var(--pink);
   /* box-shadow: 0 10px 20px 0px #ff6c52bd; */
 }
-.addUser:hover{
-  background:white;
+.addUser:hover {
+  background: white;
   box-shadow: none;
   color: var(--green);
   border: var(--green) solid 1px;
 }
-.deleteUser:hover{
-  background:white;
+.deleteUser:hover {
+  background: white;
   box-shadow: none;
   color: var(--pink);
   border: var(--pink) solid 1px;
 }
 
-.multiPanel{
+.multiPanel {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.signupForm{
+.signupForm {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 1rem;
 }
-.signupForm>label{
+.signupForm > label {
   font-size: 1.5em;
   font-weight: bold;
 }
 
-.form-control{
+.form-control {
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 }
-.formAlert{
+.formAlert {
   color: var(--pink);
 }
 
-
-.signupFormInput{
+.signupFormInput {
   height: 3rem;
   border-radius: 3rem;
-  border:var(--gray) solid 1px;
+  border: var(--gray) solid 1px;
   font-size: larger;
-  letter-spacing: .1rem;
+  letter-spacing: 0.1rem;
   padding-left: 1rem;
 }
-.formAlert{
+.formAlert {
   min-height: 2.5rem;
 }
-.signupBtn{
+.signupBtn {
   height: 3rem;
   border-radius: 3rem;
   background: var(--green);
   border: none;
 }
-.forbidBtn{
+.forbidBtn {
   background: var(--gray) !important;
   color: var(--bg-white);
 }
 @media screen and (min-width: 1024px) {
-  .multiPanel{
+  .multiPanel {
     flex-direction: row;
     min-width: 40rem;
   }
-  .signupForm{
+  .signupForm {
     min-width: 21rem;
   }
 }
 /* ----------admin----------- */
 
 /* ----------alertbar----------- */
-.alert{
+.alert {
   position: fixed;
   bottom: 4rem;
   right: 1rem;
@@ -327,23 +320,22 @@ nav {
   width: 19rem;
   padding: 1rem;
   display: flex;
-  align-items: center; 
+  align-items: center;
   gap: 1rem;
   font-size: larger;
   font-weight: bold;
-
 }
 
-.alert-success{
-  color:var(--green-text);
+.alert-success {
+  color: var(--green-text);
   background-color: var(--green-bg);
 }
-.alert-warn{
-  color:var(--orange-text);
+.alert-warn {
+  color: var(--orange-text);
   background-color: var(--orange-bg);
 }
-.alert-error{
-  color:var(--pink-text);
+.alert-error {
+  color: var(--pink-text);
   background-color: var(--pink-bg);
 }
 
@@ -351,144 +343,158 @@ nav {
   opacity: 0;
   transform: translateX(-60em);
   transition: all 250ms linear 2s;
-}/* ----------alerbar----------- */
+} /* ----------alerbar----------- */
 
-.task-wrapper{
+.task-wrapper {
   display: flex;
   flex-direction: column;
   gap: 3rem;
 }
 
-.createTask{
+.createTask {
   width: 100%;
 }
 
-
-
-.bgPaper{
+.bgPaper {
   background: var(--bg-white);
   border-radius: 20px;
   padding: 1rem;
-  box-shadow: 6px 8px 33px var(--box-shadow)
+  box-shadow: 6px 8px 33px var(--box-shadow);
 }
 
-
-.addTaskBtn{
+.addTaskBtn {
   border-radius: 50%;
   width: 50px;
   height: 50px;
   display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #77bfa3;
+  justify-content: center;
+  align-items: center;
+  background: #77bfa3;
 }
 
-.addTaskBtn:hover{
+.addTaskBtn:hover {
   background: #35a87f5c;
   transform: scale(1.2);
 }
-.addTaskBtn:active{
+.addTaskBtn:active {
   transform: scale(1);
 }
 
-.addTaskSvg{
+.addTaskSvg {
   width: 25px;
   height: 25px;
 }
-.addTaskSvgPath{
+.addTaskSvgPath {
   color: var(--bg-white);
- 
 }
 
-.errormsg{
+.errormsg {
   color: #f4845f;
   margin: 0;
 }
 
-.inputWrapper{
+.inputWrapper {
   display: flex;
   align-items: center;
   flex-direction: column;
   width: 100%;
-  gap: .5rem;
+  gap: 0.5rem;
 }
-.inputBox,.selectCompany{
+.inputBox,
+.selectCompany {
   width: 100%;
 }
-.datePicker{
+.datePicker {
   width: 100%;
   padding: 1rem;
   border-radius: 5px;
   font-size: medium;
   border-color: rgb(173 173 173 / 28%);
 }
-.selectCompanyBtn{
+.selectCompanyBtn {
   margin: 1rem;
 }
 
-.createTaskBox{
+.createTaskBox {
   display: flex;
   gap: 5rem;
   justify-content: flex-end;
   padding: 2rem 1rem;
 }
 
-.mainTotal{
+.mainTotal {
   font-size: larger;
   font-weight: bolder;
-  color:var(--purple)
+  color: var(--purple);
 }
 
-.tableUsers{
+.tableUsers {
   display: flex;
   gap: 1rem;
   flex-direction: row;
 }
 
-.profit{
+.profit {
   font-size: larger;
   font-weight: bolder;
-  color:var(--pink)
+  color: var(--pink);
 }
 
-.cost{
+.cost {
   font-size: larger;
   font-weight: bolder;
-  color:var(--green-text)
+  color: var(--green-text);
 }
 
-.pValue{
+.pValue {
   font-size: larger;
   font-weight: bolder;
 }
-.hiddenAdim{
+.hiddenAdim {
   display: none;
 }
 
-.printTable{
-  border-color: #07032B;
+.printTable {
+  border-color: #07032b;
   border-style: solid;
   border-collapse: collapse;
   /* height: 3508px;
   width: 2480px; */
 }
 
-.printTable>tbody>tr>td { 
+.printTable > tbody > tr > td {
   border-width: 2px;
-  border-color: #07032B;
+  border-color: #07032b;
   border-style: solid;
   padding: 5px;
-} 
+}
 
-.signupTitle{
+.signupTitle {
   margin: 0;
 }
 
-.passwordTab{
+.passwordTab {
   max-width: 425px;
 }
 
-.fakeTable{
+.fakeTable {
   width: 100%;
   height: 50vh;
+}
+
+.toolMenu {
+  height: 3rem;
+}
+.toolDesptop {
+  display: none;
+}
+
+@media screen and (min-width: 700px) {
+  .toolMenu {
+    display: none;
+  }
+
+  .toolDesptop {
+    display: block;
+  }
 }

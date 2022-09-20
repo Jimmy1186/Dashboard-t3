@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";
-import { Tooltip, IconButton, Box, Button, Stack } from "@mui/material";
+import { Tooltip, IconButton, Box, Button, Stack, Menu } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
 import Fab from "@mui/material/Fab";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
@@ -57,7 +57,7 @@ const initialValues = {
     },
   ],
 };
- const numberWithCommas = (x: number | undefined) => {
+const numberWithCommas = (x: number | undefined) => {
   if (x === undefined) x = 0;
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
@@ -68,19 +68,27 @@ function Index() {
   const [openAddCompany, setOpenAddCompany] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { data: session } = useSession();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openTool = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const {
     data: task,
     isLoading,
     refetch,
     isFetching,
     isError,
-  } = trpc.useQuery(["guest.taskList"]);
+  } = trpc.useQuery(["guest.taskList"], {
+    keepPreviousData: true,
+  });
 
   const AllMutation = trpc.useMutation(["add.createTask"], {
     onSuccess: () => refetch(),
   });
-
-
 
   const profit = useMemo(
     () =>
@@ -112,7 +120,8 @@ function Index() {
 
   const outbound = useMemo(
     () =>
-       task &&task.map((i) => {
+      task &&
+      task.map((i) => {
         const mainpro =
           Number(i.companyTypes[0]?.amount) -
           Number(i.companyTypes[0]?.cutPayment);
@@ -120,13 +129,12 @@ function Index() {
         const lol = i.companyTypes.slice(1).reduce((acc, curr) => {
           return acc + Number(curr.amount) - Number(curr.cutPayment);
         }, 0);
-        const o = parseFloat(((lol / mainpro) * 100).toFixed(2))
-     
-        return isNaN(o)?0:o;
+        const o = parseFloat(((lol / mainpro) * 100).toFixed(2));
+
+        return isNaN(o) ? 0 : o;
       }),
     [task]
   );
- 
 
   const editMutation = trpc.useMutation(["add.edit"], {
     onSuccess: () => refetch(),
@@ -464,7 +472,7 @@ function Index() {
               {cv.map((i: iTypes) => {
                 return (
                   <div className="installmenttable" key={uuidv4()}>
-                    <Fab variant="extended" disabled={!(i.ok)} color="success">
+                    <Fab variant="extended" disabled={!i.ok} color="success">
                       <PriceCheckIcon />
                       <h4>{i.percent}%</h4>
                     </Fab>
@@ -561,7 +569,7 @@ function Index() {
         },
       },
     ],
-    [profit,cost,outbound]
+    [profit, cost, outbound]
   );
 
   if (isLoading || task === undefined) {
@@ -622,7 +630,7 @@ function Index() {
                 showAlertBanner: isError,
                 showProgressBars: isFetching,
               }}
-              renderRowActions={({ row, table }) => (
+              renderRowActions={({ row }) => (
                 <Box sx={{ display: "flex", gap: "1rem" }}>
                   <Tooltip arrow placement="left" title="Edit">
                     <IconButton onClick={() => editTask(row.original)}>
@@ -637,43 +645,92 @@ function Index() {
                 </Box>
               )}
               renderTopToolbarCustomActions={({ table }) => (
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: "1rem",
-                    p: "0.5rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <Button
-                    disabled={session?.user?.role === "R"}
-                    startIcon={<AddIcon />}
-                    variant="contained"
-                    onClick={() => {
-                      setOpen(!open);
-                      setCoe(true);
-                    }}
-                  >
-                    新增
-                  </Button>
-                  <DownloadXlsx
-                    clickableState={table.getIsSomeRowsSelected()}
-                    rowValue={table.getSelectedRowModel().rows}
-                    profit={profit}
-                    cost={cost}
-                    outbound={outbound}
-                  />
+                <>
+                  <div className="toolMenu">
+                    <Button
+                      id="basic-button"
+                      aria-controls={openTool ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={openTool ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      工具
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={openTool}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem" }}>
+                        <Button
+                          disabled={session?.user?.role === "R"}
+                          startIcon={<AddIcon />}
+                          variant="contained"
+                          onClick={() => {
+                            setOpen(!open);
+                            setCoe(true);
+                          }}
+                        >
+                          新增
+                        </Button>
+                        <DownloadXlsx
+                          clickableState={table.getIsSomeRowsSelected()}
+                          rowValue={table.getSelectedRowModel().rows}
+                          profit={profit}
+                          cost={cost}
+                          outbound={outbound}
+                        />
 
-                  <Button
-                    startIcon={<AddBusinessIcon />}
-                    variant="contained"
-                    onClick={() => {
-                      setOpenAddCompany(true);
-                    }}
-                  >
-                    新增公司資料
-                  </Button>
-                </Box>
+                        <Button
+                          startIcon={<AddBusinessIcon />}
+                          variant="contained"
+                          onClick={() => {
+                            setOpenAddCompany(true);
+                          }}
+                        >
+                          新增公司資料
+                        </Button>
+                      </Box>
+                    </Menu>
+                  </div>
+
+                  <div className="toolDesptop">
+                    <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem" }}>
+                      <Button
+                        disabled={session?.user?.role === "R"}
+                        startIcon={<AddIcon />}
+                        variant="contained"
+                        onClick={() => {
+                          setOpen(!open);
+                          setCoe(true);
+                        }}
+                      >
+                        新增
+                      </Button>
+                      <DownloadXlsx
+                        clickableState={table.getIsSomeRowsSelected()}
+                        rowValue={table.getSelectedRowModel().rows}
+                        profit={profit}
+                        cost={cost}
+                        outbound={outbound}
+                      />
+
+                      <Button
+                        startIcon={<AddBusinessIcon />}
+                        variant="contained"
+                        onClick={() => {
+                          setOpenAddCompany(true);
+                        }}
+                      >
+                        新增公司資料
+                      </Button>
+                    </Box>
+                  </div>
+                </>
               )}
             />
           </div>
