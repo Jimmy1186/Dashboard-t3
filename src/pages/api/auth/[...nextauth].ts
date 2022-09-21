@@ -13,8 +13,8 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
 
       credentials: {
-        id: { label: "UserId", type: "text", placeholder: "A X X X X X" },
-        password: { label: "Password", type: "password" },
+        id: { label: "使用著編號", type: "text", placeholder: "A X X X X X" },
+        password: { label: "密碼", type: "password" },
       },
       async authorize(credentials) {
         if (credentials === undefined) {
