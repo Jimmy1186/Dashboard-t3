@@ -17,7 +17,7 @@ import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import AddIcon from "@mui/icons-material/Add";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
 import AddCompony from "../../components/widget/AddCompony";
 
@@ -257,17 +257,17 @@ function Index() {
         accessorKey: "id",
         header: "編號",
         enableEditing: false,
-        enableGrouping:false
+        enableGrouping: false,
       },
       {
         accessorKey: "task_name",
         header: "表單名",
-        enableGrouping:false
+        enableGrouping: false,
       },
       {
         accessorKey: "p",
         header: "坪數",
-        enableGrouping:false
+        enableGrouping: false,
       },
       {
         accessorKey: "pValue",
@@ -278,7 +278,7 @@ function Index() {
         Cell: ({ cell }) => (
           <p className="pValue">{numberWithCommas(cell.getValue<number>())}</p>
         ),
-        enableGrouping:false
+        enableGrouping: false,
       },
       {
         accessorKey: "adapt",
@@ -332,12 +332,12 @@ function Index() {
 
           return <p className="mainTotal">{numberWithCommas(cv[0]?.amount)}</p>;
         },
-        enableGrouping:false
+        enableGrouping: false,
       },
       {
         accessorFn: (row) => row.companyTypes,
         header: "主差し引い",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -356,7 +356,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "主備註",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -371,7 +371,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払業者",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cType = {
             company: {
@@ -394,7 +394,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払総額",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -415,7 +415,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払差し引い",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -437,7 +437,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払備註",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -464,7 +464,7 @@ function Index() {
       {
         accessorFn: (row) => row.installments,
         header: "分割払い",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ cell }) => {
           type iType = {
             percent: number;
@@ -531,11 +531,10 @@ function Index() {
       },
       {
         header: "利益",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ row }) => {
-         
           if (isLoading) {
-            return <CircularProgress color="success" />
+            return <CircularProgress color="success" />;
           }
           return profit === undefined ? (
             ""
@@ -548,9 +547,8 @@ function Index() {
         header: "総原価合計",
         enableGrouping: false,
         Cell: ({ row }) => {
-      
           if (isLoading) {
-            return <CircularProgress color="success" />
+            return <CircularProgress color="success" />;
           }
           return (
             <p className="cost">
@@ -561,11 +559,10 @@ function Index() {
       },
       {
         header: "外注率",
-        enableGrouping:false,
+        enableGrouping: false,
         Cell: ({ row }) => {
-       
           if (isLoading) {
-            return <CircularProgress color="success" />
+            return <CircularProgress color="success" />;
           }
           return outbound === undefined ? (
             ""
@@ -583,131 +580,94 @@ function Index() {
   if (isLoading || task === undefined) {
     return (
       <>
-        <Stack spacing={1}>
-          <Stack direction="row" spacing={2}>
-            <Skeleton variant="rectangular" width={80} height={30} />
-            <Skeleton variant="rectangular" width={80} height={30} />
+        <div className="bgPaper">
+          <Stack spacing={1}>
+            <Stack direction="row" spacing={2}>
+              <Skeleton variant="rectangular" width={80} height={30} />
+              <Skeleton variant="rectangular" width={80} height={30} />
+            </Stack>
+
+            {/* For variant="text", adjust the height via font-size */}
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton animation="wave" height={50} />
           </Stack>
-
-          {/* For variant="text", adjust the height via font-size */}
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-          <Skeleton animation="wave" height={50} />
-        </Stack>
+        </div>
       </>
     );
   }
   return (
     <>
       <div className="task-wrapper">
-        {isLoading ? (
-          <Skeleton animation="wave">
-            <Paper elevation={3} />
-          </Skeleton>
-        ) : (
-          <div className="bgPaper">
-            {" "}
-            <MaterialReactTable
-              columns={columns}
-              data={task ? task : []}
-              editingMode="modal" //default
-              enableColumnOrdering
-              enableRowSelection
-              enableEditing
-              enableMultiRowSelection={false}
-              enableGrouping
-              state={{
-                isLoading,
-                showAlertBanner: isError,
-                showProgressBars: isFetching,
-              }}
-              renderRowActions={({ row }) => (
-                <Box sx={{ display: "flex", gap: "1rem" }}>
-                  <Tooltip arrow placement="left" title="Edit">
-                    <IconButton onClick={() => editTask(row.original)}>
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip arrow placement="right" title="Delete">
-                    <IconButton color="error" onClick={() => onDeleteRow(row)}>
-                      <Delete />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              )}
-              renderTopToolbarCustomActions={({ table }) => (
-                <>
-                  <div className="toolMenu">
-                    <Button
-                      id="basic-button"
-                      aria-controls={openTool ? "basic-menu" : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={openTool ? "true" : undefined}
-                      onClick={handleClick}
-                    >
-                      工具
-                    </Button>
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl}
-                      open={openTool}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        "aria-labelledby": "basic-button",
-                      }}
-                    >
-                      <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem" }}>
-                        <Button
-                          disabled={session?.user?.role === "R"}
-                          startIcon={<AddIcon />}
-                          variant="contained"
-                          onClick={() => {
-                            setOpen(!open);
-                            setCoe(true);
-                          }}
-                        >
-                          新增
-                        </Button>
-                        <DownloadXlsx
-                          clickableState={table.getIsSomeRowsSelected()}
-                          rowValue={table.getSelectedRowModel().rows}
-                          profit={profit}
-                          cost={cost}
-                          outbound={outbound}
-                        />
-
-                        <Button
-                          startIcon={<AddBusinessIcon />}
-                          variant="contained"
-                          onClick={() => {
-                            setOpenAddCompany(true);
-                          }}
-                        >
-                          新增公司資料
-                        </Button>
-                      </Box>
-                    </Menu>
-                  </div>
-
-                  <div className="toolDesptop">
+        <div className="bgPaper">
+          {" "}
+          <MaterialReactTable
+            columns={columns}
+            data={task ? task : []}
+            editingMode="modal" //default
+            enableColumnOrdering
+            enableRowSelection
+            enableEditing
+            enableMultiRowSelection={false}
+            enableGrouping
+            state={{
+              isLoading,
+              showAlertBanner: isError,
+              showProgressBars: isFetching,
+            }}
+            renderRowActions={({ row }) => (
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Tooltip arrow placement="left" title="Edit">
+                  <IconButton onClick={() => editTask(row.original)}>
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip arrow placement="right" title="Delete">
+                  <IconButton color="error" onClick={() => onDeleteRow(row)}>
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
+            renderTopToolbarCustomActions={({ table }) => (
+              <>
+                <div className="flex md:hidden">
+                  <Button
+                    id="basic-button"
+                    aria-controls={openTool ? "basic-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={openTool ? "true" : undefined}
+                    onClick={handleClick}
+                  >
+                    工具
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={openTool}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
                     <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem" }}>
                       <Button
                         disabled={session?.user?.role === "R"}
@@ -738,12 +698,46 @@ function Index() {
                         新增公司資料
                       </Button>
                     </Box>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-        )}
+                  </Menu>
+                </div>
+
+                <div className="hidden md:flex">
+                  <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem" }}>
+                    <Button
+                      disabled={session?.user?.role === "R"}
+                      startIcon={<AddIcon />}
+                      variant="contained"
+                      onClick={() => {
+                        setOpen(!open);
+                        setCoe(true);
+                      }}
+                    >
+                      新增
+                    </Button>
+                    <DownloadXlsx
+                      clickableState={table.getIsSomeRowsSelected()}
+                      rowValue={table.getSelectedRowModel().rows}
+                      profit={profit}
+                      cost={cost}
+                      outbound={outbound}
+                    />
+
+                    <Button
+                      startIcon={<AddBusinessIcon />}
+                      variant="contained"
+                      onClick={() => {
+                        setOpenAddCompany(true);
+                      }}
+                    >
+                      新增公司資料
+                    </Button>
+                  </Box>
+                </div>
+              </>
+            )}
+          />
+        </div>
+
         {editData != undefined ? (
           <CreateTask
             coe={coe}

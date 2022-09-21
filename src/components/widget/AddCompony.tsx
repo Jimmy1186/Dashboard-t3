@@ -141,8 +141,8 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
               {deleteCompanyMutation.data?.msg}
             </Alert>
           </Snackbar>
-          <div className="companyBox">
-            <Form className="signupForm">
+          <div className="p-3 lg:flex">
+            <Form className="flex flex-col gap-5 p-3">
               <h3>新增公司</h3>
 
               <p className="errormsg">{errors.c_name}</p>

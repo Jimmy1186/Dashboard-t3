@@ -47,7 +47,7 @@ function AddPriOrSecCompany({
     return    <LinearProgress />
   }
   return (
-    <div className="bgPaper inputWrapper">
+    <div className="bgPaper flex flex-col gap-4">
       <FieldArray
         name="companyTypes"
         validateOnChange={false}
@@ -56,7 +56,7 @@ function AddPriOrSecCompany({
             {values.companyTypes && values.companyTypes.length > 0 ? (
               values.companyTypes.map((per: any, index: number) => (
                 <div key={index} className="selectCompany">
-                  <div className="inputBox">
+                  <div className="inputBox flex flex-col gap-4">
                     <h3>契約公司</h3>
                     {/* <p className="errormsg">{errors.companyTypes[index]?.company.}</p> */}
                     <Autocomplete
@@ -169,7 +169,7 @@ function AddPriOrSecCompany({
                       variant="outlined"
                     />
                   </div>
-                  <div className="inputBox selectCompanyBtn">
+                  <div className="">
                     <ButtonGroup
                       variant="contained"
                       aria-label="outlined primary button group"

@@ -8,7 +8,7 @@ import { signupUserType, userTableType } from "../../../types/common";
 import Signup from "../../../components/tools/Signup";
 import { useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Box, Button, Dialog, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, Dialog, IconButton, Skeleton, Stack, Tooltip } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
@@ -141,6 +141,41 @@ function Index() {
 
   if (session?.user?.role != "X") {
     return <h1>無權限</h1>;
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <Stack spacing={1}>
+          <Stack direction="row" spacing={2}>
+            <Skeleton variant="rectangular" width={80} height={30} />
+          </Stack>
+
+          {/* For variant="text", adjust the height via font-size */}
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+          <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+          <Skeleton animation="wave" height={50} />
+        </Stack>
+      </>
+    );
   }
   return (
     <>

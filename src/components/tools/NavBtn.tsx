@@ -4,7 +4,7 @@ import { navStateType } from "../../types/common";
 function NavBtn({ navState, setNavState }: navStateType) {
   return (
     <svg
-      className="icon navBtn"
+      className="w-10 h-10 absolute right-5 top-5 z-50 lg:hidden"
       viewBox="0 0 24 24"
       onClick={() => setNavState(!navState)}
     >

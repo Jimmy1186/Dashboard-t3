@@ -129,12 +129,16 @@ function Signup({
               </RadioGroup>
             </Box>
           </div>
-
-            <Button variant="outlined" onClick={() => handleClose}>
+          <div className="flex justify-around gap-3">
+            <Button
+              fullWidth={true}
+              variant="outlined"
+              onClick={() => handleClose}
+            >
               取消
             </Button>
             <Button
-
+              fullWidth={true}
               className={`signupBtn ${isValid ? "" : "forbidBtn"}`}
               type="submit"
               disabled={!isValid}
@@ -142,8 +146,7 @@ function Signup({
             >
               新增
             </Button>
-         
-            
+          </div>
         </Form>
       )}
     </Formik>

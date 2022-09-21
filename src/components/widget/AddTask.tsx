@@ -17,7 +17,7 @@ type tType = {
 function AddTask({ errors, setFieldValue, handleChange, values, coe }: tType) {
   return (
     <>
-      <div className="bgPaper inputWrapper">
+      <div className="bgPaper">
         <div className="inputBox">
           <p className="errormsg">{errors.id}</p>
           <h3>表單編號</h3>

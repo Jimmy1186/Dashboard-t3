@@ -14,7 +14,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <>還在施工中... ...</>
+      <h1 className="text-3xl font-bold underline text-lime-300">
+      Hello world!
+    </h1>
 
     </>
   );

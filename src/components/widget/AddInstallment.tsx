@@ -76,7 +76,7 @@ if (values.installments === undefined && coe === false) {
                       />
                     </div>
 
-                    <div className="inputBox selectCompanyBtn">
+                    <div className="">
                       <ButtonGroup
                         variant="contained"
                         aria-label="outlined primary button group"

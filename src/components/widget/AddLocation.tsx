@@ -29,7 +29,7 @@ function AddLocation({
   }
   return (
     <>
-      <div className="bgPaper ">
+      <div className="bgPaper flex flex-col gap-4">
         <h3>地區</h3>
 
         {errors.locations ? <p className="errormsg">必填</p> : ""}

@@ -30,7 +30,7 @@ function AddCharge({
   }
   return (
     <>
-      <div className="bgPaper">
+      <div className="bgPaper flex flex-col gap-4">
         <h3>担当者</h3>
 
         {errors.charges}

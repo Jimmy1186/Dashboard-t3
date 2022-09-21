@@ -60,8 +60,8 @@ function CreateTask({
           fullWidth={true}
           maxWidth="lg"
         >
-          <motion.div className="formWrapper">
-            <Form className="signupForm">
+          <div className="p-3">
+            <Form className="flex flex-col gap-5 ">
               <h2>編輯表單</h2>
               <AddTask
                 coe={coe}
@@ -99,14 +99,14 @@ function CreateTask({
                 errors={errors}
                 setFieldValue={setFieldValue}
               />
-              <div className="bgPaper createTaskBox">
-                <Button variant="outlined" onClick={handleClose}>取消</Button>
-                <Button variant="contained" type="submit" disabled={!isValid}>
+              <div className="bgPaper flex justify-around gap-3">
+                <Button   fullWidth={true} variant="outlined" onClick={handleClose}>取消</Button>
+                <Button   fullWidth={true} variant="contained" type="submit" disabled={!isValid}>
                   存檔
                 </Button>
               </div>
             </Form>
-          </motion.div>
+          </div>
         </Dialog>
       )}
     </Formik>
