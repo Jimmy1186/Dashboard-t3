@@ -3,7 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { trpc } from "../../utils/trpc";
 import { taskType } from "../../types/task";
-
+import LinearProgress from '@mui/material/LinearProgress';
 type locationType = {
   values: taskType;
   coe: boolean;
@@ -22,11 +22,11 @@ function AddCharge({
   const { data, isLoading } = trpc.useQuery(["add.user"]);
 
   if (values.charges === undefined && coe === false) {
-    return <>loading</>;
+    return <LinearProgress />
   }
 
   if (isLoading) {
-    return <>isloading</>;
+    return <LinearProgress />
   }
   return (
     <>

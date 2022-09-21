@@ -28,12 +28,6 @@ export const signupUserSchema = baseUserSchema.extend({
 });
 
 export const changePasswordSchema = z.object({
-  id: z
-  .string()
-  .min(6, "固定6位")
-  .max(6, "固定6位")
-  .regex(new RegExp(".*[A-Z].*"), "One uppercase character")
-  .regex(new RegExp("^[A-Z0-9_.]+$"), "english and number only"),
   oldPassword: z
     .string()
     .min(3, "Password must be at least 3 characters long")

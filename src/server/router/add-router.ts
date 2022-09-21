@@ -36,7 +36,7 @@ export const addRouter = createProtectedRouter()
         });
 
       if (existColumn != 0) {
-        return { msg: "已有該公司", alertStatus: "warn" };
+        return { msg: "已有該公司", alertStatus: "warning" };
       }
 
       await ctx.prisma.company.create({
@@ -352,4 +352,37 @@ export const addRouter = createProtectedRouter()
         },
       });
     },
-  });
+  })
+  .query("listCompany",{
+    resolve:async({ctx})=>{
+      return await ctx.prisma.company.findMany({
+        select:{
+          id:true,
+          c_name:true,
+          c_title:true,
+          c_tax:true
+        }
+      })
+    }
+  })
+  .mutation("deleteCompany",{
+    input:z.object({
+      id:z.number()
+    }),
+    resolve:async({ctx,input})=>{
+      try{
+        await ctx.prisma.company.delete({
+        where:{
+          id:input.id
+        }
+        
+      })
+      return { msg: "刪除成功", alertStatus: "success" };
+      }catch(e){
+        console.log(e)
+      return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
+      }
+      
+      
+    }
+  })

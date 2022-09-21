@@ -4,16 +4,14 @@ import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Box, Button, TextField } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
-import PinIcon from "@mui/icons-material/Pin";
+
 
 type changePasswordTypefun = {
-  id: string;
   sumbitHandler: (values: changePasswordType, action: any) => void;
 };
 
-const ChangePasswordTab = ({ sumbitHandler, id }: changePasswordTypefun) => {
+const ChangePasswordTab = ({ sumbitHandler }: changePasswordTypefun) => {
   const initialValues = {
-    id: id,
     newPassword: "",
     oldPassword: "",
   };

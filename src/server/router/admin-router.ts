@@ -128,11 +128,16 @@ export const adminRouter = adminProtectedRouter()
       id: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      return await ctx.prisma.user.delete({
-        where: {
-          id: input.id,
-        },
-      });
+      try {
+        await ctx.prisma.user.delete({
+          where: {
+            id: input.id,
+          },
+        });
+        return { alertStatus: "success", msg: "刪除成功" };
+      } catch (e) {
+        return { alertStatus: "error", msg: "後端出狀況 請聯絡工程師" };
+      }
     },
   })
   .mutation("inertOneUser", {

@@ -7,11 +7,14 @@ import { trpc } from "../../../utils/trpc";
 import { signupUserType, userTableType } from "../../../types/common";
 import Signup from "../../../components/tools/Signup";
 import { useCallback } from "react";
-import AlertBar from "../../../components/tools/AlertBar";
 import { useSession } from "next-auth/react";
 import { Box, Button, Dialog, IconButton, Tooltip } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertColor } from "@mui/material/Alert";
+
+
 const initialValues = {
   id: "",
   username: "",
@@ -31,46 +34,18 @@ function Index() {
     isError,
     isFetching,
     isLoading,
-  } = trpc.useQuery(["admin.findAllUser"],{
-    keepPreviousData:true
+  } = trpc.useQuery(["admin.findAllUser"], {
+    keepPreviousData: true,
   });
   const deleteMutation = trpc.useMutation(["admin.deleteUser"], {
     onSuccess: () => refetch(),
   });
-  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
   const editMutation = trpc.useMutation(["admin.editUser"], {
-    onSuccess: () => {
-      setShowingAlert(true);
-      refetch();
-
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
-    onError: (e) => {
-      console.log(e);
-      setShowingAlert(true);
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
+    onSuccess: () => refetch(),
   });
   const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
-    onSuccess: () => {
-      setShowingAlert(true);
-      refetch();
-
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
-    onError: (e) => {
-      console.log(e);
-      setShowingAlert(true);
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
+    onSuccess: () => refetch(),
   });
 
   const onDelete = useCallback(
@@ -111,9 +86,19 @@ function Index() {
     });
   }, []);
 
-  const editHandler = (val: userTableType) => {
+
+  React.useEffect(() => {
+    setOpenAlert(true);
+  }, [insertMutation.isSuccess,editMutation.isSuccess]);
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
+
+
+  const editHandler = (row: MRT_Row<userTableType>) => {
     setOpen(true);
-    setEditData(val);
+    setEditData(row.original);
     setCoe(false);
   };
 
@@ -159,6 +144,39 @@ function Index() {
   }
   return (
     <>
+      <Snackbar
+            open={openAlert}
+            autoHideDuration={3000}
+            onClose={handleCloseAlert}
+          >
+            <Alert
+              severity={insertMutation.data?.alertStatus as AlertColor}
+            >
+              {insertMutation.data?.msg}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={openAlert}
+            autoHideDuration={3000}
+            onClose={handleCloseAlert}
+          >
+            <Alert
+              severity={editMutation.data?.alertStatus as AlertColor}
+            >
+              {editMutation.data?.msg}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={openAlert}
+            autoHideDuration={3000}
+            onClose={handleCloseAlert}
+          >
+            <Alert
+              severity={deleteMutation.data?.alertStatus as AlertColor}
+            >
+              {deleteMutation.data?.msg}
+            </Alert>
+          </Snackbar>
       <Dialog fullWidth={true} open={open} onClose={handleClose}>
         <div className="bgPaper">
           <Signup
@@ -184,7 +202,7 @@ function Index() {
           renderRowActions={({ row, table }) => (
             <Box sx={{ display: "flex", gap: "1rem" }}>
               <Tooltip arrow placement="left" title="Edit">
-                <IconButton onClick={() => editHandler(row.original)}>
+                <IconButton onClick={() => editHandler(row)}>
                   <Edit />
                 </IconButton>
               </Tooltip>
@@ -195,7 +213,7 @@ function Index() {
               </Tooltip>
             </Box>
           )}
-          renderTopToolbarCustomActions={({ table }) => (
+          renderTopToolbarCustomActions={() => (
             <Box
               sx={{
                 display: "flex",
@@ -221,16 +239,6 @@ function Index() {
           )}
         />
       </div>
-
-      {insertMutation.data != undefined ? (
-        <AlertBar
-          alertTitle={insertMutation.data.msg}
-          isShowingAlert={isShowingAlert}
-          alertStatus={insertMutation.data.alertStatus}
-        />
-      ) : (
-        ""
-      )}
     </>
   );
 }

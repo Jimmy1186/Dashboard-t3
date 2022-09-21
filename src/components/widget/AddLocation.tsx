@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import { trpc } from "../../utils/trpc";
 import Autocomplete from "@mui/material/Autocomplete";
 import { taskType } from "../../types/task";
-
+import LinearProgress from '@mui/material/LinearProgress';
 type locationType = {
   values: taskType;
   coe: boolean;
@@ -22,10 +22,10 @@ function AddLocation({
 
   // console.log(values)
   if (values.locations === undefined && coe === false) {
-    return <>loading</>;
+    return <LinearProgress />
   }
   if (isLoading) {
-    return <>isloading</>;
+    return  <LinearProgress />
   }
   return (
     <>

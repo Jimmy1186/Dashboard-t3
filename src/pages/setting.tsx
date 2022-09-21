@@ -3,47 +3,36 @@ import React, { useCallback, useState } from "react";
 import { changePasswordType } from "../types/common";
 import { trpc } from "../utils/trpc";
 import ChangePasswordTab from "../components/tools/ChangePasswordTab";
-import AlertBar from "../components/tools/AlertBar";
+import { Skeleton } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertColor } from "@mui/material/Alert";
 
 function Setting() {
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
-  const updateMutation = trpc.useMutation(["user.updatePassword"], {
-    onSuccess: () => {
-      setShowingAlert(true);
-      refetch();
+  const updateMutation = trpc.useMutation(["user.updatePassword"]);
 
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
-    onError: (e) => {
-      console.log(e);
-      setShowingAlert(true);
-      setTimeout(() => {
-        setShowingAlert(false);
-      }, 3000);
-    },
-  });
-  const { data, refetch } = trpc.useQuery([
-    "user.userData",
-    {
-      userId: session?.user?.id as string
-    },
-  ]);
+  const handleClose = () => {
+    setShowingAlert(false);
+  };
 
   const onUpdate = useCallback(
     (values: changePasswordType) => {
       updateMutation.mutate({
-        id: data!.id,
+        id: session?.user?.id as string,
         oldPassword: values.oldPassword,
         newPassword: values.newPassword,
       });
     },
-    [updateMutation, data]
+    [updateMutation]
   );
+
+  React.useEffect(() => {
+    setShowingAlert(true);
+  }, [updateMutation.isSuccess]);
+
 
   const sumbitHandler = async (values: changePasswordType, action: any) => {
     onUpdate(values);
@@ -51,23 +40,28 @@ function Setting() {
     action.resetForm();
   };
 
+  if (!session) {
+    return (
+      <Skeleton
+        animation="wave"
+        variant="rectangular"
+        width={210}
+        height={60}
+      />
+    );
+  }
   return (
     <>
-      {data ? (
-        <ChangePasswordTab id={data?.id} sumbitHandler={sumbitHandler} />
-      ) : (
-        ""
-      )}
-
-      {updateMutation.data != undefined ? (
-        <AlertBar
-          alertTitle={updateMutation.data.msg}
-          isShowingAlert={isShowingAlert}
-          alertStatus={updateMutation.data.alertStatus}
-        />
-      ) : (
-        ""
-      )}
+      <Snackbar
+        open={isShowingAlert}
+        autoHideDuration={3000}
+        onClose={handleClose}
+      >
+        <Alert severity={updateMutation.data?.alertStatus as AlertColor}>
+          {updateMutation.data?.msg}
+        </Alert>
+      </Snackbar>
+      <ChangePasswordTab sumbitHandler={sumbitHandler} />
     </>
   );
 }

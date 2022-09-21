@@ -5,22 +5,6 @@ import argon2 from "argon2";
 
 
 export const userRouter = createProtectedRouter()
-  .query("userData", {
-    input: z.object({
-      userId: z.string(),
-    }),
-    resolve({ ctx, input }) {
-      return ctx.prisma.user.findFirst({
-        where: {
-          id: input.userId,
-        },
-        select: {
-          id: true,
-          username: true,
-        },
-      });
-    },
-  })
   .mutation("updatePassword", {
     input: z.object({
       id: z.string(),
@@ -62,7 +46,7 @@ export const userRouter = createProtectedRouter()
       );
       // console.log(match)
       if (!match) {
-        return {msg:"舊密碼錯誤",alertStatus:"warn"}
+        return {msg:"舊密碼錯誤",alertStatus:"warning"}
       }
       
       const newHash = await argon2.hash(input.newPassword)

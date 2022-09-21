@@ -17,7 +17,7 @@ import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import AddIcon from "@mui/icons-material/Add";
-
+import CircularProgress from '@mui/material/CircularProgress';
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
 import AddCompony from "../../components/widget/AddCompony";
 
@@ -257,14 +257,17 @@ function Index() {
         accessorKey: "id",
         header: "編號",
         enableEditing: false,
+        enableGrouping:false
       },
       {
         accessorKey: "task_name",
         header: "表單名",
+        enableGrouping:false
       },
       {
         accessorKey: "p",
         header: "坪數",
+        enableGrouping:false
       },
       {
         accessorKey: "pValue",
@@ -275,6 +278,7 @@ function Index() {
         Cell: ({ cell }) => (
           <p className="pValue">{numberWithCommas(cell.getValue<number>())}</p>
         ),
+        enableGrouping:false
       },
       {
         accessorKey: "adapt",
@@ -328,11 +332,12 @@ function Index() {
 
           return <p className="mainTotal">{numberWithCommas(cv[0]?.amount)}</p>;
         },
+        enableGrouping:false
       },
       {
         accessorFn: (row) => row.companyTypes,
         header: "主差し引い",
-
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -351,7 +356,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "主備註",
-
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -366,6 +371,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払業者",
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cType = {
             company: {
@@ -388,6 +394,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払総額",
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -408,6 +415,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払差し引い",
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -429,6 +437,7 @@ function Index() {
       {
         accessorFn: (row) => row.companyTypes,
         header: "支払備註",
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type cvType = {
             amount: number;
@@ -455,6 +464,7 @@ function Index() {
       {
         accessorFn: (row) => row.installments,
         header: "分割払い",
+        enableGrouping:false,
         Cell: ({ cell }) => {
           type iType = {
             percent: number;
@@ -521,12 +531,11 @@ function Index() {
       },
       {
         header: "利益",
+        enableGrouping:false,
         Cell: ({ row }) => {
-          // const total = cell.getValue() as any;
-
-          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
+         
           if (isLoading) {
-            return <>loading</>;
+            return <CircularProgress color="success" />
           }
           return profit === undefined ? (
             ""
@@ -537,12 +546,12 @@ function Index() {
       },
       {
         header: "総原価合計",
+        enableGrouping: false,
         Cell: ({ row }) => {
-          // const total = cell.getValue() as any;
-
-          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
-          // return <><p>{cost}</p></>
-
+      
+          if (isLoading) {
+            return <CircularProgress color="success" />
+          }
           return (
             <p className="cost">
               {numberWithCommas(cost && cost[Number(row.id)])}
@@ -552,12 +561,11 @@ function Index() {
       },
       {
         header: "外注率",
+        enableGrouping:false,
         Cell: ({ row }) => {
-          // const total = cell.getValue() as any;
-
-          // console.log(cell.row.original.companyTypes?.reduce((acc,prr)=>acc + prr.amount))
+       
           if (isLoading) {
-            return <>loading</>;
+            return <CircularProgress color="success" />
           }
           return outbound === undefined ? (
             ""
@@ -625,6 +633,7 @@ function Index() {
               enableRowSelection
               enableEditing
               enableMultiRowSelection={false}
+              enableGrouping
               state={{
                 isLoading,
                 showAlertBanner: isError,

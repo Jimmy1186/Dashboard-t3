@@ -9,6 +9,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { taskType } from "../../types/task";
+import LinearProgress from '@mui/material/LinearProgress';
 type iType = {
   errors: any;
   coe: boolean;
@@ -32,7 +33,7 @@ function AddInstallment({
 
 
 if (values.installments === undefined && coe === false) {
-  return <>loading</>;
+  return  <LinearProgress />
 }
 
   return (

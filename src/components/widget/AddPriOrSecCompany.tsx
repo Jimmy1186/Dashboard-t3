@@ -11,7 +11,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { taskType } from "../../types/task";
-
+import LinearProgress from '@mui/material/LinearProgress';
 export const selectCompanySchema = z.object({
   companyId: z.number().min(1, "一定要選"),
   amount: z.number().min(1, "要大於1"),
@@ -40,11 +40,11 @@ function AddPriOrSecCompany({
   // console.log(values.companyTypes)
 
   if (values.companyTypes === undefined && coe === false) {
-    return <>loading</>;
+    return    <LinearProgress />
   }
 
   if (isLoading) {
-    return <>isloading</>;
+    return    <LinearProgress />
   }
   return (
     <div className="bgPaper inputWrapper">
@@ -194,9 +194,9 @@ function AddPriOrSecCompany({
                             c_Type: "sec",
                             company: {
                               id: 1,
-                              c_name: "復華",
-                              c_title: "復華廣告有限公司",
-                              c_tax: "00000000",
+                              c_name: "聚思怡",
+                              c_title: "台灣聚思怡股份有限公司",
+                              c_tax: "90443462",
                             },
                             amount: 0,
                             cutPayment: 0,
