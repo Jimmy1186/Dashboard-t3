@@ -13,6 +13,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
 import Alert, { AlertColor } from "@mui/material/Alert";
+import Head from "next/head";
 
 
 const initialValues = {
@@ -179,6 +180,10 @@ function Index() {
   }
   return (
     <>
+         <Head>
+      <title>SEMBA | 管理員</title>
+        
+      </Head>
       <Snackbar
             open={openAlert}
             autoHideDuration={3000}

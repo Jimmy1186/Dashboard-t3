@@ -6,6 +6,7 @@ import ChangePasswordTab from "../components/tools/ChangePasswordTab";
 import { Skeleton } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import Alert, { AlertColor } from "@mui/material/Alert";
+import Head from "next/head";
 
 function Setting() {
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
@@ -52,6 +53,10 @@ function Setting() {
   }
   return (
     <>
+    <Head>
+        <title>SEMBA | 設定</title>
+
+      </Head>
       <Snackbar
         open={isShowingAlert}
         autoHideDuration={3000}

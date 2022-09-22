@@ -20,6 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CircularProgress from "@mui/material/CircularProgress";
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
 import AddCompony from "../../components/widget/AddCompony";
+import Head from "next/head";
 
 const initialValues = {
   id: "",
@@ -616,6 +617,9 @@ function Index() {
   }
   return (
     <>
+         <Head>
+      <title>SEMBA | 報告</title>
+      </Head>
       <div className="task-wrapper">
         <div className="bgPaper">
           {" "}

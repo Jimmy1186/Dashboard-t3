@@ -7,7 +7,7 @@
        height:100vh !important;
     }
     #__next{
-        @apply flex flex-col lg:flex-row
+        @apply flex flex-col lg:grid lg:grid-cols-12
     }
 }
 
