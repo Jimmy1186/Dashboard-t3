@@ -7,7 +7,6 @@ import AddTask from "../../components/widget/AddTask";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Button from "@mui/material/Button";
-import { motion } from "framer-motion";
 import "react-datepicker/dist/react-datepicker.css";
 import { taskSchema, taskType } from "../../types/task";
 import Dialog from "@mui/material/Dialog";
