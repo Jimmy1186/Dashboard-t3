@@ -5,15 +5,27 @@ import { trpc } from "../utils/trpc";
 import ChangePasswordTab from "../components/tools/ChangePasswordTab";
 import { Skeleton } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
-import Alert, { AlertColor } from "@mui/material/Alert";
+import MuiAlert, { AlertProps,AlertColor } from '@mui/material/Alert';
 import Head from "next/head";
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 function Setting() {
   const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
-  const updateMutation = trpc.useMutation(["user.updatePassword"]);
+  const updateMutation = trpc.useMutation(["user.updatePassword"],{
+    onSuccess: () => {
+      setShowingAlert(true);
+    },
+    onError: () => {
+      setShowingAlert(true);
+    },
+  });
 
   const handleClose = () => {
     setShowingAlert(false);
@@ -30,9 +42,6 @@ function Setting() {
     [updateMutation]
   );
 
-  React.useEffect(() => {
-    setShowingAlert(true);
-  }, [updateMutation.isSuccess]);
 
 
   const sumbitHandler = async (values: changePasswordType, action: any) => {
@@ -59,7 +68,8 @@ function Setting() {
       </Head>
       <Snackbar
         open={isShowingAlert}
-        autoHideDuration={3000}
+        anchorOrigin={{ vertical:"top", horizontal:"center" }}
+        autoHideDuration={6000}
         onClose={handleClose}
       >
         <Alert severity={updateMutation.data?.alertStatus as AlertColor}>

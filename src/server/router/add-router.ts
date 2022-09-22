@@ -78,11 +78,17 @@ export const addRouter = createProtectedRouter()
       id: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      return await ctx.prisma.task.delete({
-        where: {
-          id: input.id,
-        },
-      });
+      try {
+        await ctx.prisma.task.delete({
+          where: {
+            id: input.id,
+          },
+        });
+        return { msg: "刪除成功", alertStatus: "success" };
+      } catch (e) {
+        console.log(e);
+        return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
+      }
     },
   })
   .mutation("edit", {
@@ -95,7 +101,7 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable().or(z.undefined()),
       openDate: z.date().nullable().or(z.undefined()),
       createAt: z.date().or(z.undefined()),
-      adapt:z.string().or(z.undefined()),
+      adapt: z.string().or(z.undefined()),
       locations: z
         .object({
           id: z.number().or(z.undefined()),
@@ -138,6 +144,7 @@ export const addRouter = createProtectedRouter()
         .or(z.undefined()),
     }),
     resolve: async ({ ctx, input }) => {
+  
       const {
         id,
         task_name,
@@ -191,55 +198,62 @@ export const addRouter = createProtectedRouter()
         });
       }
       // console.log(charges===undefined)
-      await ctx.prisma.task.update({
-        where: {
-          id: id,
-        },
-        data: {
-          task_name: task_name || undefined,
-          p: p || undefined,
-          pValue: pValue || undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-          openDate: openDate || undefined,
-          createAt: createAt || undefined,
-          adapt:adapt||undefined,
-          locationId: locations?.id || undefined,
-          charges:
-            charges != undefined
-              ? {
-                  deleteMany: {},
-                  createMany: {
-                    data: chargePayload,
-                  },
-                }
-              : undefined,
-          companyTypes:
-            companyType != undefined
-              ? {
-                  deleteMany: {},
-                  createMany: {
-                    data: companyTypePayload,
-                  },
-                }
-              : undefined,
-          installments:
-            installment != undefined
-              ? {
-                  deleteMany: {},
-                  createMany: {
-                    data: installment,
-                  },
-                }
-              : undefined,
-        },
+      try {
+        await ctx.prisma.task.update({
+          where: {
+            id: id,
+          },
+          data: {
+            task_name: task_name || undefined,
+            p: p || undefined,
+            pValue: pValue || undefined,
+            startDate: startDate || undefined,
+            endDate: endDate || undefined,
+            openDate: openDate || undefined,
+            createAt: createAt || undefined,
+            adapt: adapt || undefined,
+            locationId: locations?.id || undefined,
+            charges:
+              charges != undefined
+                ? {
+                    deleteMany: {},
+                    createMany: {
+                      data: chargePayload,
+                    },
+                  }
+                : undefined,
+            companyTypes:
+              companyType != undefined
+                ? {
+                    deleteMany: {},
+                    createMany: {
+                      data: companyTypePayload,
+                    },
+                  }
+                : undefined,
+            installments:
+              installment != undefined
+                ? {
+                    deleteMany: {},
+                    createMany: {
+                      data: installment,
+                    },
+                  }
+                : undefined,
+          },
 
-        include: {
-          charges: true,
-          companyTypes: true,
-          installments: true,
-        },
-      });
+          include: {
+            charges: true,
+            companyTypes: true,
+            installments: true,
+          },
+        });
+       
+        return { msg: "編輯成功", alertStatus: "success" };
+      } catch (e) {
+        console.log(e);
+        return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
+      }
     },
   })
   .mutation("createTask", {
@@ -252,7 +266,7 @@ export const addRouter = createProtectedRouter()
       endDate: z.date().nullable(),
       openDate: z.date().nullable(),
       createAt: z.date(),
-      adapt:z.string(),
+      adapt: z.string(),
       locations: z.object({
         id: z.number(),
         location_name: z.string(),
@@ -287,6 +301,7 @@ export const addRouter = createProtectedRouter()
       ),
     }),
     resolve: async ({ ctx, input }) => {
+ 
       const {
         id,
         task_name,
@@ -302,87 +317,101 @@ export const addRouter = createProtectedRouter()
         installment,
         companyType,
       } = input;
+      try {
+        const exist = await ctx.prisma.task.count({
+          where: {
+            id: id,
+          },
+        });
+        if (exist != 0) {
+          return {
+            msg: `${id} 已存在，請確認後重新輸入!`,
+            alertStatus: "warning",
+          };
+        }
 
-      const chargePayload = await charges.map((i) => {
-        return { userId: i.users.id };
-      });
+        const chargePayload = await charges.map((i) => {
+          return { userId: i.users.id };
+        });
 
-      const companyTypePayload = await companyType.map((i) => {
-        return {
-          c_Type: i.c_Type,
-          companyId: i.company.id,
-          amount: Number(i.amount),
-          cutPayment: Number(i.cutPayment),
-          notes: i.notes,
-        };
-      });
+        const companyTypePayload = await companyType.map((i) => {
+          return {
+            c_Type: i.c_Type,
+            companyId: i.company.id,
+            amount: Number(i.amount),
+            cutPayment: Number(i.cutPayment),
+            notes: i.notes,
+          };
+        });
 
-      return await ctx.prisma.task.create({
-        data: {
-          id: id,
-          task_name: task_name,
-          p: p,
-          pValue: pValue,
-          startDate: startDate,
-          endDate: endDate,
-          openDate: openDate,
-          createAt: createAt,
-          locationId: locations.id,
-          adapt:adapt,
-          charges: {
-            createMany: {
-              data: chargePayload,
+        await ctx.prisma.task.create({
+          data: {
+            id: id,
+            task_name: task_name,
+            p: p,
+            pValue: pValue,
+            startDate: startDate,
+            endDate: endDate,
+            openDate: openDate,
+            createAt: createAt,
+            locationId: locations.id,
+            adapt: adapt,
+            charges: {
+              createMany: {
+                data: chargePayload,
+              },
+            },
+            companyTypes: {
+              createMany: {
+                data: companyTypePayload,
+              },
+            },
+            installments: {
+              createMany: {
+                data: installment,
+              },
             },
           },
-          companyTypes: {
-            createMany: {
-              data: companyTypePayload,
-            },
+          include: {
+            charges: true,
+            companyTypes: true,
+            installments: true,
           },
-          installments: {
-            createMany: {
-              data: installment,
-            },
-          },
-        },
-        include: {
-          charges: true,
-          companyTypes: true,
-          installments: true,
+        });
+        return { msg: "新增成功", alertStatus: "success" };
+      } catch (e) {
+        console.log(e);
+        return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
+      }
+    },
+  })
+  .query("listCompany", {
+    resolve: async ({ ctx }) => {
+      return await ctx.prisma.company.findMany({
+        select: {
+          id: true,
+          c_name: true,
+          c_title: true,
+          c_tax: true,
         },
       });
     },
   })
-  .query("listCompany",{
-    resolve:async({ctx})=>{
-      return await ctx.prisma.company.findMany({
-        select:{
-          id:true,
-          c_name:true,
-          c_title:true,
-          c_tax:true
-        }
-      })
-    }
-  })
-  .mutation("deleteCompany",{
-    input:z.object({
-      id:z.number()
+  .mutation("deleteCompany", {
+    input: z.object({
+      id: z.number(),
     }),
-    resolve:async({ctx,input})=>{
-      try{
+    resolve: async ({ ctx, input }) => {
+      try {
         await ctx.prisma.company.delete({
-        where:{
-          id:input.id
-        }
-        
-      })
-      return { msg: "刪除成功", alertStatus: "success" };
-      }catch(e){
-        console.log(e)
-      return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
+          where: {
+            id: input.id,
+          },
+        });
+        return { msg: "刪除成功", alertStatus: "success" };
+      } catch (e) {
+        console.log(e);
+        return { msg: "資料庫或網站出問題，聯絡工程師", alertStatus: "error" };
       }
-      
-      
-    }
-  })
+    },
+  });

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TextField from "@mui/material/TextField";
@@ -10,11 +10,18 @@ import { trpc } from "../../utils/trpc";
 
 
 import Snackbar from "@mui/material/Snackbar";
-import Alert, { AlertColor } from "@mui/material/Alert";
+import MuiAlert, { AlertProps, AlertColor } from "@mui/material/Alert";
 import MaterialReactTable, {
   MRT_ColumnDef,
   MRT_Row,
 } from "material-react-table";
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const initialValues = {
   c_name: "",
@@ -28,7 +35,7 @@ type toggleCompanyType = {
 };
 
 function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
-  const [openAlert, setOpenAlert] = React.useState(false);
+  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
   const {
     data: cList,
     refetch,
@@ -39,10 +46,19 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
     keepPreviousData: true,
   });
   const deleteCompanyMutation = trpc.useMutation(["add.deleteCompany"], {
-    onSuccess: () => refetch(),
+    onSuccess: () =>refetch() 
+      
   });
   const addCompanyMutation = trpc.useMutation(["add.company"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch();
+      setShowingAlert(true);
+     
+    },
+    onError: () => {
+      setShowingAlert(true);
+ 
+    },
   });
 
   const onDelete = useCallback(
@@ -70,12 +86,9 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
   const handleClose = () => {
     setOpenAddCompany(false);
   };
-  React.useEffect(() => {
-    setOpenAlert(true);
-  }, [addCompanyMutation.isSuccess,deleteCompanyMutation.isSuccess]);
 
   const handleCloseAlert = () => {
-    setOpenAlert(false);
+    setShowingAlert(false);
   };
 
   type companyListType = {
@@ -120,8 +133,9 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
       {({ errors, values, handleChange, isValid }) => (
         <Dialog open={openAddCompany} onClose={handleClose} maxWidth="lg">
           <Snackbar
-            open={openAlert}
-            autoHideDuration={3000}
+            open={isShowingAlert}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            autoHideDuration={6000}
             onClose={handleCloseAlert}
           >
             <Alert
@@ -130,17 +144,7 @@ function AddCompony({ openAddCompany, setOpenAddCompany }: toggleCompanyType) {
               {addCompanyMutation.data?.msg}
             </Alert>
           </Snackbar>
-          <Snackbar
-            open={openAlert}
-            autoHideDuration={3000}
-            onClose={handleCloseAlert}
-          >
-            <Alert
-              severity={deleteCompanyMutation.data?.alertStatus as AlertColor}
-            >
-              {deleteCompanyMutation.data?.msg}
-            </Alert>
-          </Snackbar>
+   
           <div className="p-3 lg:flex">
             <Form className="flex flex-col gap-5 p-3">
               <h3>新增公司</h3>

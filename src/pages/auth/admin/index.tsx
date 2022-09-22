@@ -12,9 +12,14 @@ import { Box, Button, Dialog, IconButton, Skeleton, Stack, Tooltip } from "@mui/
 import { Delete, Edit } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
-import Alert, { AlertColor } from "@mui/material/Alert";
+import MuiAlert, { AlertProps,AlertColor } from '@mui/material/Alert';
 import Head from "next/head";
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const initialValues = {
   id: "",
@@ -28,6 +33,7 @@ function Index() {
   const [open, setOpen] = React.useState(false);
   const [editData, setEditData] = useState<any>();
   const [coe, setCoe] = useState(true);
+  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
   const { data: session } = useSession();
   const {
     data: users,
@@ -39,14 +45,32 @@ function Index() {
     keepPreviousData: true,
   });
   const deleteMutation = trpc.useMutation(["admin.deleteUser"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch()
+      setShowingAlert(true);
+    },
+    onError: () => {
+      setShowingAlert(true);
+    },
   });
-  const [openAlert, setOpenAlert] = React.useState(false);
+  
   const editMutation = trpc.useMutation(["admin.editUser"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch()
+      setShowingAlert(true);
+    },
+    onError: () => {
+      setShowingAlert(true);
+    },
   });
   const insertMutation = trpc.useMutation(["admin.inertOneUser"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch()
+      setShowingAlert(true);
+    },
+    onError: () => {
+      setShowingAlert(true);
+    },
   });
 
   const onDelete = useCallback(
@@ -88,12 +112,9 @@ function Index() {
   }, []);
 
 
-  React.useEffect(() => {
-    setOpenAlert(true);
-  }, [insertMutation.isSuccess,editMutation.isSuccess]);
 
   const handleCloseAlert = () => {
-    setOpenAlert(false);
+    setShowingAlert(false);
   };
 
 
@@ -185,8 +206,9 @@ function Index() {
         
       </Head>
       <Snackbar
-            open={openAlert}
-            autoHideDuration={3000}
+            open={isShowingAlert}
+            anchorOrigin={{ vertical:"top", horizontal:"center" }}
+            autoHideDuration={6000}
             onClose={handleCloseAlert}
           >
             <Alert
@@ -196,8 +218,9 @@ function Index() {
             </Alert>
           </Snackbar>
           <Snackbar
-            open={openAlert}
-            autoHideDuration={3000}
+            open={isShowingAlert}
+            anchorOrigin={{ vertical:"top", horizontal:"center" }}
+            autoHideDuration={6000}
             onClose={handleCloseAlert}
           >
             <Alert
@@ -207,8 +230,9 @@ function Index() {
             </Alert>
           </Snackbar>
           <Snackbar
-            open={openAlert}
-            autoHideDuration={3000}
+            open={isShowingAlert}
+            anchorOrigin={{ vertical:"top", horizontal:"center" }}
+            autoHideDuration={6000}
             onClose={handleCloseAlert}
           >
             <Alert

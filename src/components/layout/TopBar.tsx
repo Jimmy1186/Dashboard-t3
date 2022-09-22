@@ -2,6 +2,7 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Skeleton } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
 
 function TopBar() {
   const { data: session } = useSession();
@@ -9,7 +10,7 @@ function TopBar() {
   if (!session) {
     return (
       <>
-        <h1>請登入帳號</h1>
+       <LinearProgress color="success" />
       </>
     );
   }

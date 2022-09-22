@@ -19,7 +19,16 @@ import AddIcon from "@mui/icons-material/Add";
 import CircularProgress from "@mui/material/CircularProgress";
 import DownloadXlsx from "../../components/tools/DownloadXlsx";
 import AddCompony from "../../components/widget/AddCompony";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps, AlertColor } from "@mui/material/Alert";
 import Head from "next/head";
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const initialValues = {
   id: "",
@@ -64,14 +73,19 @@ const numberWithCommas = (x: number | undefined) => {
 
 function Index() {
   const [coe, setCoe] = useState(true);
+  const [msgType, setMsgType] = useState<boolean>(false);
   const [editData, setEditData] = useState<taskType>();
   const [openAddCompany, setOpenAddCompany] = React.useState(false);
+  const [isShowingAlert, setShowingAlert] = useState<boolean>(false);
   const [open, setOpen] = React.useState(false);
   const { data: session } = useSession();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openTool = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleCloseAlert = () => {
+    setShowingAlert(false);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -87,7 +101,15 @@ function Index() {
   });
 
   const AllMutation = trpc.useMutation(["add.createTask"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch();
+      setShowingAlert(true);
+      setMsgType(true)
+    },
+    onError: () => {
+      setShowingAlert(true);
+      setMsgType(true)
+    },
   });
 
   const profit = useMemo(
@@ -137,7 +159,15 @@ function Index() {
   );
 
   const editMutation = trpc.useMutation(["add.edit"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch();
+      setShowingAlert(true);
+      setMsgType(false)
+    },
+    onError: () => {
+      setShowingAlert(true);
+      setMsgType(false)
+    },
   });
 
   const onEdit = useCallback(
@@ -235,7 +265,13 @@ function Index() {
   };
 
   const deleteMutation = trpc.useMutation(["add.delete"], {
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch();
+      setShowingAlert(true);
+    },
+    onError: () => {
+      setShowingAlert(true);
+    },
   });
 
   const onDeleteRow = useCallback(
@@ -616,8 +652,8 @@ function Index() {
   }
   return (
     <>
-         <Head>
-      <title>SEMBA | 報告</title>
+      <Head>
+        <title>SEMBA | 報告</title>
       </Head>
       <div className="task-wrapper">
         <div className="bgPaper">
@@ -765,6 +801,20 @@ function Index() {
           setOpenAddCompany={setOpenAddCompany}
         />
       </div>
+    
+
+
+      <Snackbar
+        open={isShowingAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={6000}
+        onClose={handleCloseAlert}
+      >
+        <Alert severity={msgType? (AllMutation.data?.alertStatus as AlertColor):(editMutation.data?.alertStatus as AlertColor)}>
+         {msgType?(AllMutation.data?.msg):(editMutation.data?.msg)}
+
+        </Alert>
+      </Snackbar>
     </>
   );
 }
