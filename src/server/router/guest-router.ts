@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import path from "path";
 import { rawX } from "../../utils/rawXlsx";
 // const PUBLIC_FILE_PATH = "./public/01.xlsx";
-const PUBLIC_FILE_PATH  = path.join(process.cwd(), "/public/01.xlsx");
+const PUBLIC_FILE_PATH = path.join(process.cwd(), "/public/01.xlsx");
 const numberWithCommas = (x: number | undefined) => {
   if (x === undefined) x = 0;
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -124,16 +124,14 @@ export const guestRouter = createRouter()
       // console.log("outbound here")
       // console.log(input.outbound)
       // console.log(input.xlsx)
-      const xPayload = rawX
+      const xPayload = rawX;
       const wb = await new ExcelJs.Workbook();
-   
-      const buf = Buffer.from(xPayload, 'base64');
 
-     await wb.xlsx.load(buf)
+      const buf = Buffer.from(xPayload, "base64");
 
+      await wb.xlsx.load(buf);
 
-
-       await wb.xlsx.load(buf).then(() => {
+      await wb.xlsx.load(buf).then(() => {
         const ws = wb.getWorksheet(1);
 
         const main_amount = numberWithCommas(
@@ -155,7 +153,6 @@ export const guestRouter = createRouter()
 
         // const sd = input.xlsx[0]?.charges.map((i:any)=>`${i.users.id}${i.users.username}`)
 
-
         const c = input.cost?.toString();
         const p = input.profit?.toString();
         const o = input.outbound?.toString();
@@ -164,7 +161,6 @@ export const guestRouter = createRouter()
             return `${i.users.id}${i.users.username} `;
           })
           .join("");
-        
 
         ws.getCell("M2").value = input.xlsx[0]?.id;
 
@@ -231,13 +227,66 @@ export const guestRouter = createRouter()
           Number(p === undefined ? 0 : p)
         );
         ws.getCell("AC35").value = o === undefined ? "" : `${o}%`;
-        ws.getCell("AL39").value =  `NT$${main_amount}`;
+        ws.getCell("AL39").value = `NT$${main_amount}`;
       });
 
-      const Xdata=await wb.xlsx.writeBuffer()
+      const Xdata = await wb.xlsx.writeBuffer();
 
       return {
         xlsxPayload: Buffer.from(Xdata).toString("base64"),
       };
+    },
+  })
+  .query("dashboard", {
+    resolve: async ({ ctx }) => {
+      // const ac = await ctx.prisma.companyType.aggregate({
+      //   _sum: {
+      //     amount: true,
+      //     cutPayment: true,
+      //   },
+      // });
+      // const a = numberWithCommas(Number(ac._sum.amount));
+      // const c = numberWithCommas(Number(ac._sum.cutPayment));
+      // const p = numberWithCommas(
+      //   Number(ac._sum.amount) - Number(ac._sum.cutPayment)
+      // );
+
+
+      const allTask = await ctx.prisma.task.findMany({
+        select:{
+          id:true,
+          companyTypes:{
+            select:{
+              amount:true,
+              cutPayment:true
+            }
+          }
+        }
+      })
+
+      const a =allTask.map(i=>{
+        return Number(i.companyTypes[0]?.amount)-Number(i.companyTypes[0]?.cutPayment);
+      })
+
+
+    const c =allTask.map((i) => {
+      return i.companyTypes.slice(1).reduce((acc, curr) => {
+        return acc + Number(curr.amount) - Number(curr.cutPayment);
+      }, 0);
+    })
+
+  
+const aSum = a.reduce((prev,curr)=>{return prev+curr})
+const cSum = c.reduce((prev,curr)=>{return prev+curr})
+const pSum = aSum-cSum
+
+
+const chartPayload = allTask.map((i,j)=>{
+  return {id:i.id,total:a[j],cost:c[j]}
+})
+
+
+
+      return { aSum, cSum, pSum,chartPayload };
     },
   });

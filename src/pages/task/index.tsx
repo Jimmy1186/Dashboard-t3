@@ -5,7 +5,6 @@ import MaterialReactTable, {
 } from "material-react-table";
 import Skeleton from "@mui/material/Skeleton";
 import { trpc } from "../../utils/trpc";
-import Paper from "@mui/material/Paper";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";

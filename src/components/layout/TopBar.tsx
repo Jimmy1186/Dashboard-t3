@@ -1,6 +1,7 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Skeleton } from "@mui/material";
 
 function TopBar() {
   const { data: session } = useSession();
@@ -20,7 +21,7 @@ function TopBar() {
       <Link href={"/setting"}>
         <a>
           <div className="w-10 h-10 rounded-full bg-amber-300 text-stone-600 flex justify-center align-middle items-center font-extrabold text-xl">
-            {session?.user?.name?.charAt(0)}
+            {session?session?.user?.name?.charAt(0):<Skeleton variant="circular" width={40} height={40} />}
           </div>
         </a>
       </Link>
