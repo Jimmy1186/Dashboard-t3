@@ -1,12 +1,8 @@
 import { createRouter } from "./context";
 import ExcelJs from "exceljs";
 import { z } from "zod";
-import fs from "fs";
 import { format } from "date-fns";
-import path from "path";
 import { rawX } from "../../utils/rawXlsx";
-// const PUBLIC_FILE_PATH = "./public/01.xlsx";
-const PUBLIC_FILE_PATH = path.join(process.cwd(), "/public/01.xlsx");
 const numberWithCommas = (x: number | undefined) => {
   if (x === undefined) x = 0;
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

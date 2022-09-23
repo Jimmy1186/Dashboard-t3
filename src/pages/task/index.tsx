@@ -3,6 +3,12 @@ import MaterialReactTable, {
   MRT_ColumnDef,
   MRT_Row,
 } from "material-react-table";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Skeleton from "@mui/material/Skeleton";
 import { trpc } from "../../utils/trpc";
 import { v4 as uuidv4 } from "uuid";
@@ -10,8 +16,6 @@ import { format } from "date-fns";
 import { Edit, Delete } from "@mui/icons-material";
 import { Tooltip, IconButton, Box, Button, Stack, Menu } from "@mui/material";
 import CreateTask from "../../components/tools/CreateTask";
-import Fab from "@mui/material/Fab";
-import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import { taskType, tl } from "../../types/task";
 import { useSession } from "next-auth/react";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
@@ -22,6 +26,11 @@ import AddCompony from "../../components/widget/AddCompony";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps, AlertColor } from "@mui/material/Alert";
 import Head from "next/head";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -104,11 +113,11 @@ function Index() {
     onSuccess: () => {
       refetch();
       setShowingAlert(true);
-      setMsgType(true)
+      setMsgType(true);
     },
     onError: () => {
       setShowingAlert(true);
-      setMsgType(true)
+      setMsgType(true);
     },
   });
 
@@ -162,11 +171,11 @@ function Index() {
     onSuccess: () => {
       refetch();
       setShowingAlert(true);
-      setMsgType(false)
+      setMsgType(false);
     },
     onError: () => {
       setShowingAlert(true);
-      setMsgType(false)
+      setMsgType(false);
     },
   });
 
@@ -299,6 +308,11 @@ function Index() {
         accessorKey: "task_name",
         header: "表單名",
         enableGrouping: false,
+        Cell: ({ cell }) => (
+          <p className="py-1 px-2 text-stone-600 text-bold font-semibold rounded-lg text-xl">
+            {cell.getValue<string>()}
+          </p>
+        ),
       },
       {
         accessorKey: "p",
@@ -312,13 +326,26 @@ function Index() {
           type: "number",
         },
         Cell: ({ cell }) => (
-          <p className="pValue">{numberWithCommas(cell.getValue<number>())}</p>
+          <p className="text-blue-400 font-bold text-lg">
+            $ {numberWithCommas(cell.getValue<number>())}
+          </p>
         ),
         enableGrouping: false,
       },
       {
         accessorKey: "adapt",
         header: "工程",
+        Cell: ({ cell }) => (
+          <p
+            className={`${
+              cell.getValue<string>() === "新店"
+                ? "bg-lime-200"
+                : "bg-amber-200"
+            } rounded-lg w-fit py-1 px-2 font-bold`}
+          >
+            {cell.getValue<string>()}
+          </p>
+        ),
       },
       {
         accessorKey: "locations.location_name",
@@ -366,7 +393,7 @@ function Index() {
           }[];
           const cv = cell.getValue() as cvType;
 
-          return <p className="mainTotal">{numberWithCommas(cv[0]?.amount)}</p>;
+          return    <p className="text-red-600 font-bold text-xl">$ {numberWithCommas(cv[0]?.amount)}</p>;
         },
         enableGrouping: false,
       },
@@ -409,94 +436,60 @@ function Index() {
         header: "支払業者",
         enableGrouping: false,
         Cell: ({ cell }) => {
-          type cType = {
+          type cvType = {
+            amount: number;
+            cutPayment: number;
+            notes: string;
             company: {
               c_name: string | null;
+              c_tax: string;
             };
           }[];
-          const c = cell.getValue() as cType;
-
-          return (
-            <div className="tableUsers">
-              {c.slice(1).map((i: any) => {
-                return <p key={uuidv4()}>{i.company.c_name}</p>;
-              })}
-
-              <br />
-            </div>
-          );
-        },
-      },
-      {
-        accessorFn: (row) => row.companyTypes,
-        header: "支払総額",
-        enableGrouping: false,
-        Cell: ({ cell }) => {
-          type cvType = {
-            amount: number;
-          }[];
 
           const c = cell.getValue() as cvType;
 
           return (
-            <div className="tableUsers">
-              {numberWithCommas(
-                c.slice(1).reduce((n, { amount }) => n + Number(amount), 0)
-              )}
-              <br />
-            </div>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography  component={'span'}>詳細</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography  component={'span'}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>公司</TableCell>
+                        <TableCell>金額</TableCell>
+                        <TableCell>扣除</TableCell>
+                        <TableCell>備註</TableCell>
+                        <TableCell>統編</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {c.slice(1).map((i) => {
+                        return (
+                          <TableRow key={uuidv4()} className="min-w-fit">
+                            <TableCell>{i.company.c_name}</TableCell>
+                            <TableCell>{i.amount}</TableCell>
+                            <TableCell>{i.cutPayment}</TableCell>
+                            <TableCell>{i.notes}</TableCell>
+                            <TableCell>{i.company.c_tax}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
           );
         },
       },
-      {
-        accessorFn: (row) => row.companyTypes,
-        header: "支払差し引い",
-        enableGrouping: false,
-        Cell: ({ cell }) => {
-          type cvType = {
-            amount: number;
-            cutPayment: number;
-          }[];
-          const c = cell.getValue() as cvType;
-
-          return (
-            <div className="tableUsers">
-              {numberWithCommas(
-                c
-                  .slice(1)
-                  .reduce((n, { cutPayment }) => n + Number(cutPayment), 0)
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        accessorFn: (row) => row.companyTypes,
-        header: "支払備註",
-        enableGrouping: false,
-        Cell: ({ cell }) => {
-          type cvType = {
-            amount: number;
-            cutPayment: number;
-            notes: string;
-          }[];
-          type cvTypes = {
-            amount: number;
-            cutPayment: number;
-            notes: string;
-          };
-
-          const cv = cell.getValue() as cvType;
-
-          return (
-            <div className="tableUsers">
-              {cv.slice(1).map((i: cvTypes) => {
-                return <p key={uuidv4()}>{i.notes}</p>;
-              })}
-            </div>
-          );
-        },
-      },
+    
       {
         accessorFn: (row) => row.installments,
         header: "分割払い",
@@ -518,10 +511,13 @@ function Index() {
               {cv.map((i: iTypes) => {
                 return (
                   <div className="installmenttable" key={uuidv4()}>
-                    <Fab variant="extended" disabled={!i.ok} color="success">
-                      <PriceCheckIcon />
-                      <h4>{i.percent}%</h4>
-                    </Fab>
+                    <p
+                      className={`${
+                        i.ok ? "bg-lime-200" : "bg-stone-100"
+                      } rounded-full p-3 w-12 h-12 `}
+                    >
+                      {i.percent}%
+                    </p>
                   </div>
                 );
               })}
@@ -575,7 +571,9 @@ function Index() {
           return profit === undefined ? (
             ""
           ) : (
-            <p className="profit">{numberWithCommas(profit[Number(row.id)])}</p>
+            <p className="text-red-600 font-bold text-xl">
+              $ {numberWithCommas(profit[Number(row.id)])}
+            </p>
           );
         },
       },
@@ -587,8 +585,8 @@ function Index() {
             return <CircularProgress color="success" />;
           }
           return (
-            <p className="cost">
-              {numberWithCommas(cost && cost[Number(row.id)])}
+            <p className="text-emerald-500 font-bold text-xl">
+              $ {numberWithCommas(cost && cost[Number(row.id)])}
             </p>
           );
         },
@@ -603,7 +601,7 @@ function Index() {
           return outbound === undefined ? (
             ""
           ) : (
-            <p className="cost">
+            <p className="text-violet-500 font-bold text-xl">
               {numberWithCommas(outbound[Number(row.id)])}%
             </p>
           );
@@ -801,8 +799,6 @@ function Index() {
           setOpenAddCompany={setOpenAddCompany}
         />
       </div>
-    
-
 
       <Snackbar
         open={isShowingAlert}
@@ -810,9 +806,14 @@ function Index() {
         autoHideDuration={6000}
         onClose={handleCloseAlert}
       >
-        <Alert severity={msgType? (AllMutation.data?.alertStatus as AlertColor):(editMutation.data?.alertStatus as AlertColor)}>
-         {msgType?(AllMutation.data?.msg):(editMutation.data?.msg)}
-
+        <Alert
+          severity={
+            msgType
+              ? (AllMutation.data?.alertStatus as AlertColor)
+              : (editMutation.data?.alertStatus as AlertColor)
+          }
+        >
+          {msgType ? AllMutation.data?.msg : editMutation.data?.msg}
         </Alert>
       </Snackbar>
     </>

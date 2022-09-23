@@ -20,7 +20,7 @@ import { Skeleton } from "@mui/material";
 
 const Home: NextPage = () => {
   const { data, isLoading } = trpc.useQuery(["guest.dashboard"]);
-  console.log(data?.chartPayload);
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-5 lg:grid grid-cols-3">
