@@ -235,51 +235,63 @@ export const guestRouter = createRouter()
   })
   .query("dashboard", {
     resolve: async ({ ctx }) => {
+      const userEarn = await ctx.prisma.$queryRaw`
+      SELECT Charge.userId,SUM(amount) AS amount
+FROM Task
+JOIN Charge ON Task.id = Charge.taskId
+JOIN CompanyType ON Task.id = CompanyType.taskId
+WHERE CompanyType.c_Type="pri"
+GROUP BY Charge.userId;
+      `;
 
-      // const userTaskCount = await ctx.prisma.charge.groupBy({
-      //   by:['userId'],
-      //   _count:{
-      //     taskId:true
-      //   },
-      // })
-
-      // console.log(userTaskCount)
+      const userTaskCount = await ctx.prisma.charge.groupBy({
+        by: ["userId"],
+        _count: {
+          taskId: true,
+        },
+      });
 
       const allTask = await ctx.prisma.task.findMany({
-        select:{
-          id:true,
-          companyTypes:{
-            select:{
-              amount:true,
-              cutPayment:true
-            }
-          }
-        }
-      })
+        select: {
+          id: true,
+          companyTypes: {
+            select: {
+              amount: true,
+              cutPayment: true,
+            },
+          },
+        },
+      });
 
-      const a =allTask.map(i=>{
-        return Number(i.companyTypes[0]?.amount)-Number(i.companyTypes[0]?.cutPayment);
-      })
+      const a = allTask.map((i) => {
+        return (
+          Number(i.companyTypes[0]?.amount) -
+          Number(i.companyTypes[0]?.cutPayment)
+        );
+      });
 
+      const c = allTask.map((i) => {
+        return i.companyTypes.slice(1).reduce((acc, curr) => {
+          return acc + Number(curr.amount) - Number(curr.cutPayment);
+        }, 0);
+      });
 
-    const c =allTask.map((i) => {
-      return i.companyTypes.slice(1).reduce((acc, curr) => {
-        return acc + Number(curr.amount) - Number(curr.cutPayment);
-      }, 0);
-    })
+      const aSum = a.reduce((prev, curr) => {
+        return prev + curr;
+      });
+      const cSum = c.reduce((prev, curr) => {
+        return prev + curr;
+      });
+      const pSum = aSum - cSum;
 
-  
-const aSum = a.reduce((prev,curr)=>{return prev+curr})
-const cSum = c.reduce((prev,curr)=>{return prev+curr})
-const pSum = aSum-cSum
+      const chartPayload = allTask.map((i, j) => {
+        return { id: i.id, total: a[j], cost: c[j] };
+      });
 
+      const utc = userTaskCount.map((i) => {
+        return { name: i.userId, task: i._count.taskId };
+      });
 
-const chartPayload = allTask.map((i,j)=>{
-  return {id:i.id,total:a[j],cost:c[j]}
-})
-
-
-
-      return { aSum, cSum, pSum,chartPayload };
+      return { aSum, cSum, pSum, chartPayload, utc, userEarn };
     },
   });
