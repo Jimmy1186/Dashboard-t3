@@ -18,6 +18,14 @@ import { trpc } from "../utils/trpc";
 import { numberWithCommas } from "../utils/tools";
 import { Skeleton } from "@mui/material";
 
+
+
+
+
+
+
+
+
 const Home: NextPage = () => {
   const { data, isLoading } = trpc.useQuery(["guest.dashboard"]);
 
@@ -41,7 +49,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex flex-col gap-5 lg:grid grid-cols-3">
+      <div className="flex flex-col gap-5 lg:grid grid-cols-3  max-w-7xl xl:mx-auto">
         <div className="bgPaper">
           <h3 className="text-stone-500 ">
             <RequestQuoteIcon /> 成交總金額
@@ -63,7 +71,7 @@ const Home: NextPage = () => {
           </h3>
           <h2 className="text-pink-500">$ {numberWithCommas(data?.cSum)}</h2>
         </div>
-        <div className="bgPaper lg:col-span-3 w-full md:h-72 lg:h-96">
+        <div className="bgPaper lg:col-span-3 w-full h-64 md:h-72 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               margin={{

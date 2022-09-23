@@ -6,7 +6,7 @@ function GlassContainer({ children }: glassContainerType) {
   return (
     <>
       <div
-        className=" bg-stone-50  
+        className=" bg-stone-50 h-full
     lg:col-span-10 2xl:col-span-11"
       >
         <TopBar />

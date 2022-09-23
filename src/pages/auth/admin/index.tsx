@@ -242,6 +242,8 @@ function Index() {
             </Alert>
           </Snackbar>
       <Dialog fullWidth={true} open={open} onClose={handleClose}>
+       
+       
         <div className="bgPaper">
           <Signup
             sumbitHandler={sumbitHandler}
@@ -252,8 +254,9 @@ function Index() {
           />
         </div>
       </Dialog>
-
-      <div className="bgPaper">
+      <div className="flex flex-col gap-5 xl:grid grid-cols-2  max-w-7xl xl:mx-auto">
+        
+            <div className="bgPaper">
         <MaterialReactTable
           columns={columns}
           data={users ? users : []}
@@ -303,6 +306,8 @@ function Index() {
           )}
         />
       </div>
+        </div>
+  
     </>
   );
 }

@@ -235,18 +235,15 @@ export const guestRouter = createRouter()
   })
   .query("dashboard", {
     resolve: async ({ ctx }) => {
-      // const ac = await ctx.prisma.companyType.aggregate({
-      //   _sum: {
-      //     amount: true,
-      //     cutPayment: true,
-      //   },
-      // });
-      // const a = numberWithCommas(Number(ac._sum.amount));
-      // const c = numberWithCommas(Number(ac._sum.cutPayment));
-      // const p = numberWithCommas(
-      //   Number(ac._sum.amount) - Number(ac._sum.cutPayment)
-      // );
 
+      // const userTaskCount = await ctx.prisma.charge.groupBy({
+      //   by:['userId'],
+      //   _count:{
+      //     taskId:true
+      //   },
+      // })
+
+      // console.log(userTaskCount)
 
       const allTask = await ctx.prisma.task.findMany({
         select:{

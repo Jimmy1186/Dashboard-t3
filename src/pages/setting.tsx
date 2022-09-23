@@ -76,7 +76,21 @@ function Setting() {
           {updateMutation.data?.msg}
         </Alert>
       </Snackbar>
+<div className="flex flex-col  gap-5 md:grid md:grid-cols-3 lg:grid-cols-4 max-w-7xl xl:mx-auto">
+<div className="bgPaper w-full flex flex-col gap-1 md:gap-3 md: p-7 " >
+        <h3>用戶資料</h3>
+        <p>名稱: {session.user?.name}</p>
+        <p>編號: {session.user?.id}</p>
+        <p>權限: 
+        {session.user?.role==="X"? "管理員":""}
+        {session.user?.role==="W"? "使用者":""}
+        {session.user?.role==="R"? "訪客":""}
+        </p>
+      </div>
       <ChangePasswordTab sumbitHandler={sumbitHandler} />
+
+</div>
+      
     </>
   );
 }

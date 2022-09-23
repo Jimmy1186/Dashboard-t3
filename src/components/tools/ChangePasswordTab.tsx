@@ -24,7 +24,7 @@ const ChangePasswordTab = ({ sumbitHandler }: changePasswordTypefun) => {
         onSubmit={sumbitHandler}
       >
         {({ errors, values, handleChange, isValid }) => (
-          <div className="bgPaper md:w-fit p-7">
+          <div className="bgPaper  p-7 md:w-full">
             <h3>更改密碼</h3>
             <Form className="flex flex-col gap-1">
               <div className={`inputBox`}>
