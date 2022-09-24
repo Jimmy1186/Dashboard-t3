@@ -97,6 +97,7 @@ const Home: NextPage = () => {
           <h2 className="text-pink-500">$ {numberWithCommas(data?.cSum)}</h2>
         </div>
         <div className="bgPaper lg:col-span-3 w-full h-64 md:h-72 lg:h-96">
+          <h3>案件金額與扣除金額</h3>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               margin={{
@@ -151,6 +152,7 @@ const Home: NextPage = () => {
         </div>
 
         <div className="bgPaper lg:col-span-2 w-full h-64">
+          <h3>賺取利益</h3>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}
