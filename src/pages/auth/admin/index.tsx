@@ -3,6 +3,7 @@ import MaterialReactTable, {
   MRT_ColumnDef,
   MRT_Row,
 } from "material-react-table";
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { trpc } from "../../../utils/trpc";
 import { signupUserType, userTableType } from "../../../types/common";
 import Signup from "../../../components/tools/Signup";
@@ -20,6 +21,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+const queryClient = new QueryClient();
 
 const initialValues = {
   id: "",
@@ -205,6 +208,7 @@ function Index() {
       <title>SEMBA | 管理員</title>
         
       </Head>
+    
       <Snackbar
             open={isShowingAlert}
             anchorOrigin={{ vertical:"top", horizontal:"center" }}
@@ -254,12 +258,13 @@ function Index() {
           />
         </div>
       </Dialog>
-      <div className="flex flex-col gap-5 xl:grid grid-cols-2  max-w-7xl xl:mx-auto">
+     
+<div className="flex flex-col gap-5 xl:grid grid-cols-2  max-w-7xl xl:mx-auto">
         
             <div className="bgPaper">
         <MaterialReactTable
           columns={columns}
-          data={users ? users : []}
+          data={ users ??  []}
           enableEditing
           state={{
             isLoading,
@@ -307,9 +312,18 @@ function Index() {
         />
       </div>
         </div>
+      
+
+      
   
     </>
   );
 }
 
-export default Index;
+const ExampleWithReactQueryProvider = () => (
+  <QueryClientProvider client={queryClient}>
+    <Index />
+  </QueryClientProvider>
+);
+
+export default ExampleWithReactQueryProvider;
