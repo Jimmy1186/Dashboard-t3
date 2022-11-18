@@ -20,7 +20,7 @@ import FormLabel from "@mui/material/FormLabel";
 type signupFromType = {
   sumbitHandler: (values: signupUserType, action: any) => void;
   editSubmit: (values: userTableType, action: any) => void;
-  handleClose: (i: boolean) => void;
+  handleClose: () => void;
   coe: boolean;
   initialValues: userInitial;
 };
@@ -133,7 +133,7 @@ function Signup({
             <Button
               fullWidth={true}
               variant="outlined"
-              onClick={() => handleClose}
+              onClick={() => handleClose()}
             >
               取消
             </Button>
