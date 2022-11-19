@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
-import mainLogo from "/public/mainLogo.gif";
+import mainLogo from "/public/logo.png";
 import { navStateType } from "../../types/common";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
